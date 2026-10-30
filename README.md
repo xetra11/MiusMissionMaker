@@ -1,16 +1,82 @@
-# MiusMissionMaker – scenario generator for Graviteam Tactics: Mius-Front
+# MiusMissionMaker
 
-Builds single-player missions (`.mispack`) for **Graviteam Tactics: Mius-Front** from a JSON file and optionally installs them into the game.
+Create your own single-player missions for **Graviteam Tactics: Mius-Front**: pick a map, choose your forces from all 266 platoon types of the game, set objectives, and start the battle with one click.
 
-```
-scenario JSON ──► node tools/scenario.js build ──► output/<id>.mispack ──(--install)──► in game: QUICK BATTLE → Missions
-```
+![The mission editor](docs/img/editor.png)
 
-**No game analysis needed.** Everything needed to write a valid scenario is listed in this README (bases, maps, villages, keywords, script commands) and in [`docs/UNITS.md`](docs/UNITS.md) (every platoon type the game knows). Both are generated from the game data, so nobody has to search the game files again. You do not need access to the game to author a scenario; only building/installing it requires the game. A machine-readable version of all rules is in [`scenario.schema.json`](scenario.schema.json) (JSON Schema draft-07).
-
-Requirements for building: **Node.js** (tested with v24) and an installed copy of Mius-Front. No npm packages.
+- [Mission Editor](#mission-editor): the desktop tool. Start here.
+- [For AI / LLMs](#for-ai--llms): the technical reference, written for AI assistants.
 
 ---
+
+# Mission Editor
+
+## Getting started
+
+You need Windows, Mius-Front and [Node.js](https://nodejs.org) in your `PATH`. The WebView2 runtime the window relies on is part of Windows 11.
+
+Start `MiusMissionMaker.exe` from this folder. To build it yourself with Go 1.26:
+
+```bash
+cd gui
+go build -ldflags=-H=windowsgui -o ../MiusMissionMaker.exe .
+```
+
+If the game is not in the default Steam folder, set its location under **Settings**.
+
+## Building a mission
+
+**1. Choose a map.** Press **New**, enter a title and pick a **Map**. The map also decides your side: German on `tr03`, `tr04`, `tr06`, Soviet on the others. Use **Open** to load a saved scenario or one of the examples.
+
+**2. Set points on the map.** Blue and red squares are the start areas of the two sides, brown rectangles are villages (the number is the house count), and grey dots are positions from the original mission. Click anywhere to add a point, drag to move it, or click a village or grey dot to use its position. East is to the right, and the bar shows 1 km.
+
+![Map with points and enemy orders](docs/img/editor-map.png)
+
+**3. Pick your forces.** In **Player** and **Enemy**, choose where each side sets up and add platoons. The search covers names, roles and vehicles, for example `stug`, `t34` or `mortar`. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. Use **own position** to place a single platoon elsewhere, and **Size** to change the number of squads or vehicles.
+
+![Searching platoons](docs/img/editor-units.png)
+
+**4. Give the enemy orders.** At the bottom of the **Enemy** tab, add the points the enemy should move to, in order. Leave orders empty and tick **Block AI** for a defender that holds its positions.
+
+![Orders of the enemy](docs/img/editor-orders.png)
+
+**5. Set the objective.** In **Battle**, set how you win and lose, the time limit and the start camera. The **Texts** tab holds the hints shown during the mission.
+
+![Victory and defeat settings](docs/img/editor-battle.png)
+
+**6. Play.** Close the game if it is running and press **Start battle**.
+
+## Buttons
+
+| Button | What it does |
+|---|---|
+| **Save** | Saves the scenario to `scenarios/<id>.json`. |
+| **Build & check** | Creates the mission in `output/` and shows the report below the map. |
+| **Build & install in game** | Installs the mission permanently: QUICK BATTLE → Missions. |
+| **Start battle** | Builds the mission and starts it right away, without installing it. |
+| **Installed missions** | Lists installed missions and removes them. |
+| **Settings** | Sets the game folder. |
+
+## Good to know
+
+- **Close the game first.** Install and Start battle refuse to run while the game is open.
+- **Start battle** overwrites the game's current battle data, so finish a running battle first.
+- **Starting outside the start areas:** the deployment phase is only proven for forces starting in the blue area. If your forces start elsewhere, turn off **Deployment phase** in the **Battle** tab.
+- **Red messages** next to the buttons list what is still missing. The report below the map shows what the generator found.
+- **Text** must use plain characters; German umlauts are converted automatically.
+- The map does not show terrain yet. Stay near villages and grey dots to be safe.
+
+---
+
+# For AI / LLMs
+
+> **Humans can stop here.** Everything below is a precise technical reference for AI assistants. It is long and not meant to be read by people. To have an AI build a mission, point it to this section; to build one yourself, use the [Mission Editor](#mission-editor).
+
+**If you are an AI assistant:** you can write valid scenarios without access to the game. Everything you need is listed here (bases, maps, villages, keywords, script commands) and in [`docs/UNITS.md`](docs/UNITS.md) (every platoon type the game knows). Both are generated from the game data, so do not search the game files. A machine-readable version of all rules is in [`scenario.schema.json`](scenario.schema.json) (JSON Schema draft-07), and [`docs/catalog.json`](docs/catalog.json) holds the same data for tools. Save scenarios as `scenarios/<id>.json`; building and installing requires Node.js (tested with v24) and the game, with no npm packages.
+
+```
+scenario JSON ──► node tools/scenario.js build ──► output/<id>.mispack ──(--install or --start)──► in game
+```
 
 ## 1. Quick start
 
@@ -31,30 +97,6 @@ If the game is not installed at `C:\Program Files (x86)\Steam\steamapps\common\G
 
 ---
 
-## 1a. Desktop editor
-
-`MiusMissionMaker.exe` is a Windows program for building scenarios without writing JSON by hand. Requires Node.js in `PATH` and the Microsoft Edge WebView2 runtime (part of Windows 11). Keep the program in this folder.
-
-- **Map:** shows the base's start areas (blue player, red enemy), villages and known points. Click to add a point, drag to move it, click a village or grey point to use it. Arrows show the orders.
-- **Player / Enemy:** deployment, platoons (search all 266 types, e.g. `stug`), per-platoon position, orders.
-- **Battle / Texts:** victory, defeat, time, camera and hint texts.
-- **Save** writes `scenarios/<id>.json`. **Build & check** also creates the mission and shows the generator's report. **Build & install in game** installs it (close the game first). **Installed missions** lists and removes them.
-- **Start battle** builds the mission and starts it directly in the game, without installing it and without going through the menu. Close the game first. It uses the deployment and briefing of the mission as usual.
-- **Settings:** game folder, if not installed in the default Steam location.
-
-The program edits the same JSON format as described in section 4, so examples and hand-written files can be opened with it. Scenarios with their own `script` open too; the page shows which settings then have no effect.
-
-Build it with Go 1.26:
-
-```bash
-cd gui
-go build -ldflags=-H=windowsgui -o ../MiusMissionMaker.exe .
-```
-
-`MiusMissionMaker.exe -serve 127.0.0.1:8765` runs it without a window for use in a browser (open `http://127.0.0.1:8765/#dev`).
-
----
-
 ## 2. How it works
 
 A scenario has three parts:
@@ -65,7 +107,7 @@ A scenario has three parts:
 
 After building, the generator validates the file (IDs, references, checksums, script ↔ callsigns). Only a valid file is installed.
 
-Status: `company_vs_company` and `panzer_meeting` were played successfully in the game (the latter with forces from five different missions, some switching sides). `liberate_village` is new and untested in the game: it is the first scenario with database-built units and with forces starting outside their start areas. Every one of the 266 platoon types builds and passes validation, but database-built platoons (marked in `docs/UNITS.md`) are not yet confirmed in the game.
+Status: `company_vs_company` and `panzer_meeting` were played successfully in the game (the latter with forces from five different missions, some switching sides). `liberate_village` loads in the game, but has not been played through: it is the first scenario with database-built units and with forces starting outside their start areas. Every one of the 266 platoon types builds and passes validation, but database-built platoons (marked in `docs/UNITS.md`) are not yet confirmed in the game.
 
 ---
 
@@ -584,9 +626,10 @@ MiusMissionMaker/
 ├── README.md                    this guide (section 6 is generated)
 ├── scenario.schema.json         JSON Schema for scenario files (generated)
 ├── docs/UNITS.md                every platoon type of the game (generated)
-├── docs/catalog.json            the same data for tools, used by the desktop editor (generated)
-├── gui/                         desktop editor (Go)
-├── scenarios/                   scenarios saved by the desktop editor
+├── docs/catalog.json            the same data for tools, used by the Mission Editor (generated)
+├── docs/img/                     screenshots for this README
+├── gui/                         Mission Editor (Go); -serve <host:port> runs it without a window, open http://<host:port>/#dev
+├── scenarios/                   scenarios saved by the Mission Editor
 ├── examples/                    example scenarios
 ├── output/                      built missions (.mispack)
 ├── docs/TECHNIK.md              file formats, reverse engineering, internals (German)
