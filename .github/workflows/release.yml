@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: gui/go.mod
+          cache-dependency-path: gui/go.sum
+
+      - name: Build
+        working-directory: gui
+        run: go build -ldflags=-H=windowsgui -o ../MiusMissionMaker.exe .
+
+      # the program runs the tools next to it, so it ships together with them
+      - name: Package
+        shell: pwsh
+        run: |
+          $pkg = 'dist/MiusMissionMaker'
+          New-Item -ItemType Directory -Path $pkg | Out-Null
+          Copy-Item MiusMissionMaker.exe, README.md, scenario.schema.json -Destination $pkg
+          Copy-Item tools, examples, docs -Destination $pkg -Recurse
+          Compress-Archive -Path $pkg -DestinationPath dist/MiusMissionMaker-windows.zip
+
+      # the file name stays the same, so the README's "latest" link always works
+      - name: Publish
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME dist/MiusMissionMaker-windows.zip --title $env:GITHUB_REF_NAME --generate-notes ||
+            gh release upload $env:GITHUB_REF_NAME dist/MiusMissionMaker-windows.zip --clobber

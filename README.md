@@ -1,5 +1,9 @@
 # MiusMissionMaker
 
+[![Latest release](https://img.shields.io/github/v/release/xetra11/MiusMissionMaker)](https://github.com/xetra11/MiusMissionMaker/releases/latest)
+
+**[Download the latest version](https://github.com/xetra11/MiusMissionMaker/releases/latest/download/MiusMissionMaker-windows.zip)**
+
 Create your own single-player missions for **Graviteam Tactics: Mius-Front**: pick a map, choose your forces from all 266 platoon types of the game, set objectives, and start the battle with one click.
 
 ![The mission editor](docs/img/editor.png)
@@ -15,7 +19,9 @@ Create your own single-player missions for **Graviteam Tactics: Mius-Front**: pi
 
 You need Windows, Mius-Front and [Node.js](https://nodejs.org) in your `PATH`. The WebView2 runtime the window relies on is part of Windows 11.
 
-Start `MiusMissionMaker.exe` from this folder. To build it yourself with Go 1.26:
+[Download the latest version](https://github.com/xetra11/MiusMissionMaker/releases/latest/download/MiusMissionMaker-windows.zip), unpack the ZIP and start `MiusMissionMaker.exe`. Keep it together with the other files from the ZIP; it uses them to build missions. Older versions are on the [releases page](https://github.com/xetra11/MiusMissionMaker/releases).
+
+To build it yourself with Go 1.26:
 
 ```bash
 cd gui
@@ -625,6 +631,7 @@ The game must be closed. Before the first change `data\common\shared\config\path
 MiusMissionMaker/
 ├── README.md                    this guide (section 6 is generated)
 ├── scenario.schema.json         JSON Schema for scenario files (generated)
+├── .github/workflows/release.yml  publishes the ZIP for every pushed tag v*
 ├── docs/UNITS.md                every platoon type of the game (generated)
 ├── docs/catalog.json            the same data for tools, used by the Mission Editor (generated)
 ├── docs/img/                     screenshots for this README
