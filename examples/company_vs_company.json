@@ -1,4 +1,5 @@
 {
+  "$schema": "../scenario.schema.json",
   "id": "kp01_company_vs_company",
   "title": "Company vs Company",
   "description": "Your German infantry company (HQ and three rifle platoons) holds the line. A Soviet rifle company attacks from the East. Hold your positions and break the attack.",
@@ -6,43 +7,85 @@
   "base": "tr04",
   "max_minutes": 60,
   "time_scale": 2,
-
   "points": {
-    "defence":     [-401, -716],
+    "defence": [-401, -716],
     "enemy_start": [224, -910],
-    "hill":        [26, -816],
-    "target":      [-686, -651]
+    "hill": [26, -816],
+    "target": [-686, -651]
   },
-
   "sides": {
     "player": {
-      "deploy": { "type": "trench", "at": "defence" },
+      "deploy": {
+        "type": "trench",
+        "at": "defence"
+      },
       "platoons": [
-        { "callsign": "panther_01", "unit": "wer_mibn_1141_comcoy@tr04" },
-        { "callsign": "panther_02", "unit": "wer_mibn_1141_plat" },
-        { "callsign": "panther_03", "unit": "wer_mibn_1141_plat" },
-        { "callsign": "panther_04", "unit": "wer_mibn_1141_plat" }
+        {
+          "callsign": "panther_01",
+          "unit": "wer_mibn_1141_comcoy@tr04"
+        },
+        {
+          "callsign": "panther_02",
+          "unit": "wer_mibn_1141_plat"
+        },
+        {
+          "callsign": "panther_03",
+          "unit": "wer_mibn_1141_plat"
+        },
+        {
+          "callsign": "panther_04",
+          "unit": "wer_mibn_1141_plat"
+        }
       ]
     },
     "enemy": {
-      "deploy": { "type": "place", "at": "enemy_start" },
+      "deploy": {
+        "type": "place",
+        "at": "enemy_start"
+      },
       "platoons": [
-        { "callsign": "pine_01", "unit": "ra_rbn_1242_comcoy" },
-        { "callsign": "pine_02", "unit": "ra_rbn_1242_plat2" },
-        { "callsign": "pine_03", "unit": "ra_rbn_1242_plat2" },
-        { "callsign": "pine_04", "unit": "ra_rbn_1242_plat2" }
+        {
+          "callsign": "pine_01",
+          "unit": "ra_rbn_1242_comcoy"
+        },
+        {
+          "callsign": "pine_02",
+          "unit": "ra_rbn_1242_plat2"
+        },
+        {
+          "callsign": "pine_03",
+          "unit": "ra_rbn_1242_plat2"
+        },
+        {
+          "callsign": "pine_04",
+          "unit": "ra_rbn_1242_plat2"
+        }
       ],
       "orders": [
-        { "to": "hill", "mode": "assault" },
-        { "to": "target", "mode": "attack" },
-        { "to": "target", "mode": "siege", "wait_s": 900 }
+        {
+          "to": "hill",
+          "mode": "assault"
+        },
+        {
+          "to": "target",
+          "mode": "attack"
+        },
+        {
+          "to": "target",
+          "mode": "siege",
+          "wait_s": 900
+        }
       ]
     }
   },
-
-  "victory": { "balance": 2.0 },
-  "defeat": { "enemy_reaches": "target", "radius": 200, "share": 0.5 },
-
+  "victory": {
+    "balance": 2
+  },
+  "defeat": {
+    "enemy_reaches": "target",
+    "radius": 200,
+    "share": 0.5
+  },
   "texts": {
     "brief_own": "Your infantry company: HQ and three rifle platoons",
     "brief_foe": "Soviet rifle company assembling for the attack",

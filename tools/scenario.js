@@ -1,11 +1,12 @@
 // MiusMissionMaker scenario generator: JSON -> .mispack for Graviteam Tactics: Mius-Front.
 //
-//   node tools/scenario.js build   <scenario.json> [--install] [--game <dir>]
-//   node tools/scenario.js catalog [--game <dir>] [--out docs/KATALOG.md]
+//   node tools/scenario.js build     <scenario.json> [--install] [--game <dir>] [--out <file>]
+//   node tools/scenario.js reference [--game <dir>]
+//        regenerates the reference section of README.md and scenario.schema.json
 //
 // Map section, weather and player nation come from a shipped "base" mission; all forces,
 // the mission script and the texts are rebuilt from the JSON. Platoons can be taken from
-// any shipped mission (see the catalogue) and are re-numbered for the new mission.
+// any shipped mission (see the reference) and are re-numbered for the new mission.
 const fs = require('fs');
 const path = require('path');
 const { readPack } = require('./azp3');
@@ -15,6 +16,58 @@ const installer = require('./install_mission');
 
 const DEFAULT_GAME = 'C:/Program Files (x86)/Steam/steamapps/common/Graviteam Tactics Mius-Front';
 const ROOT = path.join(__dirname, '..');
+
+// ---------------------------------------------------------------- vocabulary
+const NAME_RE = /^[a-z][a-z0-9_]{0,30}$/;
+// callsign names from the game's localisation; others are allowed but may show oddly in-game
+const CALLSIGN_NAMES = ('pine linden birch asp beech chestnut willow oak fir broom guelder cedar reed poplar cherry ' +
+  'tiger jaguar leopard panther elefant lion beaver viper wolf fox bear lynx hawk eagle crocodile falcon').split(' ');
+const RESERVED = ['own', 'foe', 'own_main', 'foe_main', 'main', 'deploy', 'process', 'goto', 'battle_victory',
+  'battle_defeat', 'foe_later', 'own_later'];
+const MODES = {
+  assault: 'aggressive advance, fighting through to the point',
+  attack: 'attack the point',
+  march: 'move in march order: fast, not ready to fight',
+  defence: 'move to the point and take up defence there',
+  siege: 'surround and besiege the point',
+};
+const PLANS = { attack: 'ATAK', defend: 'DEF', hold: 'HOLD' };
+const DEPLOY_TYPES = { trench: 'dug in at prepared positions', place: 'placed in the open' };
+const FORMATIONS = {
+  line2: 'two lines; default for trench',
+  line: 'single line',
+  columnlr: 'column; default for place',
+  battery: 'gun/mortar battery layout',
+};
+const FACINGS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
+// role + description for every platoon template found in the shipped missions
+const UNIT_INFO = {
+  wer_mibn_1141_comcoy: ['HQ', 'Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck'],
+  wer_mibn_1141_plat: ['infantry', 'Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar'],
+  wer_mibn_1141_at_plat: ['anti-tank gun', 'Anti-tank gun section: one 5 cm Pak 38 with crew and fire-control squad'],
+  wer_minf1141_igcoy_lfpl: ['artillery', 'Infantry gun platoon: 2x 7.5 cm le.IG 18 with battery/platoon command and telephone squad'],
+  wer_pz_coy_plat1: ['tank', 'Panzer III platoon: 1x Pz III J (long gun) and 3x Pz III M'],
+  wer_mar_43_plat: ['tank destroyer', 'Marder platoon (1943): 1x Marder III and 1x Marder II self-propelled anti-tank guns'],
+  wer_mar_42_plat: ['tank destroyer', 'Marder platoon (1942): 1x Marder II, 2x Marder III, 1x Sd.Kfz. 250 half-track'],
+  wer_spg_bn_43_spam: ['support', 'Assault-gun battalion support section with 2 Opel Blitz trucks; no combat value'],
+  ra_rbn_1242_comcoy: ['HQ', 'Rifle company HQ: company commander, political officer, runner and a sniper team'],
+  ra_rbn_1242_plat2: ['infantry', 'Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads)'],
+  ra_rbn_1242_combat: ['HQ', 'Rifle battalion HQ: battalion commander and telephone squad'],
+  ra_rbn_1242_hmg: ['machine gun', 'Heavy machine-gun squad: 1x Maxim HMG with crew'],
+  ra_rr1242_smg_hq: ['HQ', 'Submachine-gun company HQ (3 men)'],
+  ra_rr1242_smg_plat: ['infantry', 'Submachine-gun platoon: platoon HQ and 3 SMG squads (assault infantry)'],
+  ra_rr1242_foot_scout: ['recon', 'Foot reconnaissance platoon: platoon HQ, 3 scout squads and an artillery observer'],
+  ra_ssq_0143_comsq: ['HQ', 'Cavalry squadron HQ: commander, political officer, telephone squad'],
+  ra_ssq_0143_plat: ['infantry', 'Cavalry sabre platoon fighting dismounted: platoon HQ and 2 squads'],
+  ra_ssq_0143_atr: ['anti-tank', 'Cavalry anti-tank rifle platoon: platoon HQ and 3 anti-tank rifle squads (dismounted)'],
+  ra_cr_0143_mt82_com: ['HQ', 'Mortar battery HQ: commander and telephone squad; no weapons of its own'],
+  ra_cr_0143_mt82_fplat: ['mortar', '82 mm mortar platoon: 3 mortars with fire-control squad'],
+  ra_tbr_42_bn1_t34_plat: ['tank', 'T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank)'],
+  ra_tbr_42_bn1_t34_cc: ['tank', 'T-34 company commander tank (1 tank)'],
+  ra_tbr_42_bn2_sm_plat: ['tank', 'T-70 light tank platoon: 3x T-70M'],
+  ra_ogvtpp_42_plat: ['tank', 'KV-1S heavy tank platoon: 2 tanks'],
+};
 
 // ---------------------------------------------------------------- helpers
 const u32 = (v, o = 0) => v.raw.readUInt32LE(o);
@@ -31,6 +84,8 @@ const platId = r => u32(r[1]);
 const nationOf = r => code4(r[1], 12);
 const POOL_MASK = 0xff800000;
 const emptyCell = () => ({ raw: Buffer.alloc(16), t: 6, pad: Buffer.alloc(12) });
+const baseId = m => m.name.split('_')[0];
+const NATION_NAME = { GER: 'German', USSR: 'Soviet' };
 
 let seed = 1;
 const rnd = (lo, hi) => { seed = (Math.imul(seed, 1103515245) + 12345) >>> 0; return lo + (seed >>> 8) % (hi - lo + 1); };
@@ -38,12 +93,13 @@ const rnd = (lo, hi) => { seed = (Math.imul(seed, 1103515245) + 12345) >>> 0; re
 class SpecError extends Error {}
 const fail = msg => { throw new SpecError(msg); };
 
-// cp1251 has no umlauts; keep texts ASCII-safe
+// the game uses cp1251, which has no umlauts; keep texts plain ASCII
 function gameText(s, where) {
   const t = String(s).replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/Ä/g, 'Ae')
-    .replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue').replace(/ß/g, 'ss').replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d\u201e]/g, '"')
-    .replace(/[\u2013\u2014]/g, '-');
-  if (/[^\x20-\x7e]/.test(t)) fail(`${where}: nur einfache Zeichen erlaubt (ASCII), gefunden: ${JSON.stringify(t.match(/[^\x20-\x7e]/)[0])}`);
+    .replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue').replace(/ß/g, 'ss').replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201c\u201d\u201e]/g, '"').replace(/[\u2013\u2014]/g, '-');
+  const bad = t.match(/[^\x20-\x7e]/);
+  if (bad) fail(`${where}: only plain ASCII characters are allowed, found ${JSON.stringify(bad[0])}`);
   return t;
 }
 
@@ -59,14 +115,37 @@ function loadMission(file) {
   m.userSide = code4(param(m.tac, 'i_gamespec:gamespec', 'user_side'));
   m.enemySide = code4(param(m.tac, 'i_gamespec:gamespec', 'enemy_side'));
   m.polygon = param(m.tac, 'i_gamespec:gamespec', 'polygon').str;
+  const text = get('desc|text').toString('latin1').split('\r\n');
+  m.title = text[0];
+  m.description = text[1];
+
+  // battlefield grid: square cells, each owned by a side at the start (NEUT = no-man's land)
+  m.cells = node(m.tac, 'ctrl_brief').table.map(r => ({ side: code4(r[0]), x: r[1].raw.readFloatLE(0), z: r[1].raw.readFloatLE(4) }));
+  const xs = [...new Set(m.cells.map(c => c.x))].sort((a, b) => a - b);
+  m.cellSize = xs[1] - xs[0];
+  const h = m.cellSize / 2;
+  m.extent = {
+    x0: Math.min(...m.cells.map(c => c.x)) - h, x1: Math.max(...m.cells.map(c => c.x)) + h,
+    z0: Math.min(...m.cells.map(c => c.z)) - h, z1: Math.max(...m.cells.map(c => c.z)) + h,
+  };
   m.points = [...m.script.matchAll(/^\s*def\s+(\w+)\s+(-?[\d.]+)\s*,\s*-?[\d.]+\s*,\s*(-?[\d.]+)/gm)]
     .map(x => ({ name: x[1], x: +x[2], z: +x[3] }));
   return m;
 }
 
+// 'player' | 'enemy' | 'neutral' | 'outside' for a map position of a base
+function areaOf(base, [x, z]) {
+  const e = base.extent;
+  if (x < e.x0 || x > e.x1 || z < e.z0 || z > e.z1) return 'outside';
+  const h = base.cellSize / 2;
+  const c = base.cells.find(c => Math.abs(x - c.x) <= h && Math.abs(z - c.z) <= h);
+  if (!c || c.side === 'NEUT') return 'neutral';
+  return c.side === base.userSide ? 'player' : 'enemy';
+}
+
 function loadMissions(gameDir) {
   const dir = path.join(gameDir, 'data', 'oprum', 'shared', 'missions');
-  if (!fs.existsSync(dir)) fail(`Spielordner nicht gefunden: ${dir} (Option --game <Ordner>)`);
+  if (!fs.existsSync(dir)) fail(`game folder not found: ${dir} (use --game <dir>)`);
   return fs.readdirSync(dir).filter(f => f.endsWith('.mispack')).sort().map(f => loadMission(path.join(dir, f)));
 }
 
@@ -84,7 +163,7 @@ function buildCatalog(missions) {
       if (n) nameMax[k] = Math.max(nameMax[k] ?? 0, +n);
     }
     for (const p of plats) {
-      const key = p[0].str + '@' + m.name.split('_')[0];
+      const key = p[0].str + '@' + baseId(m);
       if (catalog.has(key)) continue;
       const pid = platId(p), nation = nationOf(p);
       const sq = squads.filter(r => (u32(r[1]) & ~0x1ff) === pid);
@@ -111,54 +190,63 @@ function buildCatalog(missions) {
 }
 
 // ---------------------------------------------------------------- spec checks
-const NAME_RE = /^[a-z][a-z0-9_]{0,30}$/;
-// callsign names from the game's localisation; others are allowed but may show oddly in-game
-const KNOWN_CALLSIGNS = new Set(('pine linden birch asp beech chestnut willow oak fir broom guelder cedar reed poplar cherry ' +
-  'tiger jaguar leopard panther elefant lion beaver viper wolf fox bear lynx hawk eagle crocodile falcon').split(' '));
-const RESERVED = new Set(['own', 'foe', 'own_main', 'foe_main', 'main', 'deploy', 'process', 'goto', 'battle_victory', 'battle_defeat']);
-const MODES = ['assault', 'attack', 'march', 'defence', 'siege'];
-const PLANS = { attack: 'ATAK', defend: 'DEF', hold: 'HOLD' };
-
 function checkSpec(spec, base, catalog) {
-  if (!spec.id || !/^[a-z0-9_]{1,40}$/.test(spec.id)) fail('"id" fehlt oder ungueltig (nur a-z, 0-9, _; max. 40 Zeichen)');
-  if (!spec.title) fail('"title" fehlt');
-  if (spec.menu && !['missions', 'training'].includes(spec.menu)) fail('"menu" muss "missions" oder "training" sein');
+  if (!spec.id || !/^[a-z0-9_]{1,40}$/.test(spec.id)) fail('"id" missing or invalid (a-z, 0-9, _ only; max. 40 characters)');
+  if (!spec.title) fail('"title" missing');
+  if (spec.menu && !['missions', 'training'].includes(spec.menu)) fail('"menu" must be "missions" or "training"');
   const points = spec.points ?? {};
   for (const [n, p] of Object.entries(points)) {
-    if (!NAME_RE.test(n) || RESERVED.has(n)) fail(`Punktname "${n}" ungueltig oder reserviert`);
-    if (!Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite)) fail(`Punkt "${n}" muss [x, z] sein`);
+    if (!NAME_RE.test(n) || RESERVED.includes(n)) fail(`point name "${n}" is invalid or reserved`);
+    if (!Array.isArray(p) || p.length !== 2 || !p.every(Number.isFinite)) fail(`point "${n}" must be [x, z]`);
+    if (areaOf(base, p) === 'outside') {
+      const e = base.extent;
+      fail(`point "${n}" [${p}] is outside the map of base ${baseId(base)} (x ${e.x0}..${e.x1}, z ${e.z0}..${e.z1})`);
+    }
   }
-  const needPoint = (n, where) => { if (!(n in points)) fail(`${where}: Punkt "${n}" ist nicht unter "points" definiert`); };
+  const needPoint = (n, where) => { if (!(n in points)) fail(`${where}: point "${n}" is not defined in "points"`); };
+  const checkDeploy = (d, where, sideKey) => {
+    needPoint(d.at, where);
+    if (d.type && !DEPLOY_TYPES[d.type]) fail(`${where}: "type" must be ${Object.keys(DEPLOY_TYPES).join(' or ')}`);
+    if (d.formation && !FORMATIONS[d.formation]) fail(`${where}: "formation" must be one of ${Object.keys(FORMATIONS).join(', ')}`);
+    if (d.facing && !FACINGS.includes(d.facing)) fail(`${where}: "facing" must be one of ${FACINGS.join(', ')}`);
+    const area = areaOf(base, points[d.at]);
+    if (area !== sideKey) console.warn(`note: ${where} deploys at "${d.at}", which lies in the ${area} area, not in the ${sideKey} start area`);
+  };
   const seen = new Set();
   for (const [sideKey, nation] of [['player', base.userSide], ['enemy', base.enemySide]]) {
     const side = spec.sides?.[sideKey];
-    if (!side?.platoons?.length) fail(`"sides.${sideKey}.platoons" fehlt oder ist leer`);
+    if (!side?.platoons?.length) fail(`"sides.${sideKey}.platoons" missing or empty`);
     for (const [i, p] of side.platoons.entries()) {
       const where = `sides.${sideKey}.platoons[${i}]`;
-      if (!NAME_RE.test(p.callsign ?? '') || RESERVED.has(p.callsign)) fail(`${where}: "callsign" fehlt/ungueltig (a-z, 0-9, _)`);
-      if (seen.has(p.callsign)) fail(`${where}: Rufname "${p.callsign}" doppelt`);
+      if (!NAME_RE.test(p.callsign ?? '') || RESERVED.includes(p.callsign)) fail(`${where}: "callsign" missing or invalid (a-z, 0-9, _)`);
+      if (seen.has(p.callsign)) fail(`${where}: callsign "${p.callsign}" used twice`);
       seen.add(p.callsign);
-      if (!KNOWN_CALLSIGNS.has(p.callsign.replace(/_\d+$/, ''))) {
-        console.warn(`Hinweis: Rufname "${p.callsign}" nutzt keinen Namen aus der Rufnamenliste des Spiels (z. B. pine_01, panther_02).`);
+      if (!CALLSIGN_NAMES.includes(p.callsign.replace(/_\d+$/, ''))) {
+        console.warn(`note: callsign "${p.callsign}" does not use a name from the game's callsign list (e.g. pine_01, panther_02)`);
       }
       const e = catalog.get(p.unit);
-      if (!e) fail(`${where}: Zugtyp "${p.unit}" unbekannt (siehe docs/KATALOG.md)`);
-      if (e.nation !== nation) fail(`${where}: "${p.unit}" ist ${e.nation}, diese Seite ist aber ${nation} (Basis ${base.name})`);
-      if (p.position && !(Array.isArray(p.position) && p.position.length === 2)) fail(`${where}: "position" muss [x, z] sein`);
-      if (p.plan && !PLANS[p.plan]) fail(`${where}: "plan" muss attack, defend oder hold sein`);
-      if (p.deploy) needPoint(p.deploy.at, where + '.deploy');
+      if (!e) fail(`${where}: unit "${p.unit}" unknown (see README, unit types)`);
+      if (e.nation !== nation) fail(`${where}: "${p.unit}" is ${e.nation}, but this side is ${nation} (base ${baseId(base)})`);
+      if (p.position) {
+        if (!(Array.isArray(p.position) && p.position.length === 2 && p.position.every(Number.isFinite))) fail(`${where}: "position" must be [x, z]`);
+        if (areaOf(base, p.position) === 'outside') fail(`${where}: "position" is outside the map of base ${baseId(base)}`);
+      }
+      if (p.plan && !PLANS[p.plan]) fail(`${where}: "plan" must be ${Object.keys(PLANS).join(', ')}`);
+      if (p.deploy) checkDeploy(p.deploy, where + '.deploy', sideKey);
     }
-    if (side.deploy) needPoint(side.deploy.at, `sides.${sideKey}.deploy`);
+    if (side.deploy) checkDeploy(side.deploy, `sides.${sideKey}.deploy`, sideKey);
     for (const [i, o] of (side.orders ?? []).entries()) {
       needPoint(o.to, `sides.${sideKey}.orders[${i}]`);
-      if (o.mode && !MODES.includes(o.mode)) fail(`sides.${sideKey}.orders[${i}]: "mode" muss ${MODES.join(', ')} sein`);
+      if (o.mode && !MODES[o.mode]) fail(`sides.${sideKey}.orders[${i}]: "mode" must be one of ${Object.keys(MODES).join(', ')}`);
     }
     if (!side.deploy && side.platoons.some(p => !p.deploy && !p.position)) {
-      fail(`sides.${sideKey}: ohne "deploy" braucht jeder Zug "position" oder "deploy"`);
+      fail(`sides.${sideKey}: without "deploy" every platoon needs "position" or "deploy"`);
     }
   }
-  if (seen.size > 60) fail('maximal 60 Zuege pro Szenario');
+  if (seen.size > 60) fail('at most 60 platoons per scenario');
   if (spec.defeat?.enemy_reaches) needPoint(spec.defeat.enemy_reaches, 'defeat.enemy_reaches');
+  if (spec.camera?.at) needPoint(spec.camera.at, 'camera.at');
+  if (spec.camera?.direction && !FACINGS.includes(spec.camera.direction)) fail(`camera.direction must be one of ${FACINGS.join(', ')}`);
 }
 
 // ---------------------------------------------------------------- script + texts
@@ -261,16 +349,17 @@ function makeScript(spec) {
   return L;
 }
 
+const DEFAULT_TEXTS = {
+  brief_own: 'Your forces',
+  brief_foe: 'Enemy forces',
+  info_end_deploy: 'Redeploy your units if you want, then press [%do_pause] to finish deployment',
+  info_1st_orders: 'Give initial orders if you want, and press [%do_pause] again to start battle',
+  info_attack: 'The enemy attacks',
+};
+
 function makeTexts(spec) {
-  const t = {
-    brief_own: 'Your forces',
-    brief_foe: 'Enemy forces',
-    info_end_deploy: 'Redeploy your units if you want, then press [%do_pause] to finish deployment',
-    info_1st_orders: 'Give initial orders if you want, and press [%do_pause] again to start battle',
-    info_attack: 'The enemy attacks',
-    ...(spec.texts ?? {}),
-  };
-  for (const k of Object.keys(t)) if (!/^[a-z0-9_]+$/.test(k)) fail(`texts: Schluessel "${k}" ungueltig (a-z, 0-9, _)`);
+  const t = { ...DEFAULT_TEXTS, ...(spec.texts ?? {}) };
+  for (const k of Object.keys(t)) if (!/^[a-z0-9_]+$/.test(k)) fail(`texts: key "${k}" invalid (a-z, 0-9, _)`);
   return [
     gameText(spec.title, 'title'),
     gameText(spec.description ?? '', 'description'),
@@ -336,7 +425,7 @@ function buildForces(spec, base, tac, qb, catalog, nameMax) {
     const src = u32(e.pool[1]);
     const nibbles = [(src >>> 20) & 0xf, 0x8, 0x0, 0x4, 0xc, 0x2, 0x6, 0xa, 0xe];
     const id = nibbles.map(n => ((src & 0xff000000) | (n << 20)) >>> 0).find(c => !usedPools.has(c + e.nation));
-    if (id === undefined) fail(`zu viele Pools vom Typ ${hex8(src)} fuer ${e.nation}`);
+    if (id === undefined) fail(`too many pools of type ${hex8(src)} for ${e.nation}`);
     usedPools.add(id + e.nation);
     poolMap.set(k, id);
     const row = cloneRow(e.pool);
@@ -358,7 +447,7 @@ function buildForces(spec, base, tac, qb, catalog, nameMax) {
       const idx = (poolIdx.get(poolId) ?? 0) + 1;
       poolIdx.set(poolId, idx);
       seq += 1; ordinal += 1;
-      if (idx > 15) fail(`zu viele Zuege aus Pool ${e.pool[0].str} (max. 15)`);
+      if (idx > 15) fail(`too many platoons from pool ${e.pool[0].str} (max. 15)`);
       const newId = ((poolId | 0x80000) + (seq << 13) + (idx << 9)) >>> 0;
       const srcId = platId(e.plat);
       const pos = p.position ?? spec.points[p.deploy?.at ?? side.deploy.at];
@@ -405,7 +494,7 @@ function buildForces(spec, base, tac, qb, catalog, nameMax) {
 
       // map marker
       const markerSrc = e.brief ?? ref[rel].brief ?? ref[rel === 'U' ? 'E' : 'U'].brief;
-      if (!markerSrc) fail(`Basis ${base.name} hat keine Kartenmarker als Vorlage`);
+      if (!markerSrc) fail(`base ${base.name} has no map marker to copy`);
       const b = cloneRow(markerSrc);
       if (ref[rel].brief) ref[rel].brief[0].raw.copy(b[0].raw, 8, 8, 12); // marker colour
       setU32(b[0], 4, newId);
@@ -415,7 +504,7 @@ function buildForces(spec, base, tac, qb, catalog, nameMax) {
       // deployment trigger (only in newer mission versions)
       if (trig) {
         const trigSrc = e.trigger ?? ref[rel].trigger ?? ref[rel === 'U' ? 'E' : 'U'].trigger;
-        if (!trigSrc) fail(`Basis ${base.name} hat keine Ausloeser als Vorlage`);
+        if (!trigSrc) fail(`base ${base.name} has no trigger to copy`);
         const t = cloneRow(trigSrc);
         setU32(t[0], 8, ordinal);
         setCode4(t[0], 12, e.nation);
@@ -434,7 +523,7 @@ function buildForces(spec, base, tac, qb, catalog, nameMax) {
       }
     }
   }
-  if (seq > 63) fail('maximal 63 Zuege');
+  if (seq > 63) fail('at most 63 platoons');
   return counts;
 }
 
@@ -461,18 +550,18 @@ function writePack(base, payloads, outFile) {
   fs.writeFileSync(outFile, out);
 }
 
-// ---------------------------------------------------------------- commands
+// ---------------------------------------------------------------- build
 function build(specFile, opts) {
   const spec = JSON.parse(fs.readFileSync(specFile, 'utf8'));
   const missions = loadMissions(opts.game);
   const { catalog: all, nameMax } = buildCatalog(missions);
-  const base = missions.find(m => m.name === spec.base || m.name.startsWith(spec.base + '_'));
-  if (!base) fail(`"base" "${spec.base}" unbekannt. Moeglich: ${missions.map(m => m.name.split('_')[0]).join(', ')}`);
+  const base = missions.find(m => m.name === spec.base || baseId(m) === spec.base);
+  if (!base) fail(`"base" "${spec.base}" unknown. Valid: ${missions.map(baseId).join(', ')}`);
   // "unit" without @: strongest variant, the base mission's own variant wins a tie
   const strength = e => e.men + e.vehicles.length;
   const catalog = { get: key => {
     const best = all.get(key);
-    const own = key.includes('@') ? null : all.get(key + '@' + base.name.split('_')[0]);
+    const own = key.includes('@') ? null : all.get(key + '@' + baseId(base));
     return own && best && strength(own) >= strength(best) ? own : best;
   } };
   checkSpec(spec, base, catalog);
@@ -509,42 +598,187 @@ function build(specFile, opts) {
   }, outFile);
 
   const { errors, summary } = validate(outFile);
-  console.log(`${path.relative(process.cwd(), outFile)}  (Basis ${base.name}, Spieler ${base.userSide})`);
+  console.log(`${path.relative(process.cwd(), outFile)}  (base ${baseId(base)}, player ${base.userSide})`);
   for (const [s, l] of Object.entries(summary)) console.log(`  ${s}\n    ${l.join('\n    ')}`);
-  if (errors.length) { console.log('PRUEFUNG FEHLGESCHLAGEN:\n  ' + errors.join('\n  ')); process.exitCode = 1; return; }
-  console.log('  Pruefung: ok');
+  if (errors.length) { console.log('VALIDATION FAILED:\n  ' + errors.join('\n  ')); process.exitCode = 1; return; }
+  console.log('  validation: ok');
   if (opts.install) {
     const { guid, version } = installer.install(opts.game, spec.mod ?? spec.id, [outFile]);
-    console.log(`  installiert als Mod "${spec.mod ?? spec.id}" (${guid}, Version ${version}) -> QUICK BATTLE / ${spec.menu === 'training' ? 'Training' : 'Missions'}`);
+    console.log(`  installed as mod "${spec.mod ?? spec.id}" (${guid}, version ${version}) -> QUICK BATTLE / ${spec.menu === 'training' ? 'Training' : 'Missions'}`);
   }
 }
 
-function catalogDoc(opts) {
-  const missions = loadMissions(opts.game);
-  const { catalog, variants } = buildCatalog(missions);
-  const out = ['# Katalog', '', 'Automatisch erzeugt mit `node tools/scenario.js catalog`. Nicht von Hand bearbeiten.', '',
-    '## Basen (Kartenausschnitt und Spielerseite)', '',
-    '| `base` | Spieler | Gegner | Kartenausschnitt | Punkte aus dem Originalskript (x, z) |', '|---|---|---|---|---|'];
+// ---------------------------------------------------------------- reference + schema
+const BEGIN = '<!-- REFERENCE:BEGIN (generated by `node tools/scenario.js reference`, do not edit by hand) -->';
+const END = '<!-- REFERENCE:END -->';
+
+function unitRows(variants, catalog, nation) {
+  const count = list => Object.entries(list.reduce((a, v) => ({ ...a, [v]: (a[v] ?? 0) + 1 }), {}))
+    .map(([v, n]) => `${n}x ${v}`).join(', ');
+  return [...variants].filter(([t]) => catalog.get(t).nation === nation).map(([template, list]) => {
+    const e = catalog.get(template);
+    const [role, text] = UNIT_INFO[template] ?? ['?', ''];
+    return { template, role, text, e, list, vehicles: count(e.vehicles) || '-', squads: count(e.squadTypes) };
+  }).sort((a, b) => a.role.localeCompare(b.role) || a.template.localeCompare(b.template));
+}
+
+function referenceMarkdown(missions, catalog, variants) {
+  const out = [BEGIN, ''];
+  out.push('### 6.1 Bases', '',
+    'A base supplies the map section, weather, date/time and which nation the player commands. Its own troops are discarded.', '',
+    '| `base` | Player | Enemy | Original mission | Map extent (x / z, metres) |', '|---|---|---|---|---|');
   for (const m of missions) {
-    const pts = m.points.map(p => `${p.name} (${p.x}, ${p.z})`).join(', ');
-    out.push(`| \`${m.name.split('_')[0]}\` | ${m.userSide} | ${m.enemySide} | ${path.basename(m.polygon, '.polypack2')} | ${pts} |`);
+    const e = m.extent;
+    out.push(`| \`${baseId(m)}\` | ${NATION_NAME[m.userSide]} (${m.userSide}) | ${NATION_NAME[m.enemySide]} (${m.enemySide}) | ${m.title} | x ${e.x0}..${e.x1} / z ${e.z0}..${e.z1} |`);
   }
+  for (const m of missions) {
+    const e = m.extent, h = m.cellSize / 2;
+    const area = side => m.cells.filter(c => c.side === side)
+      .map(c => `x ${c.x - h}..${c.x + h} / z ${c.z - h}..${c.z + h}`).join('; ') || '-';
+    out.push('', `#### Base \`${baseId(m)}\` – ${m.title}`, '',
+      `- Player: **${NATION_NAME[m.userSide]}** (\`${m.userSide}\`), enemy: **${NATION_NAME[m.enemySide]}** (\`${m.enemySide}\`)`,
+      `- Original mission: ${m.description}`,
+      `- Map extent: x ${e.x0}..${e.x1}, z ${e.z0}..${e.z1}; grid of ${m.cellSize} m cells`,
+      `- Player start area: ${area(m.userSide)}`,
+      `- Enemy start area: ${area(m.enemySide)}`,
+      '- Known points from the original mission script (tested positions; good anchors for your own points):', '',
+      '| name | x | z | lies in |', '|---|---|---|---|');
+    for (const p of m.points) out.push(`| ${p.name} | ${p.x} | ${p.z} | ${areaOf(m, [p.x, p.z])} area |`);
+  }
+
   for (const nation of ['GER', 'USSR']) {
-    out.push('', `## Zugtypen ${nation === 'GER' ? 'Deutsch' : 'Sowjetisch'} (${nation})`, '',
-      '`unit` ohne Zusatz nimmt die staerkste Variante; eine bestimmte Variante waehlt man mit `unit@mission`.', '',
-      '| `unit` | Symbol | Gruppen | Mann | Fahrzeuge/Waffen | Gruppentypen | Varianten (Mann) |', '|---|---|---|---|---|---|---|');
-    const count = list => Object.entries(list.reduce((a, v) => ({ ...a, [v]: (a[v] ?? 0) + 1 }), {})).map(([v, n]) => `${n}x ${v}`).join(', ');
-    for (const [template, list] of variants) {
-      const e = catalog.get(template);
-      if (e.nation !== nation) continue;
-      const vars = list.map(v => `${v === e ? '**' : ''}\`${v.key}\` (${v.men})${v === e ? '**' : ''}`).join('<br>');
-      out.push(`| \`${template}\` | ${e.icon} | ${e.squads.length} | ${e.men} | ${count(e.vehicles) || '-'} | ${count(e.squadTypes)} | ${vars} |`);
+    out.push('', `### 6.${nation === 'GER' ? 2 : 3} Unit types – ${NATION_NAME[nation]} (\`${nation}\`)`, '',
+      'Use the value in the `unit` column. Without suffix the strongest variant is used; add `@<base>` for a specific variant (listed with men count).', '',
+      '| `unit` | Role | Description | Men | Vehicles / heavy weapons | Variants |', '|---|---|---|---|---|---|');
+    for (const r of unitRows(variants, catalog, nation)) {
+      const vars = r.list.map(v => `\`${v.key}\` (${v.men})`).join(', ');
+      out.push(`| \`${r.template}\` | ${r.role} | ${r.text} | ${r.e.men} | ${r.vehicles} | ${vars} |`);
     }
   }
-  const file = path.resolve(opts.out ?? path.join(ROOT, 'docs', 'KATALOG.md'));
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, out.join('\n') + '\n');
-  console.log(`${path.relative(process.cwd(), file)}: ${missions.length} Basen, ${variants.size} Zugtypen`);
+
+  out.push('', '### 6.4 Enumerations', '',
+    '| Field | Allowed values |', '|---|---|',
+    `| \`base\` | ${missions.map(m => '`' + baseId(m) + '`').join(', ')} |`,
+    '| `menu` | `missions` (default), `training` |',
+    `| \`deploy.type\` | ${Object.entries(DEPLOY_TYPES).map(([k, v]) => `\`${k}\` (${v})`).join(', ')} |`,
+    `| \`deploy.formation\` (values used by the original missions) | ${Object.entries(FORMATIONS).map(([k, v]) => `\`${k}\` (${v})`).join(', ')} |`,
+    `| \`deploy.facing\`, \`camera.direction\` | ${FACINGS.map(f => '`' + f + '`').join(', ')} |`,
+    `| \`orders[].mode\` (meanings inferred from the original missions) | ${Object.entries(MODES).map(([k, v]) => `\`${k}\` (${v})`).join(', ')} |`,
+    `| \`platoons[].plan\` | ${Object.keys(PLANS).map(k => '`' + k + '`').join(', ')} |`,
+    `| callsign names | ${CALLSIGN_NAMES.map(c => '`' + c + '`').join(', ')} – use as \`<name>_<two digits>\`, e.g. \`pine_01\` |`,
+    `| reserved point/callsign names | ${RESERVED.map(c => '`' + c + '`').join(', ')} |`,
+    `| default \`texts\` keys | ${Object.keys(DEFAULT_TEXTS).map(c => '`' + c + '`').join(', ')} |`,
+    '', END);
+  return out.join('\n');
+}
+
+function schema(missions, catalog, variants) {
+  const unitDoc = nation => [...variants].filter(([t]) => catalog.get(t).nation === nation).flatMap(([t, list]) => {
+    const [role, text] = UNIT_INFO[t] ?? ['?', ''];
+    const best = catalog.get(t);
+    return [{ const: t, description: `${role}: ${text} (${best.men} men, strongest variant)` },
+      ...list.map(v => ({ const: v.key, description: `${role}: ${text} (variant from ${v.mission}, ${v.men} men)` }))];
+  });
+  const name = { type: 'string', pattern: NAME_RE.source, not: { enum: RESERVED } };
+  const xz = { type: 'array', items: { type: 'number' }, minItems: 2, maxItems: 2, description: '[x, z] in metres; x grows to the east' };
+  const text = { type: 'string', pattern: '^[\\x20-\\x7e]*$', description: 'plain ASCII only' };
+  const deploy = {
+    type: 'object', required: ['at'], additionalProperties: false,
+    properties: {
+      at: { type: 'string', description: 'name of a point in "points"' },
+      type: { enum: Object.keys(DEPLOY_TYPES), default: 'place' },
+      formation: { enum: Object.keys(FORMATIONS) },
+      facing: { enum: FACINGS },
+    },
+  };
+  const platoon = nation => ({
+    type: 'object', required: ['callsign', 'unit'], additionalProperties: false,
+    properties: {
+      callsign: { ...name, description: `unique; recommended: <name>_<nn> with name from ${CALLSIGN_NAMES.join(', ')}` },
+      unit: { anyOf: unitDoc(nation) },
+      position: xz,
+      deploy,
+      plan: { enum: Object.keys(PLANS) },
+    },
+  });
+  const side = nation => ({
+    type: 'object', required: ['platoons'], additionalProperties: false,
+    properties: {
+      platoons: { type: 'array', minItems: 1, items: platoon(nation) },
+      deploy,
+      orders: {
+        type: 'array',
+        items: {
+          type: 'object', required: ['to'], additionalProperties: false,
+          properties: { to: { type: 'string' }, mode: { enum: Object.keys(MODES), default: 'attack' }, wait_s: { type: 'number', minimum: 0 } },
+        },
+      },
+      ai: { type: 'boolean' },
+    },
+  });
+  const byPlayer = nation => missions.filter(m => m.userSide === nation).map(baseId);
+  const enemyOf = { GER: 'USSR', USSR: 'GER' };
+  return {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'scenario.schema.json',
+    title: 'MiusMissionMaker scenario',
+    description: 'Scenario description for tools/scenario.js. Generated by `node tools/scenario.js reference`.',
+    type: 'object',
+    required: ['id', 'title', 'base', 'points', 'sides'],
+    properties: {
+      $schema: { type: 'string' },
+      id: { type: 'string', pattern: '^[a-z0-9_]{1,40}$', description: 'output file name and mod name' },
+      title: text,
+      description: text,
+      base: { enum: missions.map(baseId), description: 'shipped mission providing map, weather and player nation' },
+      menu: { enum: ['missions', 'training'], default: 'missions' },
+      max_minutes: { type: 'number', exclusiveMinimum: 0 },
+      time_scale: { type: 'number', exclusiveMinimum: 0 },
+      deploy_phase: { type: 'boolean', default: true },
+      mod: { type: 'string' },
+      camera: {
+        type: 'object', additionalProperties: false,
+        properties: { at: { type: 'string' }, direction: { enum: FACINGS }, zoom: { type: 'number' } },
+      },
+      points: { type: 'object', minProperties: 1, propertyNames: name, additionalProperties: xz },
+      sides: {
+        type: 'object', required: ['player', 'enemy'], additionalProperties: false,
+        properties: { player: { type: 'object' }, enemy: { type: 'object' } },
+      },
+      victory: {
+        type: 'object', additionalProperties: false,
+        properties: { balance: { type: 'number', exclusiveMinimum: 0 }, after_s: { type: 'number', minimum: 0 } },
+      },
+      defeat: {
+        type: 'object', additionalProperties: false,
+        properties: { enemy_reaches: { type: 'string' }, radius: { type: 'number', exclusiveMinimum: 0 }, share: { type: 'number', exclusiveMinimum: 0, maximum: 1 } },
+      },
+      texts: { type: 'object', propertyNames: { pattern: '^[a-z0-9_]+$' }, additionalProperties: text },
+      script: { type: 'array', items: { type: 'string' } },
+    },
+    patternProperties: { '^_': {} },
+    additionalProperties: false,
+    // which nation may appear on which side depends on the base
+    allOf: ['GER', 'USSR'].map(nation => ({
+      if: { properties: { base: { enum: byPlayer(nation) } }, required: ['base'] },
+      then: { properties: { sides: { properties: { player: side(nation), enemy: side(enemyOf[nation]) } } } },
+    })),
+  };
+}
+
+function reference(opts) {
+  const missions = loadMissions(opts.game);
+  const { catalog, variants } = buildCatalog(missions);
+  const missing = [...variants.keys()].filter(t => !UNIT_INFO[t]);
+  if (missing.length) console.warn('note: no description for ' + missing.join(', '));
+
+  const readme = path.join(ROOT, 'README.md');
+  const md = fs.readFileSync(readme, 'utf8');
+  const a = md.indexOf(BEGIN), b = md.indexOf(END);
+  if (a < 0 || b < 0) fail('README.md has no REFERENCE:BEGIN/END markers');
+  fs.writeFileSync(readme, md.slice(0, a) + referenceMarkdown(missions, catalog, variants) + md.slice(b + END.length));
+  fs.writeFileSync(path.join(ROOT, 'scenario.schema.json'), JSON.stringify(schema(missions, catalog, variants), null, 2) + '\n');
+  console.log(`README.md reference + scenario.schema.json: ${missions.length} bases, ${variants.size} unit types`);
 }
 
 if (require.main === module) {
@@ -555,11 +789,11 @@ if (require.main === module) {
   const [cmd, file] = args;
   try {
     if (cmd === 'build' && file) build(file, opts);
-    else if (cmd === 'catalog') catalogDoc(opts);
-    else console.log('usage:\n  node tools/scenario.js build <scenario.json> [--install] [--game <dir>] [--out <file>]\n  node tools/scenario.js catalog [--game <dir>] [--out <file>]');
+    else if (cmd === 'reference') reference(opts);
+    else console.log('usage:\n  node tools/scenario.js build <scenario.json> [--install] [--game <dir>] [--out <file>]\n  node tools/scenario.js reference [--game <dir>]');
   } catch (e) {
     if (!(e instanceof SpecError)) throw e;
-    console.error('Fehler: ' + e.message);
+    console.error('error: ' + e.message);
     process.exitCode = 1;
   }
 }

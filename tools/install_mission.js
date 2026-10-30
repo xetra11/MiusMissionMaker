@@ -44,7 +44,7 @@ const findGuid = (gameDir, name) => pathRows(loadPaths(gameDir)).table.map(r => 
 function ensureGameClosed() {
   let out = '';
   try { out = require('child_process').execSync('tasklist /FI "IMAGENAME eq starter_x64.exe"', { encoding: 'utf8' }); } catch { /* no tasklist */ }
-  if (/starter_x64\.exe/i.test(out)) throw new Error('Mius-Front laeuft noch - bitte das Spiel zuerst beenden.');
+  if (/starter_x64\.exe/i.test(out)) throw new Error('Mius-Front is still running - close the game first.');
 }
 
 function install(gameDir, modName, files) {
