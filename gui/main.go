@@ -205,6 +205,7 @@ func (a *app) routes(prefix string) http.Handler {
 		var req struct {
 			Scenario json.RawMessage `json:"scenario"`
 			Install  bool            `json:"install"`
+			Start    bool            `json:"start"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			fail(w, err)
@@ -218,6 +219,9 @@ func (a *app) routes(prefix string) http.Handler {
 		args := []string{"tools/scenario.js", "build", file, "--game", a.loadSettings().GameDir}
 		if req.Install {
 			args = append(args, "--install")
+		}
+		if req.Start {
+			args = append(args, "--start")
 		}
 		out, err := a.node(args...)
 		writeJSON(w, map[string]any{"ok": err == nil, "output": out})

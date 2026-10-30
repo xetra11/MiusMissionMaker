@@ -283,6 +283,16 @@ node tools/install_mission.js uninstall "C:/Program Files (x86)/Steam/steamapps/
 
 Die GUID wird aus dem Mod-Namen abgeleitet: erneutes `install` mit gleichem Namen ersetzt den Mod (Version +1) statt ihn zu verdoppeln. Vorlage für das Manifest: `tools/templates/desc.addpack` (vom Spiel erzeugt).
 
+### Mission direkt starten
+
+Das Spielmenü schreibt den Block `tacgame_image` einer Mission nach `data\common\shared\config\tacgame_image.cfgpack` und startet den Taktikmodus, danach beendet es sich:
+
+```
+"starter_x64.exe" root\programs\tacgame.progpack, data\common\shared\config\tacgame_image.cfgpack, users\profiles, <profil>, *:*, 0, 0
+```
+
+`<profil>` ist `cur_id` aus `users\profiles\cur_profile.engcfg`. `scenario.js --start` macht genau das. Fehlt `steam_appid.txt` im Spielordner, startet die Steam-API das Spiel über Steam neu und die Argumente gehen verloren; daher legt das Tool die Datei bei Bedarf an.
+
 ### Über das Spiel – Erfahrungen
 
 - **Build** packt alle `.mispack` des gewählten Ordners in eine ZIP-Datei `<modname>.gt3ext` (Inhalt: `core/desc.addpack` + `core/shared/missions/<name>.mispack`) und legt einen Arbeitsordner `core\` an – beides im Mod-Ordner selbst. Deshalb pro Mod einen eigenen Ordner verwenden.

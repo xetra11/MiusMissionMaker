@@ -24,7 +24,9 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 footer { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 7px 10px; background: var(--panel); border-top: 1px solid var(--line); align-items: start; }
 #log { height: 92px; overflow-y: auto; white-space: pre-wrap; font: 12px/1.35 Consolas, monospace; background: #151613; border: 1px solid var(--line); border-radius: 4px; padding: 5px 7px; color: var(--muted); }
 #log .err { color: var(--bad); } #log .good { color: var(--ok); }
-.actions { display: flex; flex-direction: column; gap: 6px; width: 190px; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 330px; }
+#checks { grid-column: 1 / 3; min-height: 18px; }
+#start { grid-column: 1 / 3; padding: 7px; }
 h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--accent); margin: 14px 0 6px; }
 h2:first-child { margin-top: 0; }
 label.f { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; }
@@ -100,7 +102,8 @@ dialog::backdrop { background: #0008; }
     <ul id="checks"></ul>
     <button id="save">Save</button>
     <button id="build">Build &amp; check</button>
-    <button id="install" class="primary">Build &amp; install in game</button>
+    <button id="install" style="grid-column: 1 / 3">Build &amp; install in game</button>
+    <button id="start" class="primary" title="Build this mission and start it directly in the game (close the game first)">Start battle</button>
   </div>
 </footer>
 <dialog id="dlg"></dialog>
@@ -533,17 +536,19 @@ document.getElementById('new').addEventListener('click', () => { s = blank(); se
 document.getElementById('save').addEventListener('click', async () => {
   try { const r = await api('/save', clean()); log('Saved ' + r.file, 'good'); await fillOpen(`scenarios/${s.id}.json`); } catch (e) { log(e.message, 'err'); }
 });
-async function build(install) {
-  log(install ? 'Building and installing...' : 'Building...');
+async function build(install, start) {
+  log(start ? 'Starting battle...' : install ? 'Building and installing...' : 'Building...');
   try {
-    const r = await api('/build', { scenario: clean(), install });
+    const r = await api('/build', { scenario: clean(), install, start });
     log(r.output.trim(), r.ok ? '' : 'err');
-    log(r.ok ? (install ? 'Installed. Start the game: QUICK BATTLE > ' + (s.menu === 'training' ? 'Training' : 'Missions') : 'Build OK') : 'Build failed', r.ok ? 'good' : 'err');
+    const done = start ? 'Battle started, the game window opens in a moment' : install ? 'Installed. Start the game: QUICK BATTLE > ' + (s.menu === 'training' ? 'Training' : 'Missions') : 'Build OK';
+    log(r.ok ? done : 'Failed', r.ok ? 'good' : 'err');
     await fillOpen(`scenarios/${s.id}.json`);
   } catch (e) { log(e.message, 'err'); }
 }
-document.getElementById('build').addEventListener('click', () => build(false));
-document.getElementById('install').addEventListener('click', () => build(true));
+document.getElementById('build').addEventListener('click', () => build(false, false));
+document.getElementById('install').addEventListener('click', () => build(true, false));
+document.getElementById('start').addEventListener('click', () => build(false, true));
 const dlg = document.getElementById('dlg');
 document.getElementById('settings').addEventListener('click', async () => {
   const st = await api('/settings');

@@ -41,10 +41,14 @@ const pathRows = cf => cf.nodes.find(n => n.slotB === 'i_objman:objman');
 const findGuid = (gameDir, name) => pathRows(loadPaths(gameDir)).table.map(r => r[0].str)
   .find(g => readManifest(gameDir, g)?.name === name || readManifest(gameDir, g)?.desc === name) ?? guidFor(name);
 
-function ensureGameClosed() {
+function gameRunning() {
   let out = '';
   try { out = require('child_process').execSync('tasklist /FI "IMAGENAME eq starter_x64.exe"', { encoding: 'utf8' }); } catch { /* no tasklist */ }
-  if (/starter_x64\.exe/i.test(out)) throw new Error('Mius-Front is still running - close the game first.');
+  return /starter_x64\.exe/i.test(out);
+}
+
+function ensureGameClosed() {
+  if (gameRunning()) throw new Error('Mius-Front is still running - close the game first.');
 }
 
 function install(gameDir, modName, files) {
@@ -106,7 +110,7 @@ function list(gameDir) {
   });
 }
 
-module.exports = { install, uninstall, list };
+module.exports = { install, uninstall, list, gameRunning };
 
 if (require.main === module) {
   const [cmd, gameDir, modName, ...files] = process.argv.slice(2);

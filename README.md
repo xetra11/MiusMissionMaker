@@ -20,6 +20,9 @@ node tools/scenario.js build examples/company_vs_company.json
 
 # build and install it into the game (close the game first)
 node tools/scenario.js build examples/company_vs_company.json --install
+
+# build it and start the battle directly (close the game first)
+node tools/scenario.js build examples/company_vs_company.json --start
 ```
 
 In the game the mission appears under **QUICK BATTLE → Missions** (or *Training*, see `"menu"`).
@@ -36,6 +39,7 @@ If the game is not installed at `C:\Program Files (x86)\Steam\steamapps\common\G
 - **Player / Enemy:** deployment, platoons (search all 266 types, e.g. `stug`), per-platoon position, orders.
 - **Battle / Texts:** victory, defeat, time, camera and hint texts.
 - **Save** writes `scenarios/<id>.json`. **Build & check** also creates the mission and shows the generator's report. **Build & install in game** installs it (close the game first). **Installed missions** lists and removes them.
+- **Start battle** builds the mission and starts it directly in the game, without installing it and without going through the menu. Close the game first. It uses the deployment and briefing of the mission as usual.
 - **Settings:** game folder, if not installed in the default Steam location.
 
 The program edits the same JSON format as described in section 4, so examples and hand-written files can be opened with it. Scenarios with their own `script` open too; the page shows which settings then have no effect.

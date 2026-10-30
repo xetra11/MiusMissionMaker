@@ -1,6 +1,7 @@
 // MiusMissionMaker scenario generator: JSON -> .mispack for Graviteam Tactics: Mius-Front.
 //
-//   node tools/scenario.js build     <scenario.json> [--install] [--game <dir>] [--out <file>]
+//   node tools/scenario.js build     <scenario.json> [--install] [--start] [--game <dir>] [--out <file>]
+//   node tools/scenario.js start     <mission.mispack> [--game <dir>]
 //   node tools/scenario.js reference [--game <dir>]
 //        regenerates the reference section of README.md, docs/UNITS.md and scenario.schema.json
 //
@@ -9,6 +10,7 @@
 // any shipped mission or be built from the game's unit database; see docs/UNITS.md.
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 const { readPack } = require('./azp3');
 const { parse, serialize } = require('./azcf');
 const { validate } = require('./validate_mission');
@@ -633,8 +635,30 @@ function writePack(base, payloads, outFile) {
   fs.writeFileSync(outFile, out);
 }
 
+// ---------------------------------------------------------------- start a battle
+// The game's menu writes the mission's battle state to tacgame_image.cfgpack and starts the
+// tactical program with this command line; doing the same skips the menu.
+function launchBattle(gameDir, missionFile) {
+  const image = readPack(missionFile).entries.find(e => e.names[0] === 'tacgame_image').payload;
+  const profile = fs.readFileSync(path.join(gameDir, 'users', 'profiles', 'cur_profile.engcfg'), 'latin1').match(/cur_id\s*=\s*(\w+)/)?.[1];
+  if (!profile) fail('no game profile found - start the game once');
+  fs.writeFileSync(path.join(gameDir, 'data', 'common', 'shared', 'config', 'tacgame_image.cfgpack'), image);
+  // without this file the Steam API restarts the game through Steam and the arguments are lost
+  const appId = path.join(gameDir, 'steam_appid.txt');
+  if (!fs.existsSync(appId)) fs.writeFileSync(appId, '312980');
+  const args = `root\\programs\\tacgame.progpack, data\\common\\shared\\config\\tacgame_image.cfgpack, users\\profiles, ${profile}, *:*, 0, 0`;
+  spawn(path.join(gameDir, 'starter_x64.exe'), [args], { cwd: gameDir, detached: true, stdio: 'ignore', windowsVerbatimArguments: true }).unref();
+}
+
+function startBattle(gameDir, missionFile) {
+  if (installer.gameRunning()) fail('Mius-Front is still running - close the game first.');
+  launchBattle(gameDir, missionFile);
+  console.log('  battle started');
+}
+
 // ---------------------------------------------------------------- build
 function build(specFile, opts) {
+  if ((opts.install || opts.start) && installer.gameRunning()) fail('Mius-Front is still running - close the game first.');
   const spec = JSON.parse(fs.readFileSync(specFile, 'utf8'));
   const missions = loadMissions(opts.game);
   const db = unitdb.loadUnitDb(opts.game);
@@ -693,6 +717,7 @@ function build(specFile, opts) {
     const { guid, version } = installer.install(opts.game, spec.mod ?? spec.id, [outFile]);
     console.log(`  installed as mod "${spec.mod ?? spec.id}" (${guid}, version ${version}) -> QUICK BATTLE / ${spec.menu === 'training' ? 'Training' : 'Missions'}`);
   }
+  if (opts.start) startBattle(opts.game, outFile);
 }
 
 // ---------------------------------------------------------------- reference + schema
@@ -936,12 +961,13 @@ if (require.main === module) {
   const args = process.argv.slice(2);
   const opt = n => { const i = args.indexOf(n); return i >= 0 ? args.splice(i, 2)[1] : undefined; };
   const flag = n => { const i = args.indexOf(n); return i >= 0 ? (args.splice(i, 1), true) : false; };
-  const opts = { game: opt('--game') ?? DEFAULT_GAME, out: opt('--out'), install: flag('--install') };
+  const opts = { game: opt('--game') ?? DEFAULT_GAME, out: opt('--out'), install: flag('--install'), start: flag('--start') };
   const [cmd, file] = args;
   try {
     if (cmd === 'build' && file) build(file, opts);
+    else if (cmd === 'start' && file) startBattle(opts.game, path.resolve(file));
     else if (cmd === 'reference') reference(opts);
-    else console.log('usage:\n  node tools/scenario.js build <scenario.json> [--install] [--game <dir>] [--out <file>]\n  node tools/scenario.js reference [--game <dir>]');
+    else console.log('usage:\n  node tools/scenario.js build <scenario.json> [--install] [--start] [--game <dir>] [--out <file>]\n  node tools/scenario.js start <mission.mispack> [--game <dir>]\n  node tools/scenario.js reference [--game <dir>]');
   } catch (e) {
     if (!(e instanceof SpecError)) throw e;
     console.error('error: ' + e.message);
@@ -949,4 +975,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { build, buildCatalog, loadMissions };
+module.exports = { build, buildCatalog, loadMissions, launchBattle };
