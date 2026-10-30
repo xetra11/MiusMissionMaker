@@ -28,6 +28,29 @@ If the game is not installed at `C:\Program Files (x86)\Steam\steamapps\common\G
 
 ---
 
+## 1a. Desktop editor
+
+`MiusMissionMaker.exe` is a Windows program for building scenarios without writing JSON by hand. Requires Node.js in `PATH` and the Microsoft Edge WebView2 runtime (part of Windows 11). Keep the program in this folder.
+
+- **Map:** shows the base's start areas (blue player, red enemy), villages and known points. Click to add a point, drag to move it, click a village or grey point to use it. Arrows show the orders.
+- **Player / Enemy:** deployment, platoons (search all 266 types, e.g. `stug`), per-platoon position, orders.
+- **Battle / Texts:** victory, defeat, time, camera and hint texts.
+- **Save** writes `scenarios/<id>.json`. **Build & check** also creates the mission and shows the generator's report. **Build & install in game** installs it (close the game first). **Installed missions** lists and removes them.
+- **Settings:** game folder, if not installed in the default Steam location.
+
+The program edits the same JSON format as described in section 4, so examples and hand-written files can be opened with it. Scenarios with their own `script` open too; the page shows which settings then have no effect.
+
+Build it with Go 1.26:
+
+```bash
+cd gui
+go build -ldflags=-H=windowsgui -o ../MiusMissionMaker.exe .
+```
+
+`MiusMissionMaker.exe -serve 127.0.0.1:8765` runs it without a window for use in a browser (open `http://127.0.0.1:8765/#dev`).
+
+---
+
 ## 2. How it works
 
 A scenario has three parts:
@@ -557,6 +580,9 @@ MiusMissionMaker/
 ├── README.md                    this guide (section 6 is generated)
 ├── scenario.schema.json         JSON Schema for scenario files (generated)
 ├── docs/UNITS.md                every platoon type of the game (generated)
+├── docs/catalog.json            the same data for tools, used by the desktop editor (generated)
+├── gui/                         desktop editor (Go)
+├── scenarios/                   scenarios saved by the desktop editor
 ├── examples/                    example scenarios
 ├── output/                      built missions (.mispack)
 ├── docs/TECHNIK.md              file formats, reverse engineering, internals (German)
@@ -570,4 +596,4 @@ MiusMissionMaker/
     └── templates/desc.addpack   template for the mod manifest
 ```
 
-After a game update, regenerate section 6, `docs/UNITS.md` and the schema with `node tools/scenario.js reference`.
+After a game update, regenerate section 6, `docs/UNITS.md`, `docs/catalog.json` and the schema with `node tools/scenario.js reference`.

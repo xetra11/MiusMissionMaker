@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mius Mission Maker</title>
+<style>
+:root {
+  --bg: #1d1f1b; --panel: #272a24; --panel2: #31352d; --line: #454a3f; --text: #e6e5dc; --muted: #a3a496;
+  --accent: #c9a24b; --player: #5b9bd5; --enemy: #d9604f; --ok: #7fb069; --bad: #e0705f;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--text); font: 13px/1.35 "Segoe UI", system-ui, sans-serif; display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; }
+header { display: flex; gap: 8px; align-items: center; padding: 7px 10px; background: var(--panel); border-bottom: 1px solid var(--line); }
+header h1 { font-size: 14px; margin: 0 10px 0 0; color: var(--accent); letter-spacing: .3px; }
+main { display: grid; grid-template-columns: 300px minmax(300px, 1fr) 440px; min-height: 0; }
+aside { background: var(--panel); overflow-y: auto; padding: 10px; }
+aside.left { border-right: 1px solid var(--line); }
+aside.right { border-left: 1px solid var(--line); display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+#mapwrap { position: relative; min-width: 0; min-height: 0; }
+canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; }
+#hint { position: absolute; left: 10px; bottom: 8px; padding: 3px 7px; background: #000a; border-radius: 4px; color: var(--muted); pointer-events: none; }
+#coord { position: absolute; right: 10px; bottom: 8px; padding: 3px 7px; background: #000a; border-radius: 4px; font-variant-numeric: tabular-nums; pointer-events: none; }
+footer { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 7px 10px; background: var(--panel); border-top: 1px solid var(--line); align-items: start; }
+#log { height: 92px; overflow-y: auto; white-space: pre-wrap; font: 12px/1.35 Consolas, monospace; background: #151613; border: 1px solid var(--line); border-radius: 4px; padding: 5px 7px; color: var(--muted); }
+#log .err { color: var(--bad); } #log .good { color: var(--ok); }
+.actions { display: flex; flex-direction: column; gap: 6px; width: 190px; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--accent); margin: 14px 0 6px; }
+h2:first-child { margin-top: 0; }
+label.f { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; }
+label.f > input, label.f > select, label.f > textarea { display: block; width: 100%; margin-top: 2px; }
+input, select, textarea, button { font: inherit; color: var(--text); background: var(--panel2); border: 1px solid var(--line); border-radius: 4px; padding: 4px 6px; }
+input:focus, select:focus, textarea:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+input[type=number] { font-variant-numeric: tabular-nums; }
+input[type=checkbox] { width: auto; }
+textarea { resize: vertical; min-height: 58px; }
+button { cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #1c1a10; font-weight: 600; }
+button.icon { padding: 1px 7px; color: var(--muted); }
+.row { display: flex; gap: 6px; align-items: center; }
+.row > * { min-width: 0; }
+.grow { flex: 1; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.mono { font-family: Consolas, monospace; font-size: 12px; }
+.tabs { display: flex; background: var(--panel2); border-bottom: 1px solid var(--line); flex: none; }
+.tabs button { flex: 1; border: 0; border-radius: 0; background: none; padding: 8px 4px; color: var(--muted); border-bottom: 2px solid transparent; }
+.tabs button.on { color: var(--text); border-bottom-color: var(--accent); }
+#panel { padding: 10px; overflow-y: auto; flex: 1; }
+.card { background: var(--panel2); border: 1px solid var(--line); border-radius: 5px; padding: 6px 7px; margin-bottom: 6px; }
+.card.wrong { border-color: var(--bad); }
+.pt { display: grid; grid-template-columns: 12px 1fr 62px 62px 24px; gap: 4px; align-items: center; margin-bottom: 4px; }
+.pt input { padding: 2px 4px; width: 100%; min-width: 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+.units { max-height: 300px; overflow-y: auto; border: 1px solid var(--line); border-radius: 4px; margin-top: 5px; }
+.unit { padding: 4px 7px; border-bottom: 1px solid #3a3e35; cursor: pointer; }
+.unit:hover { background: var(--panel2); }
+.unit b { font-weight: 600; }
+.tag { display: inline-block; padding: 0 4px; border-radius: 3px; font-size: 11px; background: #0003; color: var(--muted); margin-left: 4px; }
+.tag.warn { color: var(--bad); }
+.tag.good { color: var(--ok); }
+#checks { margin: 0; padding: 0; list-style: none; font-size: 12px; }
+#checks li { color: var(--bad); }
+#checks li.good { color: var(--ok); }
+dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 14px; width: 560px; }
+dialog::backdrop { background: #0008; }
+#banner { display: none; padding: 5px 10px; background: #5a4a1a; color: #f0e2b0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mius Mission Maker</h1>
+  <button id="new">New</button>
+  <select id="open" title="Open a scenario"></select>
+  <span class="grow"></span>
+  <button id="mods">Installed missions</button>
+  <button id="settings">Settings</button>
+</header>
+<main>
+  <aside class="left" id="left"></aside>
+  <div>
+    <div id="banner"></div>
+    <div id="mapwrap" style="height:100%">
+      <canvas id="map"></canvas>
+      <div id="hint">Click to add a point, drag to move. Click a village or grey point to use it.</div>
+      <div id="coord"></div>
+    </div>
+  </div>
+  <aside class="right">
+    <div class="tabs" id="tabs"></div>
+    <div id="panel"></div>
+  </aside>
+</main>
+<footer>
+  <div id="log"></div>
+  <div class="actions">
+    <ul id="checks"></ul>
+    <button id="save">Save</button>
+    <button id="build">Build &amp; check</button>
+    <button id="install" class="primary">Build &amp; install in game</button>
+  </div>
+</footer>
+<dialog id="dlg"></dialog>
+
+<script>
+'use strict';
+const API = '/api/' + location.hash.slice(1);
+const IN_SERVICE_DATE = 0x19430701; // all bases are set on this date
+let cat, s, tab = 'player', unitSearch = '', unitRole = '', selected = null, hover = null, drag = null;
+
+// ---------------------------------------------------------------- helpers
+function h(tag, props = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === 'class') e.className = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else if (k in e && k !== 'list') e[k] = v;
+    else e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c !== null && c !== undefined) e.append(c);
+  return e;
+}
+const fill = (el, ...kids) => el.replaceChildren(...kids.flat(3).filter(k => k !== null && k !== undefined));
+const field = (label, control) => h('label', { class: 'f' }, label, control);
+function select(options, value, onchange, extra = {}) {
+  const e = h('select', { onchange: () => onchange(e.value), ...extra },
+    options.map(o => { const [v, t] = Array.isArray(o) ? o : [o, o]; return h('option', { value: v }, t); }));
+  e.value = value ?? '';
+  return e;
+}
+function input(value, oninput, extra = {}) {
+  return h('input', { value: value ?? '', oninput: e => oninput(e.target.value), ...extra });
+}
+function number(value, oninput, extra = {}) {
+  return input(value, v => oninput(v === '' ? undefined : Number(v)), { type: 'number', ...extra });
+}
+async function api(path, body) {
+  const r = await fetch(API + path, body === undefined ? {} : { method: 'POST', body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error);
+  return j;
+}
+function log(text, cls) {
+  const box = document.getElementById('log');
+  box.append(h('div', { class: cls ?? '' }, text));
+  box.scrollTop = box.scrollHeight;
+}
+const base = () => cat.bases.find(b => b.id === s.base);
+const unitOf = key => cat.units.find(u => u.key === key.split('@')[0]);
+const nationName = n => ({ GER: 'German', USSR: 'Soviet' })[n] ?? n;
+const pointNames = () => Object.keys(s.points);
+const pointOptions = () => [['', '-'], ...pointNames()];
+
+// ---------------------------------------------------------------- scenario
+function blank() {
+  return {
+    $schema: '../scenario.schema.json', id: 'my_mission', title: 'New Mission', description: '', menu: 'missions', base: 'tr04',
+    max_minutes: 60, points: {},
+    sides: { player: { deploy: { type: 'trench', at: '' }, platoons: [] }, enemy: { deploy: { type: 'place', at: '' }, platoons: [] } },
+    victory: { balance: 2 }, defeat: {}, texts: {},
+  };
+}
+function normalise(o) {
+  o.points ??= {}; o.sides ??= {}; o.victory ??= {}; o.defeat ??= {}; o.texts ??= {};
+  for (const k of ['player', 'enemy']) { o.sides[k] ??= {}; o.sides[k].platoons ??= []; o.sides[k].deploy ??= { at: '' }; }
+  return o;
+}
+// the file holds only what is set
+function clean() {
+  const o = JSON.parse(JSON.stringify(s));
+  const prune = x => { for (const k of Object.keys(x)) if (x[k] === '' || x[k] === null || x[k] === undefined) delete x[k]; };
+  prune(o);
+  for (const k of ['player', 'enemy']) {
+    const side = o.sides[k];
+    if (!side.deploy?.at) delete side.deploy; else prune(side.deploy);
+    if (!side.orders?.length) delete side.orders;
+    for (const p of side.platoons) { prune(p); if (p.deploy && !p.deploy.at) delete p.deploy; else if (p.deploy) prune(p.deploy); }
+  }
+  for (const k of ['victory', 'defeat', 'texts', 'camera']) {
+    if (!o[k]) continue;
+    prune(o[k]);
+    if (!Object.keys(o[k]).length) delete o[k];
+  }
+  return o;
+}
+function renamePoint(from, to) {
+  const swap = v => (v === from ? to : v);
+  const pts = {};
+  for (const [k, v] of Object.entries(s.points)) pts[k === from ? to : k] = v;
+  s.points = pts;
+  for (const k of ['player', 'enemy']) {
+    const side = s.sides[k];
+    if (side.deploy) side.deploy.at = swap(side.deploy.at);
+    for (const o of side.orders ?? []) o.to = swap(o.to);
+    for (const p of side.platoons) if (p.deploy) p.deploy.at = swap(p.deploy.at);
+  }
+  if (s.victory.own_reaches) s.victory.own_reaches = swap(s.victory.own_reaches);
+  if (s.defeat.enemy_reaches) s.defeat.enemy_reaches = swap(s.defeat.enemy_reaches);
+  if (s.camera?.at) s.camera.at = swap(s.camera.at);
+  if (selected === from) selected = to;
+}
+function addPoint(name, x, z) {
+  let n = name.toLowerCase().replace(/[^a-z0-9_]/g, '_').replace(/^[^a-z]+/, '') || 'point', i = 1, t = n;
+  while (t in s.points || cat.enums.reserved.includes(t)) t = n + '_' + (++i);
+  s.points[t] = [Math.round(x), Math.round(z)];
+  selected = t;
+  refresh();
+  return t;
+}
+function areaOf(x, z) {
+  const b = base(), e = b.extent, r = b.cellSize / 2;
+  if (x < e.x0 || x > e.x1 || z < e.z0 || z > e.z1) return 'outside';
+  return b.cells.find(c => Math.abs(x - c.x) <= r && Math.abs(z - c.z) <= r)?.side ?? 'neutral';
+}
+function checks() {
+  const out = [], b = base();
+  if (!/^[a-z0-9_]{1,40}$/.test(s.id ?? '')) out.push('Mission id: a-z, 0-9, _ only');
+  if (!s.title) out.push('Title is missing');
+  if (/[^\x20-\x7e]/.test((s.title ?? '') + (s.description ?? '').replace(/[äöüÄÖÜß]/g, ''))) out.push('Title/description: plain characters only');
+  const seen = new Set();
+  for (const [k, nation] of [['player', b.player], ['enemy', b.enemy]]) {
+    const side = s.sides[k];
+    if (!side.platoons.length) out.push(`${k}: no platoons`);
+    if (!side.deploy?.at && side.platoons.some(p => !p.deploy?.at && !p.position)) out.push(`${k}: choose a deployment point`);
+    for (const p of side.platoons) {
+      if (seen.has(p.callsign)) out.push(`Callsign ${p.callsign} used twice`);
+      seen.add(p.callsign);
+      if (unitOf(p.unit)?.nation !== nation) out.push(`${p.callsign}: not a ${nationName(nation)} unit`);
+    }
+  }
+  for (const [n, [x, z]] of Object.entries(s.points)) if (areaOf(x, z) === 'outside') out.push(`Point ${n} is outside the map`);
+  return out;
+}
+function showChecks() {
+  const list = checks(), box = document.getElementById('checks');
+  box.replaceChildren(...(list.length ? list.slice(0, 3).map(t => h('li', {}, t)) : [h('li', { class: 'good' }, 'Ready to build')]));
+}
+
+// ---------------------------------------------------------------- left panel
+function renderLeft() {
+  const b = base();
+  const left = document.getElementById('left');
+  const settle = b.settlements.map(p => h('div', {
+    class: 'unit small', title: 'Add as point', onclick: () => addPoint('village', p.x, p.z),
+  }, `${p.houses} houses at [${p.x}, ${p.z}]`, h('span', { class: 'tag' }, p.area)));
+  fill(left,
+    h('h2', {}, 'Mission'),
+    field('Title', input(s.title, v => { s.title = v; showChecks(); })),
+    field('Mission id (file name)', input(s.id, v => { s.id = v; showChecks(); }, { class: 'mono' })),
+    field('Description', h('textarea', { value: s.description ?? '', oninput: e => { s.description = e.target.value; showChecks(); } })),
+    h('div', { class: 'two' },
+      field('Map (base)', select(cat.bases.map(x => [x.id, `${x.id} - ${x.title}`]), s.base, v => { s.base = v; refresh(); })),
+      field('Menu section', select(cat.enums.menu, s.menu ?? 'missions', v => { s.menu = v; }))),
+    h('div', { class: 'small muted' }, `Player: ${nationName(b.player)}, enemy: ${nationName(b.enemy)}. ${b.description}`),
+    h('h2', {}, 'Points'),
+    pointNames().length ? null : h('div', { class: 'small muted' }, 'No points yet. Click on the map.'),
+    pointNames().map(n => {
+      const area = areaOf(...s.points[n]);
+      const color = area === 'player' ? 'var(--player)' : area === 'enemy' ? 'var(--enemy)' : area === 'outside' ? 'var(--bad)' : 'var(--accent)';
+      return h('div', { class: 'pt', onclick: () => { selected = n; draw(); } },
+        h('span', { class: 'dot', style: `background:${color}`, title: area + ' area' }),
+        h('input', { value: n, class: 'mono', onchange: e => { const t = e.target.value.trim(); if (t && !(t in s.points) && /^[a-z][a-z0-9_]*$/.test(t)) renamePoint(n, t); refresh(); } }),
+        number(s.points[n][0], v => { s.points[n][0] = v ?? 0; draw(); showChecks(); }),
+        number(s.points[n][1], v => { s.points[n][1] = v ?? 0; draw(); showChecks(); }),
+        h('button', { class: 'icon', title: 'Delete', onclick: () => { renamePoint(n, ''); delete s.points['']; refresh(); } }, '×'));
+    }),
+    h('h2', {}, 'Villages on this map'),
+    settle.length ? settle : h('div', { class: 'small muted' }, 'None'));
+}
+
+// ---------------------------------------------------------------- right panel
+function renderTabs() {
+  const b = base();
+  const names = [['player', `Player (${b.player})`], ['enemy', `Enemy (${b.enemy})`], ['battle', 'Battle'], ['texts', 'Texts']];
+  document.getElementById('tabs').replaceChildren(...names.map(([k, t]) =>
+    h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; renderPanel(); renderTabs(); } }, t)));
+}
+function deployForm(d) {
+  return [
+    h('div', { class: 'two' },
+      field('Point', select(pointOptions(), d.at, v => { d.at = v; refreshKeep(); })),
+      field('Type', select(Object.keys(cat.enums.deployTypes), d.type ?? 'place', v => { d.type = v; }))),
+    h('div', { class: 'two' },
+      field('Formation', select([['', 'default'], ...Object.keys(cat.enums.formations)], d.formation, v => { d.formation = v; })),
+      field('Facing', select([['', 'towards other side'], ...cat.enums.facings], d.facing, v => { d.facing = v; }))),
+  ];
+}
+function nextCallsign(sideKey) {
+  const side = s.sides[sideKey];
+  const used = new Set(['player', 'enemy'].flatMap(k => s.sides[k].platoons.map(p => p.callsign)));
+  const name = side.platoons[0]?.callsign.replace(/_\d+$/, '') ?? (sideKey === 'player' ? 'panther' : 'pine');
+  for (let i = 1; ; i++) { const c = `${name}_${String(i).padStart(2, '0')}`; if (!used.has(c)) return c; }
+}
+function platoonCard(sideKey, p, i, nation) {
+  const side = s.sides[sideKey], u = unitOf(p.unit), wrong = u?.nation !== nation;
+  const variants = u?.variants ?? [];
+  return h('div', { class: 'card' + (wrong ? ' wrong' : '') },
+    h('div', { class: 'row' },
+      input(p.callsign, v => { p.callsign = v; showChecks(); draw(); }, { class: 'mono', style: 'width:105px', list: 'callsigns', title: 'Callsign' }),
+      h('div', { class: 'grow small mono', title: p.unit, style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, p.unit),
+      h('button', { class: 'icon', title: 'Remove', onclick: () => { side.platoons.splice(i, 1); refreshKeep(); } }, '×')),
+    h('div', { class: 'small muted', style: 'margin:3px 0' }, u ? `${u.role}, ${u.men} men${u.vehicles.length ? ', ' + summary(u.vehicles) : ''}` : 'unknown unit'),
+    h('div', { class: 'row small' },
+      variants.length ? select([[u.key, `strongest (${u.men})`], ...variants.map(v => [v.key, `${v.key.split('@')[1]} (${v.men})`])], p.unit, v => { p.unit = v; refreshKeep(); }, { title: 'Variant' }) : null,
+      u?.source === 'database' ? h('label', { title: 'Number of squads' }, 'Size ', number(p.size, v => { p.size = v; }, { style: 'width:52px', min: 1, max: u.maxSquads || 15 })) : null,
+      select([['', 'plan: default'], ...cat.enums.plans], p.plan, v => { p.plan = v; }),
+      h('label', {}, h('input', { type: 'checkbox', checked: !!p.deploy, onchange: e => { if (e.target.checked) p.deploy = { at: '', type: 'trench' }; else delete p.deploy; refreshKeep(); } }), ' own position')),
+    p.deploy ? h('div', { style: 'margin-top:6px' }, deployForm(p.deploy)) : null);
+}
+const summary = list => Object.entries(list.reduce((a, v) => ({ ...a, [v]: (a[v] ?? 0) + 1 }), {})).map(([k, n]) => `${n}x ${k}`).join(', ');
+function unitList(sideKey, nation) {
+  const q = unitSearch.toLowerCase();
+  const items = cat.units.filter(u => u.nation === nation && (!unitRole || u.role === unitRole) &&
+    (!q || [u.key, u.role, u.pool, ...u.vehicles, ...u.squads].some(t => t.toLowerCase().includes(q))));
+  const box = h('div', { class: 'units' }, items.slice(0, 120).map(u => {
+    const old = IN_SERVICE_DATE < u.period.from || IN_SERVICE_DATE > u.period.to;
+    return h('div', { class: 'unit', title: u.squads.join(', '), onclick: () => {
+      s.sides[sideKey].platoons.push({ callsign: nextCallsign(sideKey), unit: u.key });
+      refreshKeep();
+    } },
+    h('b', { class: 'mono' }, u.key),
+    u.source === 'mission' ? h('span', { class: 'tag good' }, 'tested') : null,
+    old ? h('span', { class: 'tag warn', title: 'Service period ' + u.period.text }, 'not in 07/1943') : null,
+    h('div', { class: 'small muted' }, `${u.role}, ${u.men} men${u.vehicles.length ? ', ' + summary(u.vehicles) : ''}`));
+  }));
+  return { box, count: items.length };
+}
+function sidePanel(sideKey) {
+  const side = s.sides[sideKey], b = base(), nation = sideKey === 'player' ? b.player : b.enemy;
+  const roles = [...new Set(cat.units.filter(u => u.nation === nation).map(u => u.role))].sort();
+  const list = h('div');
+  const fill = () => { const { box, count } = unitList(sideKey, nation); list.replaceChildren(h('div', { class: 'small muted', style: 'margin-top:4px' }, `${count} platoon types`), box); };
+  fill();
+  return [
+    h('h2', {}, 'Deployment'),
+    deployForm(side.deploy),
+    h('label', { class: 'small' }, h('input', { type: 'checkbox', checked: side.ai === false, onchange: e => { if (e.target.checked) side.ai = false; else delete side.ai; } }), ' Block AI (only script orders)'),
+    h('h2', {}, `Platoons (${side.platoons.length}, ${side.platoons.reduce((a, p) => a + (unitOf(p.unit)?.men ?? 0), 0)} men)`),
+    side.platoons.map((p, i) => platoonCard(sideKey, p, i, nation)),
+    h('h2', {}, 'Add platoon'),
+    h('div', { class: 'row' },
+      input(unitSearch, v => { unitSearch = v; fill(); }, { class: 'grow', placeholder: 'Search: stug, t34, rifle, mortar ...' }),
+      select([['', 'all roles'], ...roles], unitRole, v => { unitRole = v; fill(); })),
+    list,
+    h('h2', {}, 'Orders'),
+    (side.orders ?? []).map((o, i) => h('div', { class: 'row', style: 'margin-bottom:4px' },
+      select(pointOptions(), o.to, v => { o.to = v; draw(); }, { class: 'grow' }),
+      select(Object.keys(cat.enums.modes), o.mode ?? 'attack', v => { o.mode = v; }, { title: 'Movement mode' }),
+      number(o.wait_s, v => { o.wait_s = v; }, { placeholder: 'wait s', style: 'width:70px', title: 'Wait seconds after the previous order' }),
+      h('button', { class: 'icon', onclick: () => { side.orders.splice(i, 1); refreshKeep(); } }, '×'))),
+    h('button', { onclick: () => { (side.orders ??= []).push({ to: pointNames()[0] ?? '', mode: 'attack' }); refreshKeep(); } }, 'Add order'),
+  ];
+}
+function battlePanel() {
+  const v = s.victory, d = s.defeat;
+  return [
+    h('h2', {}, 'Victory'),
+    field('Own forces must reach', select(pointOptions(), v.own_reaches, x => { v.own_reaches = x; draw(); })),
+    h('div', { class: 'three' },
+      field('Radius (m)', number(v.radius, x => { v.radius = x; }, { placeholder: '200' })),
+      field('Share of forces', number(v.share, x => { v.share = x; }, { step: 0.1, placeholder: '0.5' })),
+      field('Strength ratio', number(v.balance, x => { v.balance = x; }, { step: 0.5, title: 'Own : enemy strength, e.g. 2' }))),
+    h('h2', {}, 'Defeat'),
+    field('Enemy reaches', select(pointOptions(), d.enemy_reaches, x => { d.enemy_reaches = x; draw(); })),
+    h('div', { class: 'two' },
+      field('Radius (m)', number(d.radius, x => { d.radius = x; }, { placeholder: '200' })),
+      field('Share of forces', number(d.share, x => { d.share = x; }, { step: 0.1, placeholder: '0.5' }))),
+    h('h2', {}, 'Timing'),
+    h('div', { class: 'two' },
+      field('Max. minutes', number(s.max_minutes, x => { s.max_minutes = x; })),
+      field('Time acceleration', number(s.time_scale, x => { s.time_scale = x; }, { placeholder: 'off' }))),
+    h('label', { class: 'small' }, h('input', { type: 'checkbox', checked: s.deploy_phase !== false, onchange: e => { if (e.target.checked) delete s.deploy_phase; else s.deploy_phase = false; } }), ' Deployment phase (requires starting in the player start area)'),
+    h('h2', {}, 'Start camera'),
+    h('div', { class: 'three' },
+      field('Point', select(pointOptions(), s.camera?.at, x => { (s.camera ??= {}).at = x; })),
+      field('Direction', select(['', ...cat.enums.facings], s.camera?.direction, x => { (s.camera ??= {}).direction = x; })),
+      field('Zoom', number(s.camera?.zoom, x => { (s.camera ??= {}).zoom = x; }, { step: 0.1, placeholder: '0.3' }))),
+  ];
+}
+function textsPanel() {
+  return [
+    h('div', { class: 'small muted', style: 'margin-bottom:8px' }, 'Hints shown in the mission. Leave empty for the default. Plain characters only; [%do_pause] shows the pause key.'),
+    Object.entries(cat.enums.defaultTexts).map(([k, def]) =>
+      field(k, h('textarea', { value: s.texts[k] ?? '', placeholder: def, oninput: e => { s.texts[k] = e.target.value; } }))),
+  ];
+}
+function renderPanel() {
+  const content = tab === 'battle' ? battlePanel() : tab === 'texts' ? textsPanel() : sidePanel(tab);
+  fill(document.getElementById('panel'), content);
+}
+function refreshKeep() {
+  const p = document.getElementById('panel'), y = p.scrollTop;
+  renderPanel(); p.scrollTop = y; draw(); showChecks();
+}
+function refresh() {
+  renderLeft(); renderTabs(); refreshKeep();
+  const banner = document.getElementById('banner');
+  banner.style.display = s.script ? 'block' : 'none';
+  banner.textContent = 'This scenario has its own script: orders, victory, defeat and camera below have no effect.';
+}
+
+// ---------------------------------------------------------------- map
+const canvas = document.getElementById('map'), ctx = canvas.getContext('2d');
+let view = { k: 1, ox: 0, oy: 0 };
+const toScreen = (x, z) => [view.ox + (x - base().extent.x0) * view.k, view.oy + (base().extent.z1 - z) * view.k];
+const toMap = (px, py) => [(px - view.ox) / view.k + base().extent.x0, base().extent.z1 - (py - view.oy) / view.k];
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n);
+function resize() {
+  const r = canvas.parentElement.getBoundingClientRect(), d = devicePixelRatio || 1;
+  canvas.width = r.width * d; canvas.height = r.height * d;
+  draw();
+}
+function label(text, x, y, color) {
+  ctx.font = '12px "Segoe UI"';
+  ctx.lineWidth = 3; ctx.strokeStyle = '#000b'; ctx.strokeText(text, x, y);
+  ctx.fillStyle = color; ctx.fillText(text, x, y);
+}
+function usedPoints() {
+  const m = {};
+  const mark = (n, c) => { if (n) m[n] = c; };
+  for (const [k, c] of [['player', '--player'], ['enemy', '--enemy']]) {
+    mark(s.sides[k].deploy?.at, c);
+    for (const p of s.sides[k].platoons) mark(p.deploy?.at, c);
+  }
+  return m;
+}
+function arrow(a, b, color) {
+  const [x1, y1] = toScreen(...a), [x2, y2] = toScreen(...b), an = Math.atan2(y2 - y1, x2 - x1);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2; ctx.setLineDash([7, 5]);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 11 * Math.cos(an - .4), y2 - 11 * Math.sin(an - .4));
+  ctx.lineTo(x2 - 11 * Math.cos(an + .4), y2 - 11 * Math.sin(an + .4));
+  ctx.fill();
+}
+function draw() {
+  if (!s || !cat) return;
+  const b = base(), e = b.extent, d = devicePixelRatio || 1, w = canvas.width / d, h2 = canvas.height / d;
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+  ctx.fillStyle = '#23261f'; ctx.fillRect(0, 0, w, h2);
+  const pad = 24, mw = e.x1 - e.x0, mh = e.z1 - e.z0;
+  view.k = Math.min((w - pad * 2) / mw, (h2 - pad * 2) / mh);
+  view.ox = (w - mw * view.k) / 2; view.oy = (h2 - mh * view.k) / 2;
+  const [x0, y0] = toScreen(e.x0, e.z1), [x1, y1] = toScreen(e.x1, e.z0);
+  ctx.fillStyle = '#343a2c'; ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+  for (const c of b.cells) {
+    const [cx, cy] = toScreen(c.x - b.cellSize / 2, c.z + b.cellSize / 2), sz = b.cellSize * view.k;
+    ctx.fillStyle = c.side === 'player' ? '#5b9bd533' : '#d9604f33';
+    ctx.fillRect(cx, cy, sz, sz);
+  }
+  ctx.strokeStyle = '#ffffff1f'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let x = e.x0; x <= e.x1; x += b.cellSize) { const [px] = toScreen(x, 0); ctx.moveTo(px, y0); ctx.lineTo(px, y1); }
+  for (let z = e.z0; z <= e.z1; z += b.cellSize) { const [, py] = toScreen(0, z); ctx.moveTo(x0, py); ctx.lineTo(x1, py); }
+  ctx.stroke();
+  for (const p of b.settlements) {
+    const [px, py] = toScreen(p.x, p.z), rw = Math.max(p.width * view.k, 7), rh = Math.max(p.depth * view.k, 7);
+    ctx.fillStyle = hover?.settlement === p ? '#d9b36c' : '#a8824a'; ctx.fillRect(px - rw / 2, py - rh / 2, rw, rh);
+    label(`${p.houses}`, px + rw / 2 + 3, py + 4, '#d9c9a0');
+  }
+  for (const p of b.points) {
+    const [px, py] = toScreen(p.x, p.z);
+    ctx.fillStyle = hover?.known === p ? '#fff' : '#b9b9ad'; ctx.beginPath(); ctx.arc(px, py, 3, 0, 7); ctx.fill();
+    if (hover?.known === p) label(p.name, px + 6, py - 5, '#fff');
+  }
+  const pts = s.points, used = usedPoints();
+  for (const [k, c] of [['player', css('--player')], ['enemy', css('--enemy')]]) {
+    const side = s.sides[k];
+    let from = pts[side.deploy?.at];
+    for (const o of side.orders ?? []) { const to = pts[o.to]; if (from && to && from !== to) arrow(from, to, c); from = to ?? from; }
+  }
+  for (const [n, [x, z]] of Object.entries(pts)) {
+    const [px, py] = toScreen(x, z), color = used[n] ? css(used[n]) : css('--accent');
+    ctx.fillStyle = color; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(px, py, selected === n ? 8 : 6, 0, 7); ctx.fill(); ctx.stroke();
+    label(n, px + 10, py + 4, '#fff');
+  }
+  const goal = pts[s.victory.own_reaches];
+  if (goal) { const [px, py] = toScreen(...goal); ctx.strokeStyle = '#7fb069'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(px, py, (s.victory.radius ?? 200) * view.k, 0, 7); ctx.stroke(); }
+  label('N', x0 + 6, y0 + 16, '#ddd');
+  const len = 1000 * view.k, [bx, by] = [x1 - len - 12, y1 - 12];
+  ctx.strokeStyle = '#ddd'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + len, by); ctx.stroke();
+  label('1 km', bx, by - 5, '#ddd');
+}
+function pick(px, py) {
+  for (const [n, [x, z]] of Object.entries(s.points)) { const [sx, sy] = toScreen(x, z); if (Math.hypot(sx - px, sy - py) < 10) return { point: n }; }
+  for (const p of base().points) { const [sx, sy] = toScreen(p.x, p.z); if (Math.hypot(sx - px, sy - py) < 7) return { known: p }; }
+  for (const p of base().settlements) {
+    const [sx, sy] = toScreen(p.x, p.z), rw = Math.max(p.width * view.k, 7) / 2 + 2, rh = Math.max(p.depth * view.k, 7) / 2 + 2;
+    if (Math.abs(sx - px) < rw && Math.abs(sy - py) < rh) return { settlement: p };
+  }
+  return null;
+}
+canvas.addEventListener('mousedown', e => {
+  const hit = pick(e.offsetX, e.offsetY);
+  if (hit?.point) { drag = hit.point; selected = hit.point; draw(); return; }
+  if (hit?.known) { addPoint(hit.known.name, hit.known.x, hit.known.z); return; }
+  if (hit?.settlement) { addPoint('village', hit.settlement.x, hit.settlement.z); return; }
+  const [x, z] = toMap(e.offsetX, e.offsetY);
+  const ext = base().extent;
+  if (x >= ext.x0 && x <= ext.x1 && z >= ext.z0 && z <= ext.z1) addPoint('point', x, z);
+});
+canvas.addEventListener('mousemove', e => {
+  const [x, z] = toMap(e.offsetX, e.offsetY);
+  document.getElementById('coord').textContent = `x ${Math.round(x)}  z ${Math.round(z)}  ${areaOf(x, z)}`;
+  if (drag) { s.points[drag] = [Math.round(x), Math.round(z)]; draw(); return; }
+  hover = pick(e.offsetX, e.offsetY);
+  canvas.style.cursor = hover ? 'pointer' : 'crosshair';
+  canvas.title = hover?.settlement ? `${hover.settlement.houses} houses, ${hover.settlement.width} x ${hover.settlement.depth} m` : '';
+  draw();
+});
+window.addEventListener('mouseup', () => { if (drag) { drag = null; renderLeft(); showChecks(); } });
+new ResizeObserver(resize).observe(canvas.parentElement);
+
+// ---------------------------------------------------------------- toolbar
+async function fillOpen(current) {
+  const list = await api('/scenarios');
+  const open = document.getElementById('open');
+  open.replaceChildren(h('option', { value: '' }, 'Open...'),
+    ...['scenarios', 'examples'].map(g => h('optgroup', { label: g }, list.filter(f => f.group === g).map(f => h('option', { value: f.path }, f.name)))));
+  open.value = current ?? '';
+}
+document.getElementById('open').addEventListener('change', async e => {
+  if (!e.target.value) return;
+  s = normalise(await api('/scenario?path=' + encodeURIComponent(e.target.value)));
+  selected = null;
+  refresh();
+  log('Opened ' + e.target.value);
+});
+document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; refresh(); });
+document.getElementById('save').addEventListener('click', async () => {
+  try { const r = await api('/save', clean()); log('Saved ' + r.file, 'good'); await fillOpen(`scenarios/${s.id}.json`); } catch (e) { log(e.message, 'err'); }
+});
+async function build(install) {
+  log(install ? 'Building and installing...' : 'Building...');
+  try {
+    const r = await api('/build', { scenario: clean(), install });
+    log(r.output.trim(), r.ok ? '' : 'err');
+    log(r.ok ? (install ? 'Installed. Start the game: QUICK BATTLE > ' + (s.menu === 'training' ? 'Training' : 'Missions') : 'Build OK') : 'Build failed', r.ok ? 'good' : 'err');
+    await fillOpen(`scenarios/${s.id}.json`);
+  } catch (e) { log(e.message, 'err'); }
+}
+document.getElementById('build').addEventListener('click', () => build(false));
+document.getElementById('install').addEventListener('click', () => build(true));
+const dlg = document.getElementById('dlg');
+document.getElementById('settings').addEventListener('click', async () => {
+  const st = await api('/settings');
+  const path = input(st.gameDir, v => { st.gameDir = v; });
+  dlg.replaceChildren(h('h2', {}, 'Settings'), field('Game folder', path),
+    h('div', { class: 'row' }, h('span', { class: 'grow' }), h('button', { onclick: () => dlg.close() }, 'Cancel'),
+      h('button', { class: 'primary', onclick: async () => { await api('/settings', st); dlg.close(); } }, 'Save')));
+  dlg.showModal();
+});
+document.getElementById('mods').addEventListener('click', async () => {
+  const r = await api('/mods');
+  const rows = r.output.trim().split('\n').filter(Boolean).map(l => {
+    const name = l.match(/'([^']+)'/)?.[1];
+    return h('div', { class: 'card row' }, h('div', { class: 'grow small mono' }, l.replace(/^\S+\s+/, '')),
+      name ? h('button', { onclick: async e => {
+        const res = await api('/uninstall', { name });
+        log(res.output.trim(), res.ok ? 'good' : 'err');
+        e.target.closest('.card').remove();
+      } }, 'Remove') : null);
+  });
+  dlg.replaceChildren(h('h2', {}, 'Installed missions'), rows.length ? h('div', {}, rows) : h('div', { class: 'muted' }, 'None'),
+    h('div', { class: 'small muted', style: 'margin:8px 0' }, 'Close the game before removing.'),
+    h('div', { class: 'row' }, h('span', { class: 'grow' }), h('button', { onclick: () => dlg.close() }, 'Close')));
+  dlg.showModal();
+});
+
+(async () => {
+  document.body.append(h('datalist', { id: 'callsigns' }));
+  try {
+    cat = await api('/catalog');
+    document.getElementById('callsigns').append(...cat.enums.callsigns.map(c => h('option', { value: c + '_01' })));
+    s = blank();
+    await fillOpen();
+    refresh();
+    resize();
+  } catch (e) { log('Start failed: ' + e.message, 'err'); }
+})();
+</script>
+</body>
+</html>

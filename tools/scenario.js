@@ -730,6 +730,31 @@ function unitsDoc(missions, catalog, variants, db) {
   return out.join('\n') + '\n';
 }
 
+// docs/catalog.json: everything a tool needs to offer valid choices
+function catalogJson(missions, catalog, variants, db) {
+  return {
+    enums: {
+      menu: ['missions', 'training'], deployTypes: DEPLOY_TYPES, formations: FORMATIONS, facings: FACINGS, modes: MODES,
+      plans: Object.keys(PLANS), callsigns: CALLSIGN_NAMES, reserved: RESERVED, defaultTexts: DEFAULT_TEXTS,
+    },
+    bases: missions.map(m => ({
+      id: baseId(m), player: m.userSide, enemy: m.enemySide, title: m.title, description: m.description,
+      extent: m.extent, cellSize: m.cellSize,
+      cells: m.cells.filter(c => c.side !== 'NEUT').map(c => ({ side: c.side === m.userSide ? 'player' : 'enemy', x: c.x, z: c.z })),
+      points: m.points.map(p => ({ ...p, area: areaOf(m, [p.x, p.z]) })),
+      settlements: m.settlements.map(s => ({ ...s, width: Math.round(s.width), depth: Math.round(s.depth), area: areaOf(m, [s.x, s.z]) })),
+    })),
+    units: db.platoons.map(t => {
+      const e = catalog.get(t.key);
+      return {
+        key: t.key, nation: t.pool.nation, role: ROLE_NAMES[t.type] ?? t.type, pool: t.pool.key, men: e.men, vehicles: e.vehicles,
+        squads: e.squadTypes, maxSquads: t.maxSquads, source: e.fromDb ? 'database' : 'mission',
+        period: unitdb.period(t.pool), variants: (variants.get(t.key) ?? []).filter(v => v !== e).map(v => ({ key: v.key, men: v.men })),
+      };
+    }),
+  };
+}
+
 function scriptCommandRows(missions) {
   const all = missions.map(m => m.script).join('\n').split(/\r?\n/);
   return SCRIPT_COMMANDS.map(c => {
@@ -902,6 +927,7 @@ function reference(opts) {
   if (a < 0 || b < 0) fail('README.md has no REFERENCE:BEGIN/END markers');
   fs.writeFileSync(readme, md.slice(0, a) + referenceMarkdown(missions, db) + md.slice(b + END.length));
   fs.writeFileSync(path.join(ROOT, 'docs', 'UNITS.md'), unitsDoc(missions, catalog, variants, db));
+  fs.writeFileSync(path.join(ROOT, 'docs', 'catalog.json'), JSON.stringify(catalogJson(missions, catalog, variants, db)) + '\n');
   fs.writeFileSync(path.join(ROOT, 'scenario.schema.json'), JSON.stringify(schema(missions, catalog, variants, db), null, 2) + '\n');
   console.log(`README.md, docs/UNITS.md, scenario.schema.json: ${missions.length} bases, ${db.platoons.length} platoon types`);
 }
