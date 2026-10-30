@@ -243,6 +243,16 @@ Gegenprobe: Das Beispiel `examples/company_vs_company.json` ergibt in allen Trup
 
 ---
 
+### Zusätzliche Datenquellen
+
+- **Einheiten-Datenbank:** `data\common\shared\packed_data\tabs_oprum.flatdata` ist ein AZP3-Container (Verzeichnis nach der Hashtabelle, Offset `0x40 + Slots*8`). `div_units_ger` enthält die Tabellen `units` (Fahrzeuge/Personen) und `squads` (Gruppentypen, Besatzungen), `qbattle` die Zugvorlagen (z. B. `wer_spg_bn_43_bat_pl` mit Zusammensetzung und Pool).
+- **Züge aus der Datenbank:** Alle 266 Zugvorlagen sind baubar. `tools/unitdb.js` leitet die Zeilen aus Datenbankfeldern ab: Rollen-Maske (`squads` Spalte 23) und Unterrolle stehen direkt in der Datenbank, Pool-ID = `code * 0x800000`. Klassen-Tabellen (`SQUAD_CLASS`, `ROLE_GROUP`, `WEAPON_CLASS`) stammen aus allen 111 Gruppen der Missionen; mit `?` markierte Werte kommen dort nicht vor und sind vom ähnlichsten Typ übernommen. Gegenprobe: 98 von 111 Originalgruppen entstehen exakt neu, die übrigen 13 unterscheiden sich nur in Uniform-/Modellvarianten.
+- **Skriptsprache:** Die vollständigen Listen der Befehle, Formationen und Bewegungsarten stehen als Strings in `bin/rel/x64/adv_game.codelib`.
+- **Gebäude:** Jede Kartenkachel (`*.polypack2`, 2048 m) enthält in `obj_quads` die Objekte. Missionskoordinaten sind die lokalen Koordinaten der Mittelkachel (`polygon` in `gamespec`); geprüft an den Punkten `village` aus `sm01` und `tr02`, die 20–30 m neben Häusern liegen.
+- **Kartenzellen:** `ctrl_area0..3` ist eine zeilenweise Liste der Zellenbesitzer über das Rechteck `mission_area` (Zellen zu 1024 m), `ctrl_brief` dieselbe Information für alle Zellen.
+
+---
+
 ## 7. Validierung
 
 `validate_mission.js` prüft:

@@ -6,7 +6,7 @@ Builds single-player missions (`.mispack`) for **Graviteam Tactics: Mius-Front**
 scenario JSON ──► node tools/scenario.js build ──► output/<id>.mispack ──(--install)──► in game: QUICK BATTLE → Missions
 ```
 
-**This README is self-contained.** Everything needed to write a valid scenario – every allowed unit, base map, coordinate range and keyword – is listed here (section 6). You do not need access to the game files to author a scenario; only building/installing it requires the game. A machine-readable version of all rules is in [`scenario.schema.json`](scenario.schema.json) (JSON Schema draft-07).
+**No game analysis needed.** Everything needed to write a valid scenario is listed in this README (bases, maps, villages, keywords, script commands) and in [`docs/UNITS.md`](docs/UNITS.md) (every platoon type the game knows). Both are generated from the game data, so nobody has to search the game files again. You do not need access to the game to author a scenario; only building/installing it requires the game. A machine-readable version of all rules is in [`scenario.schema.json`](scenario.schema.json) (JSON Schema draft-07).
 
 Requirements for building: **Node.js** (tested with v24) and an installed copy of Mius-Front. No npm packages.
 
@@ -33,12 +33,12 @@ If the game is not installed at `C:\Program Files (x86)\Steam\steamapps\common\G
 A scenario has three parts:
 
 1. **Base** – one of the 7 missions shipped with the game. It provides the **map section, weather, date/time, preview image and which nation the player commands** (German or Soviet). Its own troops are discarded.
-2. **Forces** – any combination of the 24 platoon types found in the shipped missions (section 6.2 / 6.3). Each platoon gets new IDs, a callsign and a position. Platoons may come from other missions and may switch sides.
+2. **Forces** – any combination of the 266 platoon types of the game ([docs/UNITS.md](docs/UNITS.md)). Each platoon gets new IDs, a callsign and a position. Platoons are taken from a shipped mission where one contains them, otherwise built from the game's unit database.
 3. **Course of battle** – deployment, orders for the enemy, victory and defeat conditions, hint texts. The generator turns this into the mission script; experts may supply their own script.
 
 After building, the generator validates the file (IDs, references, checksums, script ↔ callsigns). Only a valid file is installed.
 
-Status: both examples were played successfully in the game (company vs company; mixed forces taken from five different missions with platoons switching sides).
+Status: `company_vs_company` and `panzer_meeting` were played successfully in the game (the latter with forces from five different missions, some switching sides). `liberate_village` is new and untested in the game: it is the first scenario with database-built units and with forces starting outside their start areas. Every one of the 266 platoon types builds and passes validation, but database-built platoons (marked in `docs/UNITS.md`) are not yet confirmed in the game.
 
 ---
 
@@ -47,9 +47,9 @@ Status: both examples were played successfully in the game (company vs company; 
 Follow these steps; every value you need is in section 6.
 
 1. **Pick a base** (6.1). It decides the map and who the player is: German player → `tr03`, `tr04`, `tr06`; Soviet player → `sm01`, `tr01`, `tr02`, `tr05`.
-2. **Define points** in that base's coordinate system. Put the player's deployment point inside the **player start area** and the enemy's inside the **enemy start area** of the base. Reusing or staying close to the *known points* of the base is safest – they are tested positions.
-3. **Choose platoons**: player platoons must be of the player's nation, enemy platoons of the enemy nation (6.2 German, 6.3 Soviet). A realistic company = 1 HQ + 2–3 rifle platoons, optionally support (machine guns, mortars, anti-tank guns, tanks).
-4. **Give every platoon a unique callsign** of the form `<name>_<two digits>`, e.g. `panther_01`, with a name from the callsign list (6.4). Typically one name per side.
+2. **Define points** in that base's coordinate system. Put the player's deployment point inside the **player start area** and the enemy's inside the **enemy start area** of the base. Reusing or staying close to the *known points* of the base is safest – they are tested positions. To fight over a village, use the **settlements** listed for the base; they give the real location of the buildings.
+3. **Choose platoons** from [docs/UNITS.md](docs/UNITS.md): player platoons must be of the player's nation, enemy platoons of the enemy nation. Its vehicle index at the end shows which platoons contain a given vehicle. A realistic company = 1 HQ + 2–3 rifle platoons, optionally support (machine guns, mortars, anti-tank guns, tanks).
+4. **Give every platoon a unique callsign** of the form `<name>_<two digits>`, e.g. `panther_01`, with a name from the callsign list (6.3). Typically one name per side.
 5. **Set deployment** for each side (`deploy`), **orders** for the attacker, a **victory** and a **defeat** condition.
 6. Keep all texts plain ASCII; English fits the rest of the game.
 
@@ -95,6 +95,7 @@ A German rifle platoon (player) digs in at `home`; a Soviet rifle platoon attack
 Complete examples:
 - [examples/company_vs_company.json](examples/company_vs_company.json) – German infantry company defends against a Soviet rifle company (base `tr04`).
 - [examples/panzer_meeting.json](examples/panzer_meeting.json) – Pz III platoon, rifle platoon and Pak against T-34s, riflemen, SMG troops and a Maxim (base `tr06`, units from five missions).
+- [examples/liberate_village.json](examples/liberate_village.json) – infantry company and two StuG III attack a village held by a Soviet rifle company (base `tr06`, enemy deployed per platoon, victory by taking the village).
 
 JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.g. `"_note": "..."`. To get editor validation and auto-completion add `"$schema": "../scenario.schema.json"` (path relative to the JSON file).
 
@@ -128,7 +129,7 @@ JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.
 }
 ```
 
-- **Name:** lowercase letters, digits, `_`, starting with a letter, max. 31 characters, not a reserved name (6.4).
+- **Name:** lowercase letters, digits, `_`, starting with a letter, max. 31 characters, not a reserved name (6.3).
 - **Value:** `[x, z]` in metres in the coordinate system of the base. **x grows to the east** (derived from the original scripts, where the enemy "from the east" stands at larger x). Points must lie inside the base's map extent (6.1), otherwise the build fails.
 - Each base lists its **player start area**, **enemy start area** and **known points** (6.1). The generator warns if a side deploys outside its own start area.
 
@@ -154,7 +155,7 @@ JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.
 |---|---|---|---|
 | `at` | yes | point name | Where to set up. |
 | `type` | – | `"trench"` \| `"place"` | `trench` = dug in at prepared positions, `place` = in the open. Default `place`. |
-| `formation` | – | `"line2"`, `"line"`, `"columnlr"`, `"battery"` | Formation. Default `line2` for `trench`, `columnlr` for `place`. |
+| `formation` | – | see 6.3 | Formation. Default `line2` for `trench`, `columnlr` for `place`. |
 | `facing` | – | `"N"`, `"NE"`, `"E"`, `"SE"`, `"S"`, `"SW"`, `"W"`, `"NW"` | Facing. Default: towards the other side. |
 
 Each side needs a `deploy`, unless every one of its platoons has its own `deploy` or a `position`.
@@ -172,7 +173,7 @@ Each side needs a `deploy`, unless every one of its platoons has its own `deploy
 | Field | Required | Values | Meaning |
 |---|---|---|---|
 | `to` | yes | point name | Destination. |
-| `mode` | – | `"assault"`, `"attack"`, `"march"`, `"defence"`, `"siege"` | Kind of movement (6.4). Default `attack`. |
+| `mode` | – | see 6.3 | Kind of movement. Default `attack`. |
 | `wait_s` | – | seconds | Wait this long after the previous order. Without `wait_s` the order is queued and executed once the previous one is done. |
 
 ### 4.5 `platoons`
@@ -184,8 +185,9 @@ Each side needs a `deploy`, unless every one of its platoons has its own `deploy
 
 | Field | Required | Meaning |
 |---|---|---|
-| `callsign` | yes | Unique callsign, recommended `<name>_<nn>` with a name from 6.4, e.g. `pine_03`. Other names work but trigger a warning and may display oddly in the game. |
-| `unit` | yes | Platoon type from 6.2/6.3, e.g. `wer_mibn_1141_plat`. Without suffix the strongest variant is used (on a tie the base's own variant). A specific variant: `<unit>@<base>`, e.g. `wer_mibn_1141_comcoy@tr04`. Must match the side's nation. |
+| `callsign` | yes | Unique callsign, recommended `<name>_<nn>` with a name from 6.3, e.g. `pine_03`. Other names work but trigger a warning and may display oddly in the game. |
+| `unit` | yes | Platoon type from [docs/UNITS.md](docs/UNITS.md), e.g. `wer_mibn_1141_plat`. Without suffix the strongest variant is used (on a tie the base's own variant). A specific variant: `<unit>@<base>`, e.g. `wer_mibn_1141_comcoy@tr04`. Must match the side's nation. |
+| `size` | – | Number of squads (1–15), for tanks effectively the number of vehicles. Repeats the platoon's last squad type, e.g. `wer_spg_bn_43_bat_pl` with `"size": 3` gives 3 StuG III instead of 2. |
 | `position` | – | `[x, z]` – platoon symbol / deployment area on the battle map before set-up. Default: its deployment point. |
 | `deploy` | – | Own set-up for this platoon only (same fields as the side's `deploy`); overrides the side's `deploy`. |
 | `plan` | – | `"attack"`, `"defend"`, `"hold"` – basic AI attitude of this platoon. Default: as usual in the base. |
@@ -199,10 +201,19 @@ Limits: at most 60 platoons per scenario, at most 15 platoons of the same pool (
 "defeat":  { "enemy_reaches": "target", "radius": 200, "share": 0.5 }
 ```
 
+To win by taking an objective, combine both checks; they are evaluated in order, first `own_reaches`, then `balance`:
+
+```json
+"victory": { "own_reaches": "village", "radius": 250, "share": 0.5, "balance": 2.0 }
+```
+
 | Field | Meaning |
 |---|---|
 | `victory.balance` | Victory as soon as the ratio of own to enemy strength reaches this value (`2.0` = twice as strong). |
 | `victory.after_s` | Start checking only after this many seconds. |
+| `victory.own_reaches` | Victory requires your forces to reach this point … |
+| `victory.radius` | … within this radius in metres (default `200`) … |
+| `victory.share` | … with this share of your forces (default `0.5`). |
 | `defeat.enemy_reaches` | Defeat when the enemy reaches this point … |
 | `defeat.radius` | … within this radius in metres (default `200`) … |
 | `defeat.share` | … with this share of its forces (default `0.5`). |
@@ -239,7 +250,7 @@ Instead of the generated course of battle you can write the whole script, one li
 ]
 ```
 
-Then `points`, `orders`, `victory`, `defeat` and `camera` have no effect – everything is in the script. Callsigns used in `group` lines must exist (checked). Known commands are described in [docs/TECHNIK.md, section 5](docs/TECHNIK.md#5-missionsskript) (German). Tip: build once without `script` and use the generated script as a template: `node tools/azp3.js output/<id>.mispack tmp` writes it to `tmp/script__config__loc_def.bin`.
+Then `points`, `orders`, `victory`, `defeat` and `camera` have no effect – everything is in the script. Callsigns used in `group` lines must exist (checked). All commands are listed in section 6.4. Tip: build once without `script` and use the generated script as a template: `node tools/azp3.js output/<id>.mispack tmp` writes it to `tmp/script__config__loc_def.bin`.
 
 ---
 
@@ -279,6 +290,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -1024..4096, z -2048..3072; grid of 1024 m cells
 - Player start area: x 0..1024 / z 0..1024; x 1024..2048 / z 1024..2048
 - Enemy start area: x 2048..3072 / z 0..1024; x 2048..3072 / z 1024..2048
+- Settlements: 111 houses around [2900, -416], 1812 x 1063 m (neutral area); 33 houses around [2425, -430], 702 x 317 m (neutral area); 17 houses around [1352, -127], 316 x 248 m (neutral area); 8 houses around [1640, -230], 322 x 127 m (neutral area); 8 houses around [3506, -476], 66 x 251 m (neutral area); 5 houses around [1268, 300], 104 x 202 m (neutral area); 4 houses around [98, 98], 55 x 114 m (player area); 4 houses around [3342, -89], 75 x 98 m (neutral area); 3 houses around [404, 35], 152 x 22 m (player area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -298,6 +310,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z -1024..4096; grid of 1024 m cells
 - Player start area: x 1024..2048 / z 2048..3072
 - Enemy start area: x 0..1024 / z 1024..2048
+- Settlements: 10 houses around [2893, 2117], 220 x 164 m (neutral area); 9 houses around [2478, 2789], 49 x 148 m (neutral area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -318,6 +331,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z -1024..4096; grid of 1024 m cells
 - Player start area: x -1024..0 / z 1024..2048; x -1024..0 / z 2048..3072
 - Enemy start area: x 0..1024 / z 1024..2048; x 1024..2048 / z 1024..2048
+- Settlements: 10 houses around [2893, 2117], 220 x 164 m (neutral area); 9 houses around [2478, 2789], 49 x 148 m (neutral area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -334,6 +348,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -1024..4096, z -2048..2048; grid of 1024 m cells
 - Player start area: x 0..1024 / z -1024..0
 - Enemy start area: x 2048..3072 / z -1024..0; x 2048..3072 / z 0..1024
+- Settlements: 83 houses around [1583, 1757], 1180 x 586 m (neutral area); 42 houses around [1721, 1388], 527 x 524 m (neutral area); 27 houses around [346, 1386], 713 x 410 m (neutral area); 10 houses around [1434, -1909], 256 x 159 m (neutral area); 8 houses around [-590, -476], 66 x 251 m (neutral area); 6 houses around [2072, -2014], 180 x 44 m (neutral area); 4 houses around [-754, -89], 75 x 98 m (neutral area); 4 houses around [803, -1537], 59 x 117 m (neutral area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -357,6 +372,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..2048, z -2048..2048; grid of 1024 m cells
 - Player start area: x -1024..0 / z -1024..0; x -1024..0 / z 0..1024
 - Enemy start area: x 0..1024 / z -1024..0; x 0..1024 / z 0..1024
+- Settlements: none
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -388,6 +404,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z 0..4096; grid of 1024 m cells
 - Player start area: x 0..1024 / z 2048..3072
 - Enemy start area: x 0..1024 / z 1024..2048; x 1024..2048 / z 1024..2048
+- Settlements: 149 houses around [-1868, 262], 1803 x 598 m (neutral area); 111 houses around [-1196, 3680], 1812 x 1063 m (neutral area); 33 houses around [-1671, 3666], 702 x 317 m (neutral area); 10 houses around [1434, 2187], 256 x 159 m (neutral area); 8 houses around [-590, 3620], 66 x 251 m (neutral area); 6 houses around [2072, 2082], 180 x 44 m (neutral area); 4 houses around [-754, 4007], 75 x 98 m (neutral area); 4 houses around [803, 2559], 59 x 117 m (player area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -409,6 +426,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z -2048..2048; grid of 1024 m cells
 - Player start area: x -1024..0 / z -1024..0
 - Enemy start area: x 1024..2048 / z -1024..0
+- Settlements: 20 houses around [274, 1756], 430 x 307 m (neutral area); 10 houses around [845, -1979], 220 x 164 m (neutral area); 9 houses around [430, -1307], 49 x 148 m (neutral area); 8 houses around [686, 1599], 298 x 393 m (neutral area); 5 houses around [657, 1985], 215 x 102 m (neutral area); 4 houses around [1023, 1947], 112 x 64 m (neutral area); 4 houses around [2146, 98], 55 x 114 m (neutral area); 3 houses around [2452, 35], 152 x 22 m (neutral area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -417,58 +435,76 @@ A base supplies the map section, weather, date/time and which nation the player 
 | cmd | -113 | -558 | player area |
 | enemy | 1264 | -785 | enemy area |
 
-### 6.2 Unit types – German (`GER`)
+### 6.2 Unit types
 
-Use the value in the `unit` column. Without suffix the strongest variant is used; add `@<base>` for a specific variant (listed with men count).
+The complete list of all allowed `unit` values is in **[docs/UNITS.md](docs/UNITS.md)**: every platoon type of the game, grouped by parent unit, with composition, strength and service period, plus an index of all vehicles and heavy weapons.
 
-| `unit` | Role | Description | Men | Vehicles / heavy weapons | Variants |
-|---|---|---|---|---|---|
-| `wer_mibn_1141_at_plat` | anti-tank gun | Anti-tank gun section: one 5 cm Pak 38 with crew and fire-control squad | 10 | 1x pak38 | `wer_mibn_1141_at_plat@tr02` (10) |
-| `wer_minf1141_igcoy_lfpl` | artillery | Infantry gun platoon: 2x 7.5 cm le.IG 18 with battery/platoon command and telephone squad | 25 | 2x leig18 | `wer_minf1141_igcoy_lfpl@tr04` (25) |
-| `wer_mibn_1141_comcoy` | HQ | Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck | 24 | 2x opel_blitz_36, 1x pzb41 | `wer_mibn_1141_comcoy@sm01` (11), `wer_mibn_1141_comcoy@tr04` (23), `wer_mibn_1141_comcoy@tr05` (24) |
-| `wer_mibn_1141_plat` | infantry | Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar | 50 | - | `wer_mibn_1141_plat@sm01` (50), `wer_mibn_1141_plat@tr02` (27), `wer_mibn_1141_plat@tr04` (50), `wer_mibn_1141_plat@tr05` (47) |
-| `wer_spg_bn_43_spam` | support | Assault-gun battalion support section with 2 Opel Blitz trucks; no combat value | 8 | 2x opel_blitz_36 | `wer_spg_bn_43_spam@tr01` (8) |
-| `wer_pz_coy_plat1` | tank | Panzer III platoon: 1x Pz III J (long gun) and 3x Pz III M | 20 | 1x pz3jlg, 3x pz3m | `wer_pz_coy_plat1@tr06` (20) |
-| `wer_mar_42_plat` | tank destroyer | Marder platoon (1942): 1x Marder II, 2x Marder III, 1x Sd.Kfz. 250 half-track | 14 | 1x marder2_132, 2x marder3_139, 1x sdkfz250a1 | `wer_mar_42_plat@tr03` (14) |
-| `wer_mar_43_plat` | tank destroyer | Marder platoon (1943): 1x Marder III and 1x Marder II self-propelled anti-tank guns | 7 | 1x marder3_139, 1x marder2_131 | `wer_mar_43_plat@sm01` (7) |
+- German (`GER`): 132 platoon types (5 reconnaissance, 36 company HQ, 23 armour, 11 mobile support, 39 support weapons, 9 battalion HQ, 7 infantry, 2 recovery/repair)
+- Soviet (`USSR`): 134 platoon types (10 reconnaissance, 15 battalion HQ, 24 support weapons, 36 company HQ, 5 infantry, 40 armour, 4 mobile support)
 
-### 6.3 Unit types – Soviet (`USSR`)
-
-Use the value in the `unit` column. Without suffix the strongest variant is used; add `@<base>` for a specific variant (listed with men count).
-
-| `unit` | Role | Description | Men | Vehicles / heavy weapons | Variants |
-|---|---|---|---|---|---|
-| `ra_ssq_0143_atr` | anti-tank | Cavalry anti-tank rifle platoon: platoon HQ and 3 anti-tank rifle squads (dismounted) | 18 | - | `ra_ssq_0143_atr@sm01` (18) |
-| `ra_cr_0143_mt82_com` | HQ | Mortar battery HQ: commander and telephone squad; no weapons of its own | 10 | - | `ra_cr_0143_mt82_com@sm01` (10) |
-| `ra_rbn_1242_combat` | HQ | Rifle battalion HQ: battalion commander and telephone squad | 12 | - | `ra_rbn_1242_combat@tr05` (12) |
-| `ra_rbn_1242_comcoy` | HQ | Rifle company HQ: company commander, political officer, runner and a sniper team | 5 | - | `ra_rbn_1242_comcoy@tr04` (5) |
-| `ra_rr1242_smg_hq` | HQ | Submachine-gun company HQ (3 men) | 3 | - | `ra_rr1242_smg_hq@tr03` (3) |
-| `ra_ssq_0143_comsq` | HQ | Cavalry squadron HQ: commander, political officer, telephone squad | 10 | - | `ra_ssq_0143_comsq@sm01` (10) |
-| `ra_rbn_1242_plat2` | infantry | Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads) | 39 | - | `ra_rbn_1242_plat2@tr02` (21), `ra_rbn_1242_plat2@tr04` (39) |
-| `ra_rr1242_smg_plat` | infantry | Submachine-gun platoon: platoon HQ and 3 SMG squads (assault infantry) | 33 | - | `ra_rr1242_smg_plat@tr03` (33) |
-| `ra_ssq_0143_plat` | infantry | Cavalry sabre platoon fighting dismounted: platoon HQ and 2 squads | 17 | - | `ra_ssq_0143_plat@sm01` (17) |
-| `ra_rbn_1242_hmg` | machine gun | Heavy machine-gun squad: 1x Maxim HMG with crew | 6 | - | `ra_rbn_1242_hmg@tr05` (6) |
-| `ra_cr_0143_mt82_fplat` | mortar | 82 mm mortar platoon: 3 mortars with fire-control squad | 17 | 3x mt82 | `ra_cr_0143_mt82_fplat@sm01` (17) |
-| `ra_rr1242_foot_scout` | recon | Foot reconnaissance platoon: platoon HQ, 3 scout squads and an artillery observer | 41 | - | `ra_rr1242_foot_scout@tr05` (41) |
-| `ra_ogvtpp_42_plat` | tank | KV-1S heavy tank platoon: 2 tanks | 10 | 1x kv1se, 1x kv1s | `ra_ogvtpp_42_plat@tr02` (10) |
-| `ra_tbr_42_bn1_t34_cc` | tank | T-34 company commander tank (1 tank) | 4 | 1x t34_utz_m42_late | `ra_tbr_42_bn1_t34_cc@tr03` (4) |
-| `ra_tbr_42_bn1_t34_plat` | tank | T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) | 12 | 3x t34_utz_m42_late | `ra_tbr_42_bn1_t34_plat@tr01` (4), `ra_tbr_42_bn1_t34_plat@tr03` (12), `ra_tbr_42_bn1_t34_plat@tr06` (12) |
-| `ra_tbr_42_bn2_sm_plat` | tank | T-70 light tank platoon: 3x T-70M | 6 | 3x t70m | `ra_tbr_42_bn2_sm_plat@tr04` (6) |
-
-### 6.4 Enumerations
+### 6.3 Enumerations
 
 | Field | Allowed values |
 |---|---|
 | `base` | `sm01`, `tr01`, `tr02`, `tr03`, `tr04`, `tr05`, `tr06` |
 | `menu` | `missions` (default), `training` |
 | `deploy.type` | `trench` (dug in at prepared positions), `place` (placed in the open) |
-| `deploy.formation` (values used by the original missions) | `line2` (two lines; default for trench), `line` (single line), `columnlr` (column; default for place), `battery` (gun/mortar battery layout) |
+| `deploy.formation` (complete list from the game's script parser) | `columnlr` (column, tested; default for place), `line2` (two lines, tested; default for trench), `line` (single line, tested), `line1` (single line, tested with anti-tank guns), `battery` (gun/mortar battery, tested), `line3` (three lines), `column` (column), `col` (column), `columnl` (column left), `columnr` (column right), `coll` (column left), `colr` (column right), `collr` (column) |
 | `deploy.facing`, `camera.direction` | `N`, `NE`, `E`, `SE`, `S`, `SW`, `W`, `NW` |
-| `orders[].mode` (meanings inferred from the original missions) | `assault` (aggressive advance, fighting through to the point), `attack` (attack the point), `march` (move in march order: fast, not ready to fight), `defence` (move to the point and take up defence there), `siege` (surround and besiege the point) |
+| `orders[].mode` (complete list; meanings inferred) | `assault` (aggressive advance, fighting through to the point), `attack` (attack the point), `march` (move in march order: fast, not ready to fight), `fast_move` (fast move), `defence` (move to the point and take up defence there), `siege` (surround and besiege the point), `recon` (reconnaissance move), `hidden` (concealed move), `scan` (observe the area), `enter` (mount vehicles), `leave` (dismount from vehicles) |
 | `platoons[].plan` | `attack`, `defend`, `hold` |
 | callsign names | `pine`, `linden`, `birch`, `asp`, `beech`, `chestnut`, `willow`, `oak`, `fir`, `broom`, `guelder`, `cedar`, `reed`, `poplar`, `cherry`, `tiger`, `jaguar`, `leopard`, `panther`, `elefant`, `lion`, `beaver`, `viper`, `wolf`, `fox`, `bear`, `lynx`, `hawk`, `eagle`, `crocodile`, `falcon` – use as `<name>_<two digits>`, e.g. `pine_01` |
 | reserved point/callsign names | `own`, `foe`, `own_main`, `foe_main`, `main`, `deploy`, `process`, `goto`, `battle_victory`, `battle_defeat`, `foe_later`, `own_later` |
 | default `texts` keys | `brief_own`, `brief_foe`, `info_end_deploy`, `info_1st_orders`, `info_attack` |
+
+### 6.4 Script commands
+
+All commands the game's script parser knows, for use in `"script"`, with the first usage found in the shipped missions.
+
+| Command | Example |
+|---|---|
+| `def` | `def alied 717, 0, 575;` |
+| `group` | `group panther panther_02 panther_03;` |
+| `place` | `place panther enemy columnlr W;` |
+| `trench` | `trench jaguar_01 edefence line north-west;` |
+| `ambush` | `ambush()` |
+| `detach` | `detach;` |
+| `formation` | not used in the shipped missions |
+| `move` | `move panther target assault;` |
+| `+move` | `+move panther village defence;` |
+| `defence` | not used in the shipped missions |
+| `block_ai` | `block_ai panther;` |
+| `track` | `track panther enemy;` |
+| `camera` | `camera alied SE 0.5;` |
+| `map` | not used in the shipped missions |
+| `skip` | `skip deploy endgame;` |
+| `run` | `run fst_orders;` |
+| `go` | `go process;` |
+| `ret` | `ret;` |
+| `delay` | `delay 5.0;` |
+| `time` | `time 2;` |
+| `mark` | `mark defence brief1a;` |
+| `unmark` | `unmark brief1;` |
+| `chmark` | `chmark brief1c brief1d;` |
+| `event` | `event @ @1;` |
+| `blink` | `blink common pause info_1st_orders;` |
+| `unblink` | not used in the shipped missions |
+| `blink_tab` | `blink_tab support 0 1 brief6;` |
+| `unblink_tab` | `unblink_tab support;` |
+| `wait_sel` | `wait_sel pine;` |
+| `wait_sel1` | `wait_sel1 tiger_recon;` |
+| `wait_order` | `wait_order move;` |
+| `wait_orders` | not used in the shipped missions |
+| `wait_in` | `wait_in enemy village 200.0 0.5;` |
+| `wait_bal` | `wait_bal 2.0;` |
+| `wait_lost` | not used in the shipped missions |
+| `wait_capt` | `wait_capt edefence 200.0 2.0;` |
+| `endgame` | `endgame victory;` |
+| `setac` | `setac arty point0;` |
+| `check` | not used in the shipped missions |
+| `press` | not used in the shipped missions |
+| `achiv` | `achiv AC_TRAIN_END;` |
+| `clear_mem` | not used in the shipped missions |
 
 <!-- REFERENCE:END -->
 
@@ -494,12 +530,13 @@ The game must be closed. Before the first change `data\common\shared\config\path
 
 | Message | Fix |
 |---|---|
-| `unit "…" unknown` | Compare with the `unit` column in 6.2/6.3. |
+| `unit "…" unknown` | Compare with the `unit` column in [docs/UNITS.md](docs/UNITS.md). |
 | `"…" is GER, but this side is USSR` | Move the platoon to the other side or pick a base with the matching player nation (6.1). |
 | `point "…" is not defined in "points"` | Add the point or fix the typo. |
 | `point "…" is outside the map of base …` | Use coordinates within the base's map extent (6.1). |
 | `only plain ASCII characters are allowed` | Remove special characters from title/texts. |
 | `note: … deploys at "…", which lies in the … area` | Warning only: move the deployment point into the side's start area unless intended. |
+| `note: … is in service … outside` | Warning only: the unit did not exist on the mission date (all bases are 1 July 1943). |
 | `Mius-Front is still running` | Close the game, then run again with `--install`. |
 | `VALIDATION FAILED` | Internal generator error – the list below it shows what is wrong. |
 
@@ -508,7 +545,7 @@ The game must be closed. Before the first change `data\common\shared\config\path
 ## 9. Limits
 
 - Map, weather, date and time always come from the base; only the 7 map sections of the shipped missions are available.
-- Only the 24 platoon types of the shipped missions; individual squads cannot be combined freely.
+- Only the platoon types of [docs/UNITS.md](docs/UNITS.md); individual squads cannot be combined freely (`size` only repeats the last squad type).
 - Orders apply to a whole side, not to single platoons (except with your own `script`).
 
 ---
@@ -519,15 +556,18 @@ The game must be closed. Before the first change `data\common\shared\config\path
 MiusMissionMaker/
 ├── README.md                    this guide (section 6 is generated)
 ├── scenario.schema.json         JSON Schema for scenario files (generated)
+├── docs/UNITS.md                every platoon type of the game (generated)
 ├── examples/                    example scenarios
 ├── output/                      built missions (.mispack)
 ├── docs/TECHNIK.md              file formats, reverse engineering, internals (German)
 └── tools/
     ├── scenario.js              generator: build / reference
+    ├── unitdb.js                the game's unit database and platoon templates
+    ├── mapdata.js               buildings and settlements from the map tiles
     ├── install_mission.js       install / list / remove missions
     ├── validate_mission.js      consistency check of a .mispack
     ├── azp3.js, azcf.js         reading/writing the game formats
     └── templates/desc.addpack   template for the mod manifest
 ```
 
-After a game update, regenerate section 6 and the schema with `node tools/scenario.js reference`.
+After a game update, regenerate section 6, `docs/UNITS.md` and the schema with `node tools/scenario.js reference`.

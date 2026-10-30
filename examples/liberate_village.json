@@ -1,0 +1,49 @@
+{
+  "$schema": "../scenario.schema.json",
+  "id": "kp03_liberate_village",
+  "title": "Liberate the Village",
+  "description": "Soviet riflemen have dug in at a small village on the ridge. Attack from the east with your infantry company and two StuG III assault guns, drive the enemy out and take the village.",
+  "menu": "missions",
+  "base": "tr06",
+  "max_minutes": 90,
+  "deploy_phase": false,
+  "points": {
+    "start": [1700, 1650],
+    "hamlet": [686, 1599],
+    "village": [274, 1756],
+    "village_east": [430, 1730],
+    "village_south": [280, 1640]
+  },
+  "camera": { "at": "start", "direction": "W", "zoom": 0.4 },
+  "sides": {
+    "player": {
+      "deploy": { "type": "place", "at": "start", "formation": "columnlr", "facing": "W" },
+      "platoons": [
+        { "callsign": "panther_01", "unit": "wer_mibn_1141_comcoy" },
+        { "callsign": "panther_02", "unit": "wer_mibn_1141_plat" },
+        { "callsign": "panther_03", "unit": "wer_mibn_1141_plat" },
+        { "callsign": "panther_04", "unit": "wer_mibn_1141_plat" },
+        { "callsign": "tiger_01", "unit": "wer_spg_bn_43_bat_pl" }
+      ]
+    },
+    "enemy": {
+      "ai": false,
+      "platoons": [
+        { "callsign": "pine_01", "unit": "ra_rbn_1242_comcoy", "plan": "defend",
+          "deploy": { "type": "trench", "at": "village", "formation": "line", "facing": "E" } },
+        { "callsign": "pine_02", "unit": "ra_rbn_1242_plat2", "plan": "defend",
+          "deploy": { "type": "trench", "at": "village_east", "formation": "line2", "facing": "E" } },
+        { "callsign": "pine_03", "unit": "ra_rbn_1242_plat2", "plan": "defend",
+          "deploy": { "type": "trench", "at": "village_south", "formation": "line2", "facing": "SE" } },
+        { "callsign": "pine_04", "unit": "ra_rbn_1242_plat2", "plan": "defend",
+          "deploy": { "type": "trench", "at": "hamlet", "formation": "line2", "facing": "E" } }
+      ]
+    }
+  },
+  "victory": { "own_reaches": "village", "radius": 250, "share": 0.5, "balance": 2.0 },
+  "texts": {
+    "brief_own": "Your company and two StuG III assemble east of the village",
+    "brief_foe": "Soviet rifle company dug in at the village",
+    "info_1st_orders": "Give your orders, then press [%do_pause] to start the attack on the village"
+  }
+}

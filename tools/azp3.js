@@ -14,7 +14,8 @@ function readPack(file) {
   const data = fs.readFileSync(file);
   if (data.toString('latin1', 0, 4) !== 'AZP3') throw new Error('not an AZP3 pack');
   const entries = [];
-  for (let off = 0x140; off + ENTRY_SIZE <= data.length; off += ENTRY_SIZE) {
+  // directory follows the name hash table (header field 2 = number of 8-byte slots)
+  for (let off = 0x40 + data.readUInt32LE(8) * 8; off + ENTRY_SIZE <= data.length; off += ENTRY_SIZE) {
     const typ = data.readUInt32LE(off);
     if (typ !== 9) break;
     const e = {

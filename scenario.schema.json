@@ -148,6 +148,18 @@
         "after_s": {
           "type": "number",
           "minimum": 0
+        },
+        "own_reaches": {
+          "type": "string"
+        },
+        "radius": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "share": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
         }
       }
     },
@@ -253,88 +265,552 @@
                         "unit": {
                           "anyOf": [
                             {
-                              "const": "wer_mar_43_plat",
-                              "description": "tank destroyer: Marder platoon (1943): 1x Marder III and 1x Marder II self-propelled anti-tank guns (7 men, strongest variant)"
+                              "const": "wer_arty_okh",
+                              "description": "reconnaissance, 10 men"
                             },
                             {
-                              "const": "wer_mar_43_plat@sm01",
-                              "description": "tank destroyer: Marder platoon (1943): 1x Marder III and 1x Marder II self-propelled anti-tank guns (variant from sm01_repulse_gravi, 7 men)"
+                              "const": "wer_air",
+                              "description": "reconnaissance, 14 men"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (24 men, strongest variant)"
+                              "const": "wer_pzd1190_hq",
+                              "description": "company HQ, 12 men, sdkfz251c10 sdkfz251c1"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy@sm01",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (variant from sm01_repulse_gravi, 11 men)"
+                              "const": "wer_pzd1190_pz_coy_hq",
+                              "description": "company HQ, 12 men, sdkfz251c10 sdkfz251c1"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy@tr04",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (variant from tr04_defence_gravi, 23 men)"
+                              "const": "wer_pzd1190_pz_plat",
+                              "description": "armour, 41 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy@tr05",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (variant from tr05_ambush_gravi, 24 men)"
+                              "const": "wer_pzd1190_tfl_coy_hq",
+                              "description": "company HQ, 3 men, pz3fl"
                             },
                             {
-                              "const": "wer_mibn_1141_plat",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (50 men, strongest variant)"
+                              "const": "wer_pzd1190_tfl_plat",
+                              "description": "mobile support, 9 men, pz3fl pz3fl pz3fl"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@sm01",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from sm01_repulse_gravi, 50 men)"
+                              "const": "wer_pzd1190_tfl_coy",
+                              "description": "mobile support, 21 men, pz3fl pz3fl pz3fl pz3fl pz3fl pz3fl pz3fl"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@tr02",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from tr02_attack_gravi, 27 men)"
+                              "const": "wer_minf1141_stcoy_hq",
+                              "description": "company HQ, 9 men, opel_blitz_36"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@tr04",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from tr04_defence_gravi, 50 men)"
+                              "const": "wer_minf1141_stcoy_at",
+                              "description": "support weapons, 32 men, pak38 pak38 pak38 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@tr05",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from tr05_ambush_gravi, 47 men)"
+                              "const": "wer_minf1141_stcoy_at1",
+                              "description": "support weapons, 35 men, pak40 pak40 pak40 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_spg_bn_43_spam",
-                              "description": "support: Assault-gun battalion support section with 2 Opel Blitz trucks; no combat value (8 men, strongest variant)"
+                              "const": "wer_minf1141_stcoy_at2",
+                              "description": "support weapons, 35 men, pak36r pak36r pak36r sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_spg_bn_43_spam@tr01",
-                              "description": "support: Assault-gun battalion support section with 2 Opel Blitz trucks; no combat value (variant from tr01_basic_gravi, 8 men)"
+                              "const": "wer_minf1141_stcoy_at3",
+                              "description": "support weapons, 32 men, pak97_38 pak97_38 pak97_38 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_mibn_1141_at_plat",
-                              "description": "anti-tank gun: Anti-tank gun section: one 5 cm Pak 38 with crew and fire-control squad (10 men, strongest variant)"
+                              "const": "wer_minf1141_stcoy_eng",
+                              "description": "support weapons, 69 men, opel_blitz_36"
                             },
                             {
-                              "const": "wer_mibn_1141_at_plat@tr02",
-                              "description": "anti-tank gun: Anti-tank gun section: one 5 cm Pak 38 with crew and fire-control squad (variant from tr02_attack_gravi, 10 men)"
+                              "const": "wer_minf1141_arty_bat",
+                              "description": "support weapons, 48 men, lefh18m lefh18m lefh18m lefh18m"
                             },
                             {
-                              "const": "wer_mar_42_plat",
-                              "description": "tank destroyer: Marder platoon (1942): 1x Marder II, 2x Marder III, 1x Sd.Kfz. 250 half-track (14 men, strongest variant)"
+                              "const": "wer_minf1141_arty_bat2",
+                              "description": "support weapons, 48 men, sfh414f sfh414f sfh414f sfh414f"
                             },
                             {
-                              "const": "wer_mar_42_plat@tr03",
-                              "description": "tank destroyer: Marder platoon (1942): 1x Marder II, 2x Marder III, 1x Sd.Kfz. 250 half-track (variant from tr03_recon_gravi, 14 men)"
+                              "const": "wer_minf1141_aa_bat",
+                              "description": "support weapons, 45 men, flak36 flak36 flak36 flak36"
+                            },
+                            {
+                              "const": "wer_minf1141_igcoy_hq",
+                              "description": "company HQ, 16 men, sdkfz251c1 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_minf1141_igcoy_lpl",
+                              "description": "support weapons, 55 men, leig18 leig18 leig18 leig18 leig18 leig18"
                             },
                             {
                               "const": "wer_minf1141_igcoy_lfpl",
-                              "description": "artillery: Infantry gun platoon: 2x 7.5 cm le.IG 18 with battery/platoon command and telephone squad (25 men, strongest variant)"
+                              "description": "support weapons, 25 men, leig18 leig18"
                             },
                             {
-                              "const": "wer_minf1141_igcoy_lfpl@tr04",
-                              "description": "artillery: Infantry gun platoon: 2x 7.5 cm le.IG 18 with battery/platoon command and telephone squad (variant from tr04_defence_gravi, 25 men)"
+                              "const": "wer_mibn_1141_combat",
+                              "description": "battalion HQ, 15 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mibn_1141_comcoy",
+                              "description": "company HQ, 24 men, opel_blitz_36 pzb41 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mibn_1141_comcoy@sm01",
+                              "description": "company HQ, 11 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_comcoy@tr04",
+                              "description": "company HQ, 23 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat",
+                              "description": "infantry, 50 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat@tr02",
+                              "description": "infantry, 27 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat@tr04",
+                              "description": "infantry, 50 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat@tr05",
+                              "description": "infantry, 47 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_com",
+                              "description": "company HQ, 11 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat1",
+                              "description": "support weapons, 34 men, mg42 mg42 mg42 mg42"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat2",
+                              "description": "support weapons, 14 men, mg42 mg42"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat1a",
+                              "description": "support weapons, 34 men, mg34 mg34 mg34 mg34"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat2a",
+                              "description": "support weapons, 15 men, mg34 mg34"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mt_plat",
+                              "description": "support weapons, 48 men, grw34 grw34 grw34 grw34 grw34 grw34"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat0",
+                              "description": "support weapons, 18 men, pak35 pak35 pak35"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat",
+                              "description": "support weapons, 10 men, pak38"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat1",
+                              "description": "support weapons, 27 men, pak40 pak40 pak40"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat2",
+                              "description": "support weapons, 27 men, pak36r pak36r pak36r"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat3",
+                              "description": "support weapons, 24 men, pak97_38 pak97_38 pak97_38"
+                            },
+                            {
+                              "const": "wer_atbn_lid42_plat0",
+                              "description": "support weapons, 22 men, pzb41 pzb41 pzb41"
+                            },
+                            {
+                              "const": "wer_atbn_lid42_plat1",
+                              "description": "support weapons, 22 men, pak35 pak35 pak35"
+                            },
+                            {
+                              "const": "wer_atbn_lid42_plat2",
+                              "description": "support weapons, 22 men, lepak41 lepak41 lepak41"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_hq",
+                              "description": "battalion HQ, 13 men, sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_spam",
+                              "description": "recovery/repair, 20 men, opel_blitz_36 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_hqe",
+                              "description": "company HQ, 16 men, stug3e opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_hq",
+                              "description": "company HQ, 16 men, stug3f8 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_ple",
+                              "description": "mobile support, 10 men, stug3cd stug3cd sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_pl",
+                              "description": "mobile support, 10 men, stug3f8 stug3f8 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_hq",
+                              "description": "battalion HQ, 11 men, stug3f8 sdkfz251c1"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_spam",
+                              "description": "recovery/repair, 8 men, opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_bat_hq",
+                              "description": "company HQ, 16 men, stug3f8 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_bat_pl",
+                              "description": "mobile support, 8 men, stug3f8 stug3f8"
+                            },
+                            {
+                              "const": "wer_ispg_bat_42_hq",
+                              "description": "battalion HQ, 29 men, stuig33b opel_blitz_36 opel_blitz_36 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_ispg_bat_42_pl",
+                              "description": "mobile support, 15 men, stuig33b stuig33b stuig33b"
+                            },
+                            {
+                              "const": "wer_pz_shw1_com",
+                              "description": "company HQ, 15 men, pz6h1 pz3l pz3l"
+                            },
+                            {
+                              "const": "wer_pz_shw1_plat",
+                              "description": "armour, 20 men, pz6h1 pz6h1 pz3n pz3n"
+                            },
+                            {
+                              "const": "wer_pz_shw2_com",
+                              "description": "company HQ, 10 men, pz6h1 pz6h1"
+                            },
+                            {
+                              "const": "wer_pz_shw2_plat",
+                              "description": "armour, 20 men, pz6h1 pz6h1 pz6h1 pz6h1"
+                            },
+                            {
+                              "const": "wer_ft_pz_coy_com",
+                              "description": "company HQ, 15 men, opel_blitz_36 pz2c pz2c"
+                            },
+                            {
+                              "const": "wer_ft_pz_ft_plat",
+                              "description": "armour, 12 men, pz2d_fl pz2d_fl pz2d_fl pz2d_fl"
+                            },
+                            {
+                              "const": "wer_ft_pz_plat",
+                              "description": "armour, 15 men, pz2c pz2c pz2c pz2c pz2c"
+                            },
+                            {
+                              "const": "wer_pzj_coy_com",
+                              "description": "company HQ, 11 men, sdkfz250a1 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_pzj_plat",
+                              "description": "mobile support, 11 men, pzj1 pzj1 pzj1 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_mar_coy_42_com",
+                              "description": "company HQ, 11 men, sdkfz250a1 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mar_42_plat",
+                              "description": "mobile support, 14 men, marder2_132 marder3_139 marder3_139 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_mar_coy_43_com",
+                              "description": "company HQ, 7 men, marder2_131 marder2_131 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mar_43_plat",
+                              "description": "mobile support, 7 men, marder3_139 marder2_131"
+                            },
+                            {
+                              "const": "wer_sct_coy_42_com",
+                              "description": "company HQ, 10 men, sdkfz250a1 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_sct_coy_42_plat",
+                              "description": "armour, 46 men, sdkfz250a1 sdkfz250a10 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_sct_coy_42_hplat",
+                              "description": "mobile support, 50 men, sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1 mg42 sdkfz250a1 sdkfz250a1 sdkfz250a1 mg42 sdkfz251c2 sdkfz251c2"
+                            },
+                            {
+                              "const": "wer_lpz_coy41_com",
+                              "description": "company HQ, 25 men, pz3jbef pz3jkz pz2c pz2f pz2f pz2f pz2f"
+                            },
+                            {
+                              "const": "wer_lpz_coy41_plat1",
+                              "description": "armour, 25 men, pz3jkz pz3jkz pz3jkz pz3jkz pz3jkz"
+                            },
+                            {
+                              "const": "wer_lpz_coy41_plat2",
+                              "description": "armour, 25 men, pz3jlg pz3jlg pz3jlg pz3jlg pz3jlg"
+                            },
+                            {
+                              "const": "wer_pz_coy41_com",
+                              "description": "company HQ, 25 men, pz4f1 pz4f1 pz2f pz2f pz2f pz2f pz2f"
+                            },
+                            {
+                              "const": "wer_pz_coy41_plat1",
+                              "description": "armour, 20 men, pz4f1 pz4f1 pz4f1 pz4f1"
+                            },
+                            {
+                              "const": "wer_pz_coy41_plat2",
+                              "description": "armour, 20 men, pz4f2 pz4f2 pz4f2 pz4f2"
+                            },
+                            {
+                              "const": "wer_pz_coy41_plat3",
+                              "description": "armour, 20 men, pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_lplat1",
+                              "description": "armour, 25 men, pz3jlg pz3l pz3l pz3l pz3l"
+                            },
+                            {
+                              "const": "wer_pz_coy_com1",
+                              "description": "company HQ, 10 men, pz3l pz3l"
                             },
                             {
                               "const": "wer_pz_coy_plat1",
-                              "description": "tank: Panzer III platoon: 1x Pz III J (long gun) and 3x Pz III M (20 men, strongest variant)"
+                              "description": "armour, 20 men, pz3jlg pz3m pz3m pz3m"
                             },
                             {
-                              "const": "wer_pz_coy_plat1@tr06",
-                              "description": "tank: Panzer III platoon: 1x Pz III J (long gun) and 3x Pz III M (variant from tr06_meet_gravi, 20 men)"
+                              "const": "wer_pz_coy_com2",
+                              "description": "company HQ, 10 men, pz4g pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_plat2",
+                              "description": "armour, 25 men, pz4f2 pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_com3",
+                              "description": "company HQ, 10 men, pz4ga pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_plat3",
+                              "description": "armour, 25 men, pz4g pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_com4",
+                              "description": "company HQ, 10 men, pz4gl pz4gle"
+                            },
+                            {
+                              "const": "wer_pz_coy_plat4",
+                              "description": "armour, 25 men, pz4gl pz4gl pz4gle pz4g pz4g"
+                            },
+                            {
+                              "const": "wer_pz_ltank_as",
+                              "description": "armour, 12 men, pz1f pz1f pz1f pz1f pz1f pz1f"
+                            },
+                            {
+                              "const": "wer_pant_bn_43_hq",
+                              "description": "battalion HQ, 15 men, pz5dbefe pz5dbefl pz5dl"
+                            },
+                            {
+                              "const": "wer_pant_bn_43_hq1",
+                              "description": "battalion HQ, 15 men, pz5dbefe pz5dbefl pz5dbefl"
+                            },
+                            {
+                              "const": "wer_pant_bn_43_recon",
+                              "description": "reconnaissance, 25 men, pz5dl pz5dl pz5dl pz5dl pz5dl"
+                            },
+                            {
+                              "const": "wer_pant_coy_43_cmd",
+                              "description": "company HQ, 10 men, pz5dl pz5dl"
+                            },
+                            {
+                              "const": "wer_pant_coy_43_plat",
+                              "description": "armour, 25 men, pz5dl pz5dl pz5dl pz5dl pz5dl"
+                            },
+                            {
+                              "const": "wer_recbn_1141_combat",
+                              "description": "battalion HQ, 15 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_recbn_1141_comcoy",
+                              "description": "company HQ, 11 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_recbn_1141_plat1",
+                              "description": "reconnaissance, 24 men, sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8"
+                            },
+                            {
+                              "const": "wer_recbn_1141_plat2",
+                              "description": "reconnaissance, 24 men, sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8"
+                            },
+                            {
+                              "const": "ss_pz_bn42_com",
+                              "description": "battalion HQ, 28 men, pz3jbefs pz3jbef pz2f pz2f pz2f pz2f pz2f pz2f"
+                            },
+                            {
+                              "const": "ss_pz_scoy42_com1",
+                              "description": "company HQ, 15 men, pz6h1 pz3n pz3n"
+                            },
+                            {
+                              "const": "ss_pz_scoy42_plat1",
+                              "description": "armour, 20 men, pz6h1 pz3n pz6h1 pz3n"
+                            },
+                            {
+                              "const": "ss_pz_scoy43_com1",
+                              "description": "company HQ, 10 men, pz6e pz6h1"
+                            },
+                            {
+                              "const": "ss_pz_scoy43_plat1",
+                              "description": "armour, 20 men, pz6h1 pz6h1 pz6h1 pz6h1"
+                            },
+                            {
+                              "const": "ss_pz_coy42_com",
+                              "description": "company HQ, 10 men, pz4g pz4ge"
+                            },
+                            {
+                              "const": "ss_pz_coy42_plat1",
+                              "description": "armour, 25 men, pz4g pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "ss_pz_coy42_plat2",
+                              "description": "armour, 25 men, pz3m pz3l pz3l pz3l pz3l"
+                            },
+                            {
+                              "const": "ss_minf42_stcoy_hq",
+                              "description": "company HQ, 9 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_minf42_stcoy_at",
+                              "description": "support weapons, 35 men, pak40 pak40 pak40 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
+                            },
+                            {
+                              "const": "ss_pz_coy42_ecoy",
+                              "description": "company HQ, 12 men"
+                            },
+                            {
+                              "const": "ss_pz_coy42_eplat1",
+                              "description": "infantry, 47 men"
+                            },
+                            {
+                              "const": "ss_pz_coy42_eplat2",
+                              "description": "armour, 35 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_pz_coy42_eplat3",
+                              "description": "support weapons, 21 men, mg42 mg42"
+                            },
+                            {
+                              "const": "ss_spg_bat_hq1",
+                              "description": "company HQ, 16 men, stug3f8 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_spg_bat_plat1",
+                              "description": "mobile support, 8 men, stug3f8 stug3f8"
+                            },
+                            {
+                              "const": "ss_mibn42_hq",
+                              "description": "battalion HQ, 21 men, sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_coy1",
+                              "description": "company HQ, 11 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_mibn42_plat1",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ss_mibn42_plat2",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ss_mibn42_plat4",
+                              "description": "support weapons, 43 men, pzb41 mg42 mg42 grw34 grw34"
+                            },
+                            {
+                              "const": "ss_mibn42_coy2",
+                              "description": "company HQ, 5 men, sdkfz251c10"
+                            },
+                            {
+                              "const": "ss_mibn42_plat3",
+                              "description": "infantry, 41 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_plat5",
+                              "description": "support weapons, 41 men, sdkfz251c10 sdkfz251c1 mg42 mg42 sdkfz251c1 mg42 mg42 sdkfz251c2 sdkfz251c2"
+                            },
+                            {
+                              "const": "ss_mibn42_mg_coy1",
+                              "description": "company HQ, 12 men"
+                            },
+                            {
+                              "const": "ss_mibn42_mt_plat1",
+                              "description": "support weapons, 55 men, grw34 grw34 grw34 grw34 grw34 grw34"
+                            },
+                            {
+                              "const": "ss_mibn42_mg_plat1",
+                              "description": "support weapons, 49 men, mg42 mg42 mg42 mg42 mg42 mg42 mg42 mg42"
+                            },
+                            {
+                              "const": "ss_mibn42_hcoy1",
+                              "description": "company HQ, 12 men"
+                            },
+                            {
+                              "const": "ss_mibn42_eng_plat1",
+                              "description": "infantry, 47 men"
+                            },
+                            {
+                              "const": "ss_mibn42_ig_plat1",
+                              "description": "support weapons, 22 men, leig18 leig18"
+                            },
+                            {
+                              "const": "ss_mibn42_at_plat1",
+                              "description": "support weapons, 33 men, pak40 pak40 pak40"
+                            },
+                            {
+                              "const": "ss_mibn42_hcoy2",
+                              "description": "company HQ, 18 men, sdkfz251c10 sdkfz251c1 opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_mibn42_eng_plat2",
+                              "description": "infantry, 37 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_ig_plat2",
+                              "description": "support weapons, 23 men, sdkfz251c1 leig18 leig18 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_gun_plat2",
+                              "description": "support weapons, 17 men, sdkfz251c1 sdkfz251c9 sdkfz251c9 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_at_plat2",
+                              "description": "support weapons, 40 men, sdkfz251c1 pak38 pak38 pak38 sdkfz251c1 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_atr_plat2",
+                              "description": "support weapons, 17 men, sdkfz251c10 sdkfz250a11 sdkfz250a11 sdkfz250a11"
+                            },
+                            {
+                              "const": "wer_cr_pznest",
+                              "description": "support weapons, 9 men, mg_pznest mg_pznest mg_pznest"
+                            },
+                            {
+                              "const": "wer_cr_mrls_bat1",
+                              "description": "support weapons, 45 men, pak35 nbw41 nbw41 nbw41 nbw41 nbw41 nbw41"
+                            },
+                            {
+                              "const": "wer_cr_mrls_bat2",
+                              "description": "support weapons, 47 men, pak38 nbw41 nbw41 nbw41 nbw41 nbw41 nbw41"
+                            },
+                            {
+                              "const": "wer_cr_mrls_bat3",
+                              "description": "support weapons, 47 men, pak38 nbw42 nbw42 nbw42 nbw42 nbw42 nbw42"
                             }
                           ]
                         },
@@ -367,10 +843,19 @@
                             },
                             "formation": {
                               "enum": [
+                                "columnlr",
                                 "line2",
                                 "line",
-                                "columnlr",
-                                "battery"
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
                               ]
                             },
                             "facing": {
@@ -393,6 +878,12 @@
                             "defend",
                             "hold"
                           ]
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 15,
+                          "description": "number of squads; repeats the last squad type"
                         }
                       }
                     }
@@ -417,10 +908,19 @@
                       },
                       "formation": {
                         "enum": [
+                          "columnlr",
                           "line2",
                           "line",
-                          "columnlr",
-                          "battery"
+                          "line1",
+                          "battery",
+                          "line3",
+                          "column",
+                          "col",
+                          "columnl",
+                          "columnr",
+                          "coll",
+                          "colr",
+                          "collr"
                         ]
                       },
                       "facing": {
@@ -454,8 +954,14 @@
                             "assault",
                             "attack",
                             "march",
+                            "fast_move",
                             "defence",
-                            "siege"
+                            "siege",
+                            "recon",
+                            "hidden",
+                            "scan",
+                            "enter",
+                            "leave"
                           ],
                           "default": "attack"
                         },
@@ -513,144 +1019,552 @@
                         "unit": {
                           "anyOf": [
                             {
-                              "const": "ra_cr_0143_mt82_com",
-                              "description": "HQ: Mortar battery HQ: commander and telephone squad; no weapons of its own (10 men, strongest variant)"
+                              "const": "ra_arty_rgk",
+                              "description": "reconnaissance, 9 men"
                             },
                             {
-                              "const": "ra_cr_0143_mt82_com@sm01",
-                              "description": "HQ: Mortar battery HQ: commander and telephone squad; no weapons of its own (variant from sm01_repulse_gravi, 10 men)"
-                            },
-                            {
-                              "const": "ra_cr_0143_mt82_fplat",
-                              "description": "mortar: 82 mm mortar platoon: 3 mortars with fire-control squad (17 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_cr_0143_mt82_fplat@sm01",
-                              "description": "mortar: 82 mm mortar platoon: 3 mortars with fire-control squad (variant from sm01_repulse_gravi, 17 men)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_comsq",
-                              "description": "HQ: Cavalry squadron HQ: commander, political officer, telephone squad (10 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_comsq@sm01",
-                              "description": "HQ: Cavalry squadron HQ: commander, political officer, telephone squad (variant from sm01_repulse_gravi, 10 men)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_atr",
-                              "description": "anti-tank: Cavalry anti-tank rifle platoon: platoon HQ and 3 anti-tank rifle squads (dismounted) (18 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_atr@sm01",
-                              "description": "anti-tank: Cavalry anti-tank rifle platoon: platoon HQ and 3 anti-tank rifle squads (dismounted) (variant from sm01_repulse_gravi, 18 men)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_plat",
-                              "description": "infantry: Cavalry sabre platoon fighting dismounted: platoon HQ and 2 squads (17 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_plat@sm01",
-                              "description": "infantry: Cavalry sabre platoon fighting dismounted: platoon HQ and 2 squads (variant from sm01_repulse_gravi, 17 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (12 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat@tr01",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (variant from tr01_basic_gravi, 4 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat@tr03",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (variant from tr03_recon_gravi, 12 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat@tr06",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (variant from tr06_meet_gravi, 12 men)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_plat2",
-                              "description": "infantry: Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads) (39 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_plat2@tr02",
-                              "description": "infantry: Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads) (variant from tr02_attack_gravi, 21 men)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_plat2@tr04",
-                              "description": "infantry: Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads) (variant from tr04_defence_gravi, 39 men)"
-                            },
-                            {
-                              "const": "ra_ogvtpp_42_plat",
-                              "description": "tank: KV-1S heavy tank platoon: 2 tanks (10 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ogvtpp_42_plat@tr02",
-                              "description": "tank: KV-1S heavy tank platoon: 2 tanks (variant from tr02_attack_gravi, 10 men)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_hq",
-                              "description": "HQ: Submachine-gun company HQ (3 men) (3 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_hq@tr03",
-                              "description": "HQ: Submachine-gun company HQ (3 men) (variant from tr03_recon_gravi, 3 men)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_plat",
-                              "description": "infantry: Submachine-gun platoon: platoon HQ and 3 SMG squads (assault infantry) (33 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_plat@tr03",
-                              "description": "infantry: Submachine-gun platoon: platoon HQ and 3 SMG squads (assault infantry) (variant from tr03_recon_gravi, 33 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_cc",
-                              "description": "tank: T-34 company commander tank (1 tank) (4 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_cc@tr03",
-                              "description": "tank: T-34 company commander tank (1 tank) (variant from tr03_recon_gravi, 4 men)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_comcoy",
-                              "description": "HQ: Rifle company HQ: company commander, political officer, runner and a sniper team (5 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_comcoy@tr04",
-                              "description": "HQ: Rifle company HQ: company commander, political officer, runner and a sniper team (variant from tr04_defence_gravi, 5 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn2_sm_plat",
-                              "description": "tank: T-70 light tank platoon: 3x T-70M (6 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn2_sm_plat@tr04",
-                              "description": "tank: T-70 light tank platoon: 3x T-70M (variant from tr04_defence_gravi, 6 men)"
-                            },
-                            {
-                              "const": "ra_rr1242_foot_scout",
-                              "description": "recon: Foot reconnaissance platoon: platoon HQ, 3 scout squads and an artillery observer (41 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rr1242_foot_scout@tr05",
-                              "description": "recon: Foot reconnaissance platoon: platoon HQ, 3 scout squads and an artillery observer (variant from tr05_ambush_gravi, 41 men)"
+                              "const": "ra_air",
+                              "description": "reconnaissance, 10 men"
                             },
                             {
                               "const": "ra_rbn_1242_combat",
-                              "description": "HQ: Rifle battalion HQ: battalion commander and telephone squad (12 men, strongest variant)"
+                              "description": "battalion HQ, 12 men"
                             },
                             {
-                              "const": "ra_rbn_1242_combat@tr05",
-                              "description": "HQ: Rifle battalion HQ: battalion commander and telephone squad (variant from tr05_ambush_gravi, 12 men)"
+                              "const": "ra_rbn_1242_gun_plat",
+                              "description": "support weapons, 14 men, 53k 53k"
+                            },
+                            {
+                              "const": "ra_rbn_1242_comcoy",
+                              "description": "company HQ, 5 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_plat1",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_plat2",
+                              "description": "infantry, 39 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_plat2@tr02",
+                              "description": "infantry, 21 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mt50",
+                              "description": "support weapons, 8 men"
                             },
                             {
                               "const": "ra_rbn_1242_hmg",
-                              "description": "machine gun: Heavy machine-gun squad: 1x Maxim HMG with crew (6 men, strongest variant)"
+                              "description": "support weapons, 6 men"
                             },
                             {
-                              "const": "ra_rbn_1242_hmg@tr05",
-                              "description": "machine gun: Heavy machine-gun squad: 1x Maxim HMG with crew (variant from tr05_ambush_gravi, 6 men)"
+                              "const": "ra_rbn_1242_hmg2",
+                              "description": "support weapons, 12 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mg_com",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mg_plat",
+                              "description": "support weapons, 26 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mg_plat2",
+                              "description": "support weapons, 22 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_atr_com",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_atr_plat",
+                              "description": "support weapons, 25 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mt82_com",
+                              "description": "company HQ, 10 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mt82_plat",
+                              "description": "support weapons, 17 men, mt82 mt82 mt82"
+                            },
+                            {
+                              "const": "ra_rr1242_foot_scout",
+                              "description": "reconnaissance, 41 men"
+                            },
+                            {
+                              "const": "ra_rr1242_sap_plat",
+                              "description": "support weapons, 30 men"
+                            },
+                            {
+                              "const": "ra_rr1242_bat76_hq",
+                              "description": "company HQ, 22 men"
+                            },
+                            {
+                              "const": "ra_rr1242_bat76_fplat",
+                              "description": "support weapons, 16 men, m27 m27"
+                            },
+                            {
+                              "const": "ra_rr1242_atbat45_hq",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rr1242_atbat45_fplat",
+                              "description": "support weapons, 14 men, 53k 53k"
+                            },
+                            {
+                              "const": "ra_rr1242_smg_hq",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rr1242_smg_plat",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ra_rr1242_atr_hq",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rr1242_atr_plat",
+                              "description": "support weapons, 24 men"
+                            },
+                            {
+                              "const": "ra_areg_rd_42_guns",
+                              "description": "support weapons, 42 men, zis3 zis3 zis3 zis3"
+                            },
+                            {
+                              "const": "ra_areg_rd_42_howit",
+                              "description": "support weapons, 50 men, m30m38 m30m38 m30m38 m30m38"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_hq",
+                              "description": "battalion HQ, 26 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_bat_cmd",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_fplat",
+                              "description": "support weapons, 16 men, 53k 53k t20 t20"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_atr_cmd",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_atr_plat",
+                              "description": "support weapons, 24 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_comsq",
+                              "description": "company HQ, 10 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_plat",
+                              "description": "infantry, 17 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_mgs",
+                              "description": "support weapons, 27 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_atr",
+                              "description": "support weapons, 18 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_hq",
+                              "description": "battalion HQ, 12 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_sap",
+                              "description": "support weapons, 30 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_artybat",
+                              "description": "support weapons, 42 men, m27 m27 m27 m27"
+                            },
+                            {
+                              "const": "ra_cr_0143_atbat",
+                              "description": "support weapons, 31 men, 53k 53k 53k 53k"
+                            },
+                            {
+                              "const": "ra_cr_0143_mt82_com",
+                              "description": "company HQ, 10 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_mt82_fplat",
+                              "description": "support weapons, 17 men, mt82 mt82 mt82"
+                            },
+                            {
+                              "const": "ra_tbr_42_cmd_coy_sct",
+                              "description": "reconnaissance, 20 men, uc_mk1 uc_mk1_lin uc_mk1_lin"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_hq",
+                              "description": "battalion HQ, 12 men, t34_utz_m42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_cc",
+                              "description": "company HQ, 4 men, t34_utz_m42_late"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_plat",
+                              "description": "armour, 12 men, t34_utz_m42_late t34_utz_m42_late t34_utz_m42_late"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_plat@tr01",
+                              "description": "armour, 4 men"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_plat@tr06",
+                              "description": "armour, 12 men"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_coy",
+                              "description": "armour, 40 men, t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_hq",
+                              "description": "battalion HQ, 10 men, t70m gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_t34_cc",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_t34_plat",
+                              "description": "armour, 12 men, t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_t34_coy",
+                              "description": "armour, 40 men, t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_sm_cc",
+                              "description": "company HQ, 2 men, t70m"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_sm_plat",
+                              "description": "armour, 6 men, t70m t70m t70m"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_sm_coy",
+                              "description": "armour, 20 men, t70m t70m t70m t70m t70m t70m t70m t70m t70m t70m"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_kv_cc",
+                              "description": "company HQ, 5 men, kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_kv_plat",
+                              "description": "armour, 10 men, kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_kv_coy",
+                              "description": "armour, 25 men, kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_t34_cc",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_t34_plat",
+                              "description": "armour, 12 men, t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_t34_coy",
+                              "description": "armour, 40 men, t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_sm_cc",
+                              "description": "company HQ, 4 men, t60 t60"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_sm_plat",
+                              "description": "armour, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_sm_coy",
+                              "description": "armour, 22 men, t60 t60 t60 t60 t60 t60 t60 t60 t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_hq",
+                              "description": "battalion HQ, 18 men, t34_utz_m42 t60 t60 t60 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_t34_cc",
+                              "description": "company HQ, 4 men, t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_t34_plat",
+                              "description": "armour, 12 men, t34_utz_m42 t34_utz_m42 t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_t34_coy",
+                              "description": "armour, 40 men, t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_sm_cc",
+                              "description": "company HQ, 2 men, t70m"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_sm_plat",
+                              "description": "armour, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_sm_coy",
+                              "description": "armour, 20 men, t70m t60 t60 t60 t60 t60 t60 t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_hq",
+                              "description": "battalion HQ, 17 men, kv1_42_uztm t60 t60 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_kv_cc",
+                              "description": "company HQ, 5 men, kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_kv_plat",
+                              "description": "armour, 15 men, kv1_42_uztm kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_kv_coy",
+                              "description": "armour, 35 men, kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_sm_cc",
+                              "description": "company HQ, 2 men, t70m"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_sm_plat",
+                              "description": "reconnaissance, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_sm_coy",
+                              "description": "reconnaissance, 20 men, t70m t60 t60 t60 t60 t60 t60 t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tsap_43e_reg_hq",
+                              "description": "battalion HQ, 45 men, gazmm_42 gazmm_42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43e_bat_cmd",
+                              "description": "company HQ, 4 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43e_plat",
+                              "description": "mobile support, 10 men, su152 su152"
+                            },
+                            {
+                              "const": "ra_tsap_43_reg_hq",
+                              "description": "battalion HQ, 46 men, kv1s gazmm_42 ba64 gazmm_42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43_bat_cmd",
+                              "description": "company HQ, 4 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43_plat",
+                              "description": "mobile support, 10 men, su152 su152"
+                            },
+                            {
+                              "const": "ra_tsap_43l_reg_hq",
+                              "description": "battalion HQ, 46 men, kv1s gazmm_42 ba64 gazmm_42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43l_bat_cmd",
+                              "description": "company HQ, 4 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43l_plat",
+                              "description": "mobile support, 15 men, su152_late su152_late su152_late"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_reg_hq",
+                              "description": "battalion HQ, 19 men, kv1s gazmm_42 ba64 ba64 ba64"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy_cmd",
+                              "description": "company HQ, 5 men, kv1s"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_plat",
+                              "description": "armour, 10 men, kv1se kv1s"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy",
+                              "description": "armour, 25 men, kv1s kv1se kv1s kv1se kv1s"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_reg_hq1",
+                              "description": "battalion HQ, 19 men, church2 gazmm_42 ba64 ba64 ba64"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy_cmd1",
+                              "description": "company HQ, 5 men, church2"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_plat1",
+                              "description": "armour, 10 men, church2 church2"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy1",
+                              "description": "armour, 25 men, church2 church2 church2 church2 church2"
+                            },
+                            {
+                              "const": "ra_ootb_42_bn_hq",
+                              "description": "battalion HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_42_hcoy_cmd",
+                              "description": "company HQ, 4 men, kv8_42_uztm"
+                            },
+                            {
+                              "const": "ra_ootb_42_hplat",
+                              "description": "armour, 8 men, kv8_42_uztm kv8_42_uztm"
+                            },
+                            {
+                              "const": "ra_ootb_42_coy_cmd",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_42_plat",
+                              "description": "armour, 9 men, ot34_stz_m41 ot34_stz_m41 ot34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_bn_hq",
+                              "description": "battalion HQ, 4 men, t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_ootb_43_coy_cmd",
+                              "description": "company HQ, 4 men, t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_ootb_43_plat",
+                              "description": "armour, 9 men, ot34_stz_m41 ot34_stz_m41 ot34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_bn_hq",
+                              "description": "battalion HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_hcoy_cmd",
+                              "description": "company HQ, 4 men, kv8s"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_hplat",
+                              "description": "armour, 8 men, kv8s kv8s"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_coy_cmd",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_plat",
+                              "description": "armour, 9 men, ot34_stz_m41 ot34_stz_m41 ot34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbn_eng_coy_hq",
+                              "description": "company HQ, 4 men, mk2_4"
+                            },
+                            {
+                              "const": "ra_otbn_eng_mtank_plat1",
+                              "description": "armour, 8 men, mk2_4 mk2_4"
+                            },
+                            {
+                              "const": "ra_otbn_eng_mtank_plat2",
+                              "description": "mobile support, 8 men, mk2_4cs mk2_4cs"
+                            },
+                            {
+                              "const": "ra_otbn_eng_mtank_coy",
+                              "description": "armour, 20 men, mk2_4 mk2_4 mk2_4 mk2_4cs mk2_4cs"
+                            },
+                            {
+                              "const": "ra_otbn_eng_coy_hq1",
+                              "description": "company HQ, 3 men, mk3_2"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_plat1",
+                              "description": "armour, 9 men, mk3_2 mk3_2 mk3_2"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_plat2",
+                              "description": "reconnaissance, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_plat3",
+                              "description": "armour, 6 men, t70m t70m t70m"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_coy",
+                              "description": "armour, 30 men, mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2"
+                            },
+                            {
+                              "const": "ra_sct_coy_hq",
+                              "description": "company HQ, 4 men, ba64 ba64"
+                            },
+                            {
+                              "const": "ra_sct_coy_lacar_plat",
+                              "description": "reconnaissance, 10 men, ba64 ba64 ba64 ba64 ba64"
+                            },
+                            {
+                              "const": "ra_sct_coy_lacar_plat2",
+                              "description": "reconnaissance, 15 men, ba20 ba20 ba20 ba20 ba20"
+                            },
+                            {
+                              "const": "ra_sct_coy_smg_plat",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ra_sct_coy_apc_plat",
+                              "description": "reconnaissance, 28 men, m3a1_scout m3a1_scout m3a1_scout"
+                            },
+                            {
+                              "const": "ra_lap_bty_76",
+                              "description": "support weapons, 42 men, zis3 zis3 zis3 zis3"
+                            },
+                            {
+                              "const": "ra_lap_bty_85",
+                              "description": "support weapons, 42 men, 52k 52k 52k 52k"
+                            },
+                            {
+                              "const": "ra_tbn_usat_ltank_plat",
+                              "description": "armour, 12 men, m3a1_stuart m3a1_stuart m3a1_stuart"
+                            },
+                            {
+                              "const": "ra_tbn_usat_ltank_coy",
+                              "description": "armour, 40 men, m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart"
+                            },
+                            {
+                              "const": "ra_tbn_usat_mtank_plat",
+                              "description": "armour, 15 men, m4a2_sherman m4a2_sherman m4a2_sherman"
+                            },
+                            {
+                              "const": "ra_tbn_usat_mtank_coy",
+                              "description": "armour, 50 men, m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_coy_hq",
+                              "description": "company HQ, 6 men, t26_m36_rad t26_m35"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_ltank1",
+                              "description": "armour, 15 men, t26_m35_rad t26_m35 t26_m35 t26_m35 t26_m35"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_ltank2",
+                              "description": "armour, 15 men, t26_m36_rad t26_m36_rad t26_m35 t26_m35 t26_m35"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_ltank3",
+                              "description": "armour, 15 men, t26_m40_rad t26_m39 t26_m39 t26_m40 t26_m39_aa"
+                            },
+                            {
+                              "const": "ra_orro_plat",
+                              "description": "armour, 15 men"
                             }
                           ]
                         },
@@ -683,10 +1597,19 @@
                             },
                             "formation": {
                               "enum": [
+                                "columnlr",
                                 "line2",
                                 "line",
-                                "columnlr",
-                                "battery"
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
                               ]
                             },
                             "facing": {
@@ -709,6 +1632,12 @@
                             "defend",
                             "hold"
                           ]
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 15,
+                          "description": "number of squads; repeats the last squad type"
                         }
                       }
                     }
@@ -733,10 +1662,19 @@
                       },
                       "formation": {
                         "enum": [
+                          "columnlr",
                           "line2",
                           "line",
-                          "columnlr",
-                          "battery"
+                          "line1",
+                          "battery",
+                          "line3",
+                          "column",
+                          "col",
+                          "columnl",
+                          "columnr",
+                          "coll",
+                          "colr",
+                          "collr"
                         ]
                       },
                       "facing": {
@@ -770,8 +1708,14 @@
                             "assault",
                             "attack",
                             "march",
+                            "fast_move",
                             "defence",
-                            "siege"
+                            "siege",
+                            "recon",
+                            "hidden",
+                            "scan",
+                            "enter",
+                            "leave"
                           ],
                           "default": "attack"
                         },
@@ -854,144 +1798,552 @@
                         "unit": {
                           "anyOf": [
                             {
-                              "const": "ra_cr_0143_mt82_com",
-                              "description": "HQ: Mortar battery HQ: commander and telephone squad; no weapons of its own (10 men, strongest variant)"
+                              "const": "ra_arty_rgk",
+                              "description": "reconnaissance, 9 men"
                             },
                             {
-                              "const": "ra_cr_0143_mt82_com@sm01",
-                              "description": "HQ: Mortar battery HQ: commander and telephone squad; no weapons of its own (variant from sm01_repulse_gravi, 10 men)"
-                            },
-                            {
-                              "const": "ra_cr_0143_mt82_fplat",
-                              "description": "mortar: 82 mm mortar platoon: 3 mortars with fire-control squad (17 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_cr_0143_mt82_fplat@sm01",
-                              "description": "mortar: 82 mm mortar platoon: 3 mortars with fire-control squad (variant from sm01_repulse_gravi, 17 men)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_comsq",
-                              "description": "HQ: Cavalry squadron HQ: commander, political officer, telephone squad (10 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_comsq@sm01",
-                              "description": "HQ: Cavalry squadron HQ: commander, political officer, telephone squad (variant from sm01_repulse_gravi, 10 men)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_atr",
-                              "description": "anti-tank: Cavalry anti-tank rifle platoon: platoon HQ and 3 anti-tank rifle squads (dismounted) (18 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_atr@sm01",
-                              "description": "anti-tank: Cavalry anti-tank rifle platoon: platoon HQ and 3 anti-tank rifle squads (dismounted) (variant from sm01_repulse_gravi, 18 men)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_plat",
-                              "description": "infantry: Cavalry sabre platoon fighting dismounted: platoon HQ and 2 squads (17 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ssq_0143_plat@sm01",
-                              "description": "infantry: Cavalry sabre platoon fighting dismounted: platoon HQ and 2 squads (variant from sm01_repulse_gravi, 17 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (12 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat@tr01",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (variant from tr01_basic_gravi, 4 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat@tr03",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (variant from tr03_recon_gravi, 12 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_plat@tr06",
-                              "description": "tank: T-34 platoon: 3x T-34 model 1942 (training variant: 1 tank) (variant from tr06_meet_gravi, 12 men)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_plat2",
-                              "description": "infantry: Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads) (39 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_plat2@tr02",
-                              "description": "infantry: Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads) (variant from tr02_attack_gravi, 21 men)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_plat2@tr04",
-                              "description": "infantry: Rifle platoon: platoon HQ and 4 rifle squads with light machine guns (training variant: 2 squads) (variant from tr04_defence_gravi, 39 men)"
-                            },
-                            {
-                              "const": "ra_ogvtpp_42_plat",
-                              "description": "tank: KV-1S heavy tank platoon: 2 tanks (10 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_ogvtpp_42_plat@tr02",
-                              "description": "tank: KV-1S heavy tank platoon: 2 tanks (variant from tr02_attack_gravi, 10 men)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_hq",
-                              "description": "HQ: Submachine-gun company HQ (3 men) (3 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_hq@tr03",
-                              "description": "HQ: Submachine-gun company HQ (3 men) (variant from tr03_recon_gravi, 3 men)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_plat",
-                              "description": "infantry: Submachine-gun platoon: platoon HQ and 3 SMG squads (assault infantry) (33 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rr1242_smg_plat@tr03",
-                              "description": "infantry: Submachine-gun platoon: platoon HQ and 3 SMG squads (assault infantry) (variant from tr03_recon_gravi, 33 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_cc",
-                              "description": "tank: T-34 company commander tank (1 tank) (4 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn1_t34_cc@tr03",
-                              "description": "tank: T-34 company commander tank (1 tank) (variant from tr03_recon_gravi, 4 men)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_comcoy",
-                              "description": "HQ: Rifle company HQ: company commander, political officer, runner and a sniper team (5 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rbn_1242_comcoy@tr04",
-                              "description": "HQ: Rifle company HQ: company commander, political officer, runner and a sniper team (variant from tr04_defence_gravi, 5 men)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn2_sm_plat",
-                              "description": "tank: T-70 light tank platoon: 3x T-70M (6 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_tbr_42_bn2_sm_plat@tr04",
-                              "description": "tank: T-70 light tank platoon: 3x T-70M (variant from tr04_defence_gravi, 6 men)"
-                            },
-                            {
-                              "const": "ra_rr1242_foot_scout",
-                              "description": "recon: Foot reconnaissance platoon: platoon HQ, 3 scout squads and an artillery observer (41 men, strongest variant)"
-                            },
-                            {
-                              "const": "ra_rr1242_foot_scout@tr05",
-                              "description": "recon: Foot reconnaissance platoon: platoon HQ, 3 scout squads and an artillery observer (variant from tr05_ambush_gravi, 41 men)"
+                              "const": "ra_air",
+                              "description": "reconnaissance, 10 men"
                             },
                             {
                               "const": "ra_rbn_1242_combat",
-                              "description": "HQ: Rifle battalion HQ: battalion commander and telephone squad (12 men, strongest variant)"
+                              "description": "battalion HQ, 12 men"
                             },
                             {
-                              "const": "ra_rbn_1242_combat@tr05",
-                              "description": "HQ: Rifle battalion HQ: battalion commander and telephone squad (variant from tr05_ambush_gravi, 12 men)"
+                              "const": "ra_rbn_1242_gun_plat",
+                              "description": "support weapons, 14 men, 53k 53k"
+                            },
+                            {
+                              "const": "ra_rbn_1242_comcoy",
+                              "description": "company HQ, 5 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_plat1",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_plat2",
+                              "description": "infantry, 39 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_plat2@tr02",
+                              "description": "infantry, 21 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mt50",
+                              "description": "support weapons, 8 men"
                             },
                             {
                               "const": "ra_rbn_1242_hmg",
-                              "description": "machine gun: Heavy machine-gun squad: 1x Maxim HMG with crew (6 men, strongest variant)"
+                              "description": "support weapons, 6 men"
                             },
                             {
-                              "const": "ra_rbn_1242_hmg@tr05",
-                              "description": "machine gun: Heavy machine-gun squad: 1x Maxim HMG with crew (variant from tr05_ambush_gravi, 6 men)"
+                              "const": "ra_rbn_1242_hmg2",
+                              "description": "support weapons, 12 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mg_com",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mg_plat",
+                              "description": "support weapons, 26 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mg_plat2",
+                              "description": "support weapons, 22 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_atr_com",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_atr_plat",
+                              "description": "support weapons, 25 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mt82_com",
+                              "description": "company HQ, 10 men"
+                            },
+                            {
+                              "const": "ra_rbn_1242_mt82_plat",
+                              "description": "support weapons, 17 men, mt82 mt82 mt82"
+                            },
+                            {
+                              "const": "ra_rr1242_foot_scout",
+                              "description": "reconnaissance, 41 men"
+                            },
+                            {
+                              "const": "ra_rr1242_sap_plat",
+                              "description": "support weapons, 30 men"
+                            },
+                            {
+                              "const": "ra_rr1242_bat76_hq",
+                              "description": "company HQ, 22 men"
+                            },
+                            {
+                              "const": "ra_rr1242_bat76_fplat",
+                              "description": "support weapons, 16 men, m27 m27"
+                            },
+                            {
+                              "const": "ra_rr1242_atbat45_hq",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rr1242_atbat45_fplat",
+                              "description": "support weapons, 14 men, 53k 53k"
+                            },
+                            {
+                              "const": "ra_rr1242_smg_hq",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rr1242_smg_plat",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ra_rr1242_atr_hq",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_rr1242_atr_plat",
+                              "description": "support weapons, 24 men"
+                            },
+                            {
+                              "const": "ra_areg_rd_42_guns",
+                              "description": "support weapons, 42 men, zis3 zis3 zis3 zis3"
+                            },
+                            {
+                              "const": "ra_areg_rd_42_howit",
+                              "description": "support weapons, 50 men, m30m38 m30m38 m30m38 m30m38"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_hq",
+                              "description": "battalion HQ, 26 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_bat_cmd",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_fplat",
+                              "description": "support weapons, 16 men, 53k 53k t20 t20"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_atr_cmd",
+                              "description": "company HQ, 3 men"
+                            },
+                            {
+                              "const": "ra_sepatdiv_42_atr_plat",
+                              "description": "support weapons, 24 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_comsq",
+                              "description": "company HQ, 10 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_plat",
+                              "description": "infantry, 17 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_mgs",
+                              "description": "support weapons, 27 men"
+                            },
+                            {
+                              "const": "ra_ssq_0143_atr",
+                              "description": "support weapons, 18 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_hq",
+                              "description": "battalion HQ, 12 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_sap",
+                              "description": "support weapons, 30 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_artybat",
+                              "description": "support weapons, 42 men, m27 m27 m27 m27"
+                            },
+                            {
+                              "const": "ra_cr_0143_atbat",
+                              "description": "support weapons, 31 men, 53k 53k 53k 53k"
+                            },
+                            {
+                              "const": "ra_cr_0143_mt82_com",
+                              "description": "company HQ, 10 men"
+                            },
+                            {
+                              "const": "ra_cr_0143_mt82_fplat",
+                              "description": "support weapons, 17 men, mt82 mt82 mt82"
+                            },
+                            {
+                              "const": "ra_tbr_42_cmd_coy_sct",
+                              "description": "reconnaissance, 20 men, uc_mk1 uc_mk1_lin uc_mk1_lin"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_hq",
+                              "description": "battalion HQ, 12 men, t34_utz_m42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_cc",
+                              "description": "company HQ, 4 men, t34_utz_m42_late"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_plat",
+                              "description": "armour, 12 men, t34_utz_m42_late t34_utz_m42_late t34_utz_m42_late"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_plat@tr01",
+                              "description": "armour, 4 men"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_plat@tr06",
+                              "description": "armour, 12 men"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn1_t34_coy",
+                              "description": "armour, 40 men, t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_hq",
+                              "description": "battalion HQ, 10 men, t70m gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_t34_cc",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_t34_plat",
+                              "description": "armour, 12 men, t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_t34_coy",
+                              "description": "armour, 40 men, t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_sm_cc",
+                              "description": "company HQ, 2 men, t70m"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_sm_plat",
+                              "description": "armour, 6 men, t70m t70m t70m"
+                            },
+                            {
+                              "const": "ra_tbr_42_bn2_sm_coy",
+                              "description": "armour, 20 men, t70m t70m t70m t70m t70m t70m t70m t70m t70m t70m"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_kv_cc",
+                              "description": "company HQ, 5 men, kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_kv_plat",
+                              "description": "armour, 10 men, kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_kv_coy",
+                              "description": "armour, 25 men, kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_t34_cc",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_t34_plat",
+                              "description": "armour, 12 men, t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_t34_coy",
+                              "description": "armour, 40 men, t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41 t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_sm_cc",
+                              "description": "company HQ, 4 men, t60 t60"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_sm_plat",
+                              "description": "armour, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_otbr_42_bn_sm_coy",
+                              "description": "armour, 22 men, t60 t60 t60 t60 t60 t60 t60 t60 t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_hq",
+                              "description": "battalion HQ, 18 men, t34_utz_m42 t60 t60 t60 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_t34_cc",
+                              "description": "company HQ, 4 men, t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_t34_plat",
+                              "description": "armour, 12 men, t34_utz_m42 t34_utz_m42 t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_t34_coy",
+                              "description": "armour, 40 men, t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42 t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_sm_cc",
+                              "description": "company HQ, 2 men, t70m"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_sm_plat",
+                              "description": "armour, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrt34_42_bn_sm_coy",
+                              "description": "armour, 20 men, t70m t60 t60 t60 t60 t60 t60 t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_hq",
+                              "description": "battalion HQ, 17 men, kv1_42_uztm t60 t60 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_kv_cc",
+                              "description": "company HQ, 5 men, kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_kv_plat",
+                              "description": "armour, 15 men, kv1_42_uztm kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_kv_coy",
+                              "description": "armour, 35 men, kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm kv1_42_uztm"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_sm_cc",
+                              "description": "company HQ, 2 men, t70m"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_sm_plat",
+                              "description": "reconnaissance, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tbrkv_42_bn_sm_coy",
+                              "description": "reconnaissance, 20 men, t70m t60 t60 t60 t60 t60 t60 t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_tsap_43e_reg_hq",
+                              "description": "battalion HQ, 45 men, gazmm_42 gazmm_42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43e_bat_cmd",
+                              "description": "company HQ, 4 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43e_plat",
+                              "description": "mobile support, 10 men, su152 su152"
+                            },
+                            {
+                              "const": "ra_tsap_43_reg_hq",
+                              "description": "battalion HQ, 46 men, kv1s gazmm_42 ba64 gazmm_42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43_bat_cmd",
+                              "description": "company HQ, 4 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43_plat",
+                              "description": "mobile support, 10 men, su152 su152"
+                            },
+                            {
+                              "const": "ra_tsap_43l_reg_hq",
+                              "description": "battalion HQ, 46 men, kv1s gazmm_42 ba64 gazmm_42 gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43l_bat_cmd",
+                              "description": "company HQ, 4 men, gazmm_42"
+                            },
+                            {
+                              "const": "ra_tsap_43l_plat",
+                              "description": "mobile support, 15 men, su152_late su152_late su152_late"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_reg_hq",
+                              "description": "battalion HQ, 19 men, kv1s gazmm_42 ba64 ba64 ba64"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy_cmd",
+                              "description": "company HQ, 5 men, kv1s"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_plat",
+                              "description": "armour, 10 men, kv1se kv1s"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy",
+                              "description": "armour, 25 men, kv1s kv1se kv1s kv1se kv1s"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_reg_hq1",
+                              "description": "battalion HQ, 19 men, church2 gazmm_42 ba64 ba64 ba64"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy_cmd1",
+                              "description": "company HQ, 5 men, church2"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_plat1",
+                              "description": "armour, 10 men, church2 church2"
+                            },
+                            {
+                              "const": "ra_ogvtpp_42_coy1",
+                              "description": "armour, 25 men, church2 church2 church2 church2 church2"
+                            },
+                            {
+                              "const": "ra_ootb_42_bn_hq",
+                              "description": "battalion HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_42_hcoy_cmd",
+                              "description": "company HQ, 4 men, kv8_42_uztm"
+                            },
+                            {
+                              "const": "ra_ootb_42_hplat",
+                              "description": "armour, 8 men, kv8_42_uztm kv8_42_uztm"
+                            },
+                            {
+                              "const": "ra_ootb_42_coy_cmd",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_42_plat",
+                              "description": "armour, 9 men, ot34_stz_m41 ot34_stz_m41 ot34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_bn_hq",
+                              "description": "battalion HQ, 4 men, t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_ootb_43_coy_cmd",
+                              "description": "company HQ, 4 men, t34_utz_m42"
+                            },
+                            {
+                              "const": "ra_ootb_43_plat",
+                              "description": "armour, 9 men, ot34_stz_m41 ot34_stz_m41 ot34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_bn_hq",
+                              "description": "battalion HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_hcoy_cmd",
+                              "description": "company HQ, 4 men, kv8s"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_hplat",
+                              "description": "armour, 8 men, kv8s kv8s"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_coy_cmd",
+                              "description": "company HQ, 4 men, t34_stz_m41"
+                            },
+                            {
+                              "const": "ra_ootb_43_508_plat",
+                              "description": "armour, 9 men, ot34_stz_m41 ot34_stz_m41 ot34_stz_m41"
+                            },
+                            {
+                              "const": "ra_otbn_eng_coy_hq",
+                              "description": "company HQ, 4 men, mk2_4"
+                            },
+                            {
+                              "const": "ra_otbn_eng_mtank_plat1",
+                              "description": "armour, 8 men, mk2_4 mk2_4"
+                            },
+                            {
+                              "const": "ra_otbn_eng_mtank_plat2",
+                              "description": "mobile support, 8 men, mk2_4cs mk2_4cs"
+                            },
+                            {
+                              "const": "ra_otbn_eng_mtank_coy",
+                              "description": "armour, 20 men, mk2_4 mk2_4 mk2_4 mk2_4cs mk2_4cs"
+                            },
+                            {
+                              "const": "ra_otbn_eng_coy_hq1",
+                              "description": "company HQ, 3 men, mk3_2"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_plat1",
+                              "description": "armour, 9 men, mk3_2 mk3_2 mk3_2"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_plat2",
+                              "description": "reconnaissance, 6 men, t60 t60 t60"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_plat3",
+                              "description": "armour, 6 men, t70m t70m t70m"
+                            },
+                            {
+                              "const": "ra_otbn_eng_ltank_coy",
+                              "description": "armour, 30 men, mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2 mk3_2"
+                            },
+                            {
+                              "const": "ra_sct_coy_hq",
+                              "description": "company HQ, 4 men, ba64 ba64"
+                            },
+                            {
+                              "const": "ra_sct_coy_lacar_plat",
+                              "description": "reconnaissance, 10 men, ba64 ba64 ba64 ba64 ba64"
+                            },
+                            {
+                              "const": "ra_sct_coy_lacar_plat2",
+                              "description": "reconnaissance, 15 men, ba20 ba20 ba20 ba20 ba20"
+                            },
+                            {
+                              "const": "ra_sct_coy_smg_plat",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ra_sct_coy_apc_plat",
+                              "description": "reconnaissance, 28 men, m3a1_scout m3a1_scout m3a1_scout"
+                            },
+                            {
+                              "const": "ra_lap_bty_76",
+                              "description": "support weapons, 42 men, zis3 zis3 zis3 zis3"
+                            },
+                            {
+                              "const": "ra_lap_bty_85",
+                              "description": "support weapons, 42 men, 52k 52k 52k 52k"
+                            },
+                            {
+                              "const": "ra_tbn_usat_ltank_plat",
+                              "description": "armour, 12 men, m3a1_stuart m3a1_stuart m3a1_stuart"
+                            },
+                            {
+                              "const": "ra_tbn_usat_ltank_coy",
+                              "description": "armour, 40 men, m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart m3a1_stuart"
+                            },
+                            {
+                              "const": "ra_tbn_usat_mtank_plat",
+                              "description": "armour, 15 men, m4a2_sherman m4a2_sherman m4a2_sherman"
+                            },
+                            {
+                              "const": "ra_tbn_usat_mtank_coy",
+                              "description": "armour, 50 men, m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman m4a2_sherman"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_coy_hq",
+                              "description": "company HQ, 6 men, t26_m36_rad t26_m35"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_ltank1",
+                              "description": "armour, 15 men, t26_m35_rad t26_m35 t26_m35 t26_m35 t26_m35"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_ltank2",
+                              "description": "armour, 15 men, t26_m36_rad t26_m36_rad t26_m35 t26_m35 t26_m35"
+                            },
+                            {
+                              "const": "ra_ltbr_bat_ltank3",
+                              "description": "armour, 15 men, t26_m40_rad t26_m39 t26_m39 t26_m40 t26_m39_aa"
+                            },
+                            {
+                              "const": "ra_orro_plat",
+                              "description": "armour, 15 men"
                             }
                           ]
                         },
@@ -1024,10 +2376,19 @@
                             },
                             "formation": {
                               "enum": [
+                                "columnlr",
                                 "line2",
                                 "line",
-                                "columnlr",
-                                "battery"
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
                               ]
                             },
                             "facing": {
@@ -1050,6 +2411,12 @@
                             "defend",
                             "hold"
                           ]
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 15,
+                          "description": "number of squads; repeats the last squad type"
                         }
                       }
                     }
@@ -1074,10 +2441,19 @@
                       },
                       "formation": {
                         "enum": [
+                          "columnlr",
                           "line2",
                           "line",
-                          "columnlr",
-                          "battery"
+                          "line1",
+                          "battery",
+                          "line3",
+                          "column",
+                          "col",
+                          "columnl",
+                          "columnr",
+                          "coll",
+                          "colr",
+                          "collr"
                         ]
                       },
                       "facing": {
@@ -1111,8 +2487,14 @@
                             "assault",
                             "attack",
                             "march",
+                            "fast_move",
                             "defence",
-                            "siege"
+                            "siege",
+                            "recon",
+                            "hidden",
+                            "scan",
+                            "enter",
+                            "leave"
                           ],
                           "default": "attack"
                         },
@@ -1170,88 +2552,552 @@
                         "unit": {
                           "anyOf": [
                             {
-                              "const": "wer_mar_43_plat",
-                              "description": "tank destroyer: Marder platoon (1943): 1x Marder III and 1x Marder II self-propelled anti-tank guns (7 men, strongest variant)"
+                              "const": "wer_arty_okh",
+                              "description": "reconnaissance, 10 men"
                             },
                             {
-                              "const": "wer_mar_43_plat@sm01",
-                              "description": "tank destroyer: Marder platoon (1943): 1x Marder III and 1x Marder II self-propelled anti-tank guns (variant from sm01_repulse_gravi, 7 men)"
+                              "const": "wer_air",
+                              "description": "reconnaissance, 14 men"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (24 men, strongest variant)"
+                              "const": "wer_pzd1190_hq",
+                              "description": "company HQ, 12 men, sdkfz251c10 sdkfz251c1"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy@sm01",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (variant from sm01_repulse_gravi, 11 men)"
+                              "const": "wer_pzd1190_pz_coy_hq",
+                              "description": "company HQ, 12 men, sdkfz251c10 sdkfz251c1"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy@tr04",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (variant from tr04_defence_gravi, 23 men)"
+                              "const": "wer_pzd1190_pz_plat",
+                              "description": "armour, 41 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1"
                             },
                             {
-                              "const": "wer_mibn_1141_comcoy@tr05",
-                              "description": "HQ: Infantry company HQ: company commander and radio/telephone squad; the strongest variant adds an anti-tank rifle squad, a PzB 41 team and a truck (variant from tr05_ambush_gravi, 24 men)"
+                              "const": "wer_pzd1190_tfl_coy_hq",
+                              "description": "company HQ, 3 men, pz3fl"
                             },
                             {
-                              "const": "wer_mibn_1141_plat",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (50 men, strongest variant)"
+                              "const": "wer_pzd1190_tfl_plat",
+                              "description": "mobile support, 9 men, pz3fl pz3fl pz3fl"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@sm01",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from sm01_repulse_gravi, 50 men)"
+                              "const": "wer_pzd1190_tfl_coy",
+                              "description": "mobile support, 21 men, pz3fl pz3fl pz3fl pz3fl pz3fl pz3fl pz3fl"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@tr02",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from tr02_attack_gravi, 27 men)"
+                              "const": "wer_minf1141_stcoy_hq",
+                              "description": "company HQ, 9 men, opel_blitz_36"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@tr04",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from tr04_defence_gravi, 50 men)"
+                              "const": "wer_minf1141_stcoy_at",
+                              "description": "support weapons, 32 men, pak38 pak38 pak38 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_mibn_1141_plat@tr05",
-                              "description": "infantry: Rifle platoon: platoon HQ, 4 rifle squads with light machine guns, 5 cm light mortar (variant from tr05_ambush_gravi, 47 men)"
+                              "const": "wer_minf1141_stcoy_at1",
+                              "description": "support weapons, 35 men, pak40 pak40 pak40 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_spg_bn_43_spam",
-                              "description": "support: Assault-gun battalion support section with 2 Opel Blitz trucks; no combat value (8 men, strongest variant)"
+                              "const": "wer_minf1141_stcoy_at2",
+                              "description": "support weapons, 35 men, pak36r pak36r pak36r sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_spg_bn_43_spam@tr01",
-                              "description": "support: Assault-gun battalion support section with 2 Opel Blitz trucks; no combat value (variant from tr01_basic_gravi, 8 men)"
+                              "const": "wer_minf1141_stcoy_at3",
+                              "description": "support weapons, 32 men, pak97_38 pak97_38 pak97_38 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
                             },
                             {
-                              "const": "wer_mibn_1141_at_plat",
-                              "description": "anti-tank gun: Anti-tank gun section: one 5 cm Pak 38 with crew and fire-control squad (10 men, strongest variant)"
+                              "const": "wer_minf1141_stcoy_eng",
+                              "description": "support weapons, 69 men, opel_blitz_36"
                             },
                             {
-                              "const": "wer_mibn_1141_at_plat@tr02",
-                              "description": "anti-tank gun: Anti-tank gun section: one 5 cm Pak 38 with crew and fire-control squad (variant from tr02_attack_gravi, 10 men)"
+                              "const": "wer_minf1141_arty_bat",
+                              "description": "support weapons, 48 men, lefh18m lefh18m lefh18m lefh18m"
                             },
                             {
-                              "const": "wer_mar_42_plat",
-                              "description": "tank destroyer: Marder platoon (1942): 1x Marder II, 2x Marder III, 1x Sd.Kfz. 250 half-track (14 men, strongest variant)"
+                              "const": "wer_minf1141_arty_bat2",
+                              "description": "support weapons, 48 men, sfh414f sfh414f sfh414f sfh414f"
                             },
                             {
-                              "const": "wer_mar_42_plat@tr03",
-                              "description": "tank destroyer: Marder platoon (1942): 1x Marder II, 2x Marder III, 1x Sd.Kfz. 250 half-track (variant from tr03_recon_gravi, 14 men)"
+                              "const": "wer_minf1141_aa_bat",
+                              "description": "support weapons, 45 men, flak36 flak36 flak36 flak36"
+                            },
+                            {
+                              "const": "wer_minf1141_igcoy_hq",
+                              "description": "company HQ, 16 men, sdkfz251c1 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_minf1141_igcoy_lpl",
+                              "description": "support weapons, 55 men, leig18 leig18 leig18 leig18 leig18 leig18"
                             },
                             {
                               "const": "wer_minf1141_igcoy_lfpl",
-                              "description": "artillery: Infantry gun platoon: 2x 7.5 cm le.IG 18 with battery/platoon command and telephone squad (25 men, strongest variant)"
+                              "description": "support weapons, 25 men, leig18 leig18"
                             },
                             {
-                              "const": "wer_minf1141_igcoy_lfpl@tr04",
-                              "description": "artillery: Infantry gun platoon: 2x 7.5 cm le.IG 18 with battery/platoon command and telephone squad (variant from tr04_defence_gravi, 25 men)"
+                              "const": "wer_mibn_1141_combat",
+                              "description": "battalion HQ, 15 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mibn_1141_comcoy",
+                              "description": "company HQ, 24 men, opel_blitz_36 pzb41 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mibn_1141_comcoy@sm01",
+                              "description": "company HQ, 11 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_comcoy@tr04",
+                              "description": "company HQ, 23 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat",
+                              "description": "infantry, 50 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat@tr02",
+                              "description": "infantry, 27 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat@tr04",
+                              "description": "infantry, 50 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_plat@tr05",
+                              "description": "infantry, 47 men"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_com",
+                              "description": "company HQ, 11 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat1",
+                              "description": "support weapons, 34 men, mg42 mg42 mg42 mg42"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat2",
+                              "description": "support weapons, 14 men, mg42 mg42"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat1a",
+                              "description": "support weapons, 34 men, mg34 mg34 mg34 mg34"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mg_plat2a",
+                              "description": "support weapons, 15 men, mg34 mg34"
+                            },
+                            {
+                              "const": "wer_mibn_1141_mt_plat",
+                              "description": "support weapons, 48 men, grw34 grw34 grw34 grw34 grw34 grw34"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat0",
+                              "description": "support weapons, 18 men, pak35 pak35 pak35"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat",
+                              "description": "support weapons, 10 men, pak38"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat1",
+                              "description": "support weapons, 27 men, pak40 pak40 pak40"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat2",
+                              "description": "support weapons, 27 men, pak36r pak36r pak36r"
+                            },
+                            {
+                              "const": "wer_mibn_1141_at_plat3",
+                              "description": "support weapons, 24 men, pak97_38 pak97_38 pak97_38"
+                            },
+                            {
+                              "const": "wer_atbn_lid42_plat0",
+                              "description": "support weapons, 22 men, pzb41 pzb41 pzb41"
+                            },
+                            {
+                              "const": "wer_atbn_lid42_plat1",
+                              "description": "support weapons, 22 men, pak35 pak35 pak35"
+                            },
+                            {
+                              "const": "wer_atbn_lid42_plat2",
+                              "description": "support weapons, 22 men, lepak41 lepak41 lepak41"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_hq",
+                              "description": "battalion HQ, 13 men, sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_spam",
+                              "description": "recovery/repair, 20 men, opel_blitz_36 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_hqe",
+                              "description": "company HQ, 16 men, stug3e opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_hq",
+                              "description": "company HQ, 16 men, stug3f8 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_ple",
+                              "description": "mobile support, 10 men, stug3cd stug3cd sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_spg_bn_42_bat_pl",
+                              "description": "mobile support, 10 men, stug3f8 stug3f8 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_hq",
+                              "description": "battalion HQ, 11 men, stug3f8 sdkfz251c1"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_spam",
+                              "description": "recovery/repair, 8 men, opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_bat_hq",
+                              "description": "company HQ, 16 men, stug3f8 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_spg_bn_43_bat_pl",
+                              "description": "mobile support, 8 men, stug3f8 stug3f8"
+                            },
+                            {
+                              "const": "wer_ispg_bat_42_hq",
+                              "description": "battalion HQ, 29 men, stuig33b opel_blitz_36 opel_blitz_36 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_ispg_bat_42_pl",
+                              "description": "mobile support, 15 men, stuig33b stuig33b stuig33b"
+                            },
+                            {
+                              "const": "wer_pz_shw1_com",
+                              "description": "company HQ, 15 men, pz6h1 pz3l pz3l"
+                            },
+                            {
+                              "const": "wer_pz_shw1_plat",
+                              "description": "armour, 20 men, pz6h1 pz6h1 pz3n pz3n"
+                            },
+                            {
+                              "const": "wer_pz_shw2_com",
+                              "description": "company HQ, 10 men, pz6h1 pz6h1"
+                            },
+                            {
+                              "const": "wer_pz_shw2_plat",
+                              "description": "armour, 20 men, pz6h1 pz6h1 pz6h1 pz6h1"
+                            },
+                            {
+                              "const": "wer_ft_pz_coy_com",
+                              "description": "company HQ, 15 men, opel_blitz_36 pz2c pz2c"
+                            },
+                            {
+                              "const": "wer_ft_pz_ft_plat",
+                              "description": "armour, 12 men, pz2d_fl pz2d_fl pz2d_fl pz2d_fl"
+                            },
+                            {
+                              "const": "wer_ft_pz_plat",
+                              "description": "armour, 15 men, pz2c pz2c pz2c pz2c pz2c"
+                            },
+                            {
+                              "const": "wer_pzj_coy_com",
+                              "description": "company HQ, 11 men, sdkfz250a1 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_pzj_plat",
+                              "description": "mobile support, 11 men, pzj1 pzj1 pzj1 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_mar_coy_42_com",
+                              "description": "company HQ, 11 men, sdkfz250a1 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mar_42_plat",
+                              "description": "mobile support, 14 men, marder2_132 marder3_139 marder3_139 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_mar_coy_43_com",
+                              "description": "company HQ, 7 men, marder2_131 marder2_131 opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_mar_43_plat",
+                              "description": "mobile support, 7 men, marder3_139 marder2_131"
+                            },
+                            {
+                              "const": "wer_sct_coy_42_com",
+                              "description": "company HQ, 10 men, sdkfz250a1 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_sct_coy_42_plat",
+                              "description": "armour, 46 men, sdkfz250a1 sdkfz250a10 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
+                            },
+                            {
+                              "const": "wer_sct_coy_42_hplat",
+                              "description": "mobile support, 50 men, sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1 mg42 sdkfz250a1 sdkfz250a1 sdkfz250a1 mg42 sdkfz251c2 sdkfz251c2"
+                            },
+                            {
+                              "const": "wer_lpz_coy41_com",
+                              "description": "company HQ, 25 men, pz3jbef pz3jkz pz2c pz2f pz2f pz2f pz2f"
+                            },
+                            {
+                              "const": "wer_lpz_coy41_plat1",
+                              "description": "armour, 25 men, pz3jkz pz3jkz pz3jkz pz3jkz pz3jkz"
+                            },
+                            {
+                              "const": "wer_lpz_coy41_plat2",
+                              "description": "armour, 25 men, pz3jlg pz3jlg pz3jlg pz3jlg pz3jlg"
+                            },
+                            {
+                              "const": "wer_pz_coy41_com",
+                              "description": "company HQ, 25 men, pz4f1 pz4f1 pz2f pz2f pz2f pz2f pz2f"
+                            },
+                            {
+                              "const": "wer_pz_coy41_plat1",
+                              "description": "armour, 20 men, pz4f1 pz4f1 pz4f1 pz4f1"
+                            },
+                            {
+                              "const": "wer_pz_coy41_plat2",
+                              "description": "armour, 20 men, pz4f2 pz4f2 pz4f2 pz4f2"
+                            },
+                            {
+                              "const": "wer_pz_coy41_plat3",
+                              "description": "armour, 20 men, pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_lplat1",
+                              "description": "armour, 25 men, pz3jlg pz3l pz3l pz3l pz3l"
+                            },
+                            {
+                              "const": "wer_pz_coy_com1",
+                              "description": "company HQ, 10 men, pz3l pz3l"
                             },
                             {
                               "const": "wer_pz_coy_plat1",
-                              "description": "tank: Panzer III platoon: 1x Pz III J (long gun) and 3x Pz III M (20 men, strongest variant)"
+                              "description": "armour, 20 men, pz3jlg pz3m pz3m pz3m"
                             },
                             {
-                              "const": "wer_pz_coy_plat1@tr06",
-                              "description": "tank: Panzer III platoon: 1x Pz III J (long gun) and 3x Pz III M (variant from tr06_meet_gravi, 20 men)"
+                              "const": "wer_pz_coy_com2",
+                              "description": "company HQ, 10 men, pz4g pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_plat2",
+                              "description": "armour, 25 men, pz4f2 pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_com3",
+                              "description": "company HQ, 10 men, pz4ga pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_plat3",
+                              "description": "armour, 25 men, pz4g pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "wer_pz_coy_com4",
+                              "description": "company HQ, 10 men, pz4gl pz4gle"
+                            },
+                            {
+                              "const": "wer_pz_coy_plat4",
+                              "description": "armour, 25 men, pz4gl pz4gl pz4gle pz4g pz4g"
+                            },
+                            {
+                              "const": "wer_pz_ltank_as",
+                              "description": "armour, 12 men, pz1f pz1f pz1f pz1f pz1f pz1f"
+                            },
+                            {
+                              "const": "wer_pant_bn_43_hq",
+                              "description": "battalion HQ, 15 men, pz5dbefe pz5dbefl pz5dl"
+                            },
+                            {
+                              "const": "wer_pant_bn_43_hq1",
+                              "description": "battalion HQ, 15 men, pz5dbefe pz5dbefl pz5dbefl"
+                            },
+                            {
+                              "const": "wer_pant_bn_43_recon",
+                              "description": "reconnaissance, 25 men, pz5dl pz5dl pz5dl pz5dl pz5dl"
+                            },
+                            {
+                              "const": "wer_pant_coy_43_cmd",
+                              "description": "company HQ, 10 men, pz5dl pz5dl"
+                            },
+                            {
+                              "const": "wer_pant_coy_43_plat",
+                              "description": "armour, 25 men, pz5dl pz5dl pz5dl pz5dl pz5dl"
+                            },
+                            {
+                              "const": "wer_recbn_1141_combat",
+                              "description": "battalion HQ, 15 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_recbn_1141_comcoy",
+                              "description": "company HQ, 11 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "wer_recbn_1141_plat1",
+                              "description": "reconnaissance, 24 men, sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8"
+                            },
+                            {
+                              "const": "wer_recbn_1141_plat2",
+                              "description": "reconnaissance, 24 men, sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8 sdkfz232_8"
+                            },
+                            {
+                              "const": "ss_pz_bn42_com",
+                              "description": "battalion HQ, 28 men, pz3jbefs pz3jbef pz2f pz2f pz2f pz2f pz2f pz2f"
+                            },
+                            {
+                              "const": "ss_pz_scoy42_com1",
+                              "description": "company HQ, 15 men, pz6h1 pz3n pz3n"
+                            },
+                            {
+                              "const": "ss_pz_scoy42_plat1",
+                              "description": "armour, 20 men, pz6h1 pz3n pz6h1 pz3n"
+                            },
+                            {
+                              "const": "ss_pz_scoy43_com1",
+                              "description": "company HQ, 10 men, pz6e pz6h1"
+                            },
+                            {
+                              "const": "ss_pz_scoy43_plat1",
+                              "description": "armour, 20 men, pz6h1 pz6h1 pz6h1 pz6h1"
+                            },
+                            {
+                              "const": "ss_pz_coy42_com",
+                              "description": "company HQ, 10 men, pz4g pz4ge"
+                            },
+                            {
+                              "const": "ss_pz_coy42_plat1",
+                              "description": "armour, 25 men, pz4g pz4ge pz4ge pz4ge pz4ge"
+                            },
+                            {
+                              "const": "ss_pz_coy42_plat2",
+                              "description": "armour, 25 men, pz3m pz3l pz3l pz3l pz3l"
+                            },
+                            {
+                              "const": "ss_minf42_stcoy_hq",
+                              "description": "company HQ, 9 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_minf42_stcoy_at",
+                              "description": "support weapons, 35 men, pak40 pak40 pak40 sdkfz250a1 sdkfz250a1 sdkfz250a1 sdkfz250a1"
+                            },
+                            {
+                              "const": "ss_pz_coy42_ecoy",
+                              "description": "company HQ, 12 men"
+                            },
+                            {
+                              "const": "ss_pz_coy42_eplat1",
+                              "description": "infantry, 47 men"
+                            },
+                            {
+                              "const": "ss_pz_coy42_eplat2",
+                              "description": "armour, 35 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_pz_coy42_eplat3",
+                              "description": "support weapons, 21 men, mg42 mg42"
+                            },
+                            {
+                              "const": "ss_spg_bat_hq1",
+                              "description": "company HQ, 16 men, stug3f8 opel_blitz_36 opel_blitz_36 opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_spg_bat_plat1",
+                              "description": "mobile support, 8 men, stug3f8 stug3f8"
+                            },
+                            {
+                              "const": "ss_mibn42_hq",
+                              "description": "battalion HQ, 21 men, sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_coy1",
+                              "description": "company HQ, 11 men, opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_mibn42_plat1",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ss_mibn42_plat2",
+                              "description": "infantry, 33 men"
+                            },
+                            {
+                              "const": "ss_mibn42_plat4",
+                              "description": "support weapons, 43 men, pzb41 mg42 mg42 grw34 grw34"
+                            },
+                            {
+                              "const": "ss_mibn42_coy2",
+                              "description": "company HQ, 5 men, sdkfz251c10"
+                            },
+                            {
+                              "const": "ss_mibn42_plat3",
+                              "description": "infantry, 41 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_plat5",
+                              "description": "support weapons, 41 men, sdkfz251c10 sdkfz251c1 mg42 mg42 sdkfz251c1 mg42 mg42 sdkfz251c2 sdkfz251c2"
+                            },
+                            {
+                              "const": "ss_mibn42_mg_coy1",
+                              "description": "company HQ, 12 men"
+                            },
+                            {
+                              "const": "ss_mibn42_mt_plat1",
+                              "description": "support weapons, 55 men, grw34 grw34 grw34 grw34 grw34 grw34"
+                            },
+                            {
+                              "const": "ss_mibn42_mg_plat1",
+                              "description": "support weapons, 49 men, mg42 mg42 mg42 mg42 mg42 mg42 mg42 mg42"
+                            },
+                            {
+                              "const": "ss_mibn42_hcoy1",
+                              "description": "company HQ, 12 men"
+                            },
+                            {
+                              "const": "ss_mibn42_eng_plat1",
+                              "description": "infantry, 47 men"
+                            },
+                            {
+                              "const": "ss_mibn42_ig_plat1",
+                              "description": "support weapons, 22 men, leig18 leig18"
+                            },
+                            {
+                              "const": "ss_mibn42_at_plat1",
+                              "description": "support weapons, 33 men, pak40 pak40 pak40"
+                            },
+                            {
+                              "const": "ss_mibn42_hcoy2",
+                              "description": "company HQ, 18 men, sdkfz251c10 sdkfz251c1 opel_blitz_36"
+                            },
+                            {
+                              "const": "ss_mibn42_eng_plat2",
+                              "description": "infantry, 37 men, sdkfz251c10 sdkfz251c1 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_ig_plat2",
+                              "description": "support weapons, 23 men, sdkfz251c1 leig18 leig18 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_gun_plat2",
+                              "description": "support weapons, 17 men, sdkfz251c1 sdkfz251c9 sdkfz251c9 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_at_plat2",
+                              "description": "support weapons, 40 men, sdkfz251c1 pak38 pak38 pak38 sdkfz251c1 sdkfz251c1 sdkfz251c1 sdkfz251c1"
+                            },
+                            {
+                              "const": "ss_mibn42_atr_plat2",
+                              "description": "support weapons, 17 men, sdkfz251c10 sdkfz250a11 sdkfz250a11 sdkfz250a11"
+                            },
+                            {
+                              "const": "wer_cr_pznest",
+                              "description": "support weapons, 9 men, mg_pznest mg_pznest mg_pznest"
+                            },
+                            {
+                              "const": "wer_cr_mrls_bat1",
+                              "description": "support weapons, 45 men, pak35 nbw41 nbw41 nbw41 nbw41 nbw41 nbw41"
+                            },
+                            {
+                              "const": "wer_cr_mrls_bat2",
+                              "description": "support weapons, 47 men, pak38 nbw41 nbw41 nbw41 nbw41 nbw41 nbw41"
+                            },
+                            {
+                              "const": "wer_cr_mrls_bat3",
+                              "description": "support weapons, 47 men, pak38 nbw42 nbw42 nbw42 nbw42 nbw42 nbw42"
                             }
                           ]
                         },
@@ -1284,10 +3130,19 @@
                             },
                             "formation": {
                               "enum": [
+                                "columnlr",
                                 "line2",
                                 "line",
-                                "columnlr",
-                                "battery"
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
                               ]
                             },
                             "facing": {
@@ -1310,6 +3165,12 @@
                             "defend",
                             "hold"
                           ]
+                        },
+                        "size": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 15,
+                          "description": "number of squads; repeats the last squad type"
                         }
                       }
                     }
@@ -1334,10 +3195,19 @@
                       },
                       "formation": {
                         "enum": [
+                          "columnlr",
                           "line2",
                           "line",
-                          "columnlr",
-                          "battery"
+                          "line1",
+                          "battery",
+                          "line3",
+                          "column",
+                          "col",
+                          "columnl",
+                          "columnr",
+                          "coll",
+                          "colr",
+                          "collr"
                         ]
                       },
                       "facing": {
@@ -1371,8 +3241,14 @@
                             "assault",
                             "attack",
                             "march",
+                            "fast_move",
                             "defence",
-                            "siege"
+                            "siege",
+                            "recon",
+                            "hidden",
+                            "scan",
+                            "enter",
+                            "leave"
                           ],
                           "default": "attack"
                         },
