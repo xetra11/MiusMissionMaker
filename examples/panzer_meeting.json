@@ -1,0 +1,46 @@
+{
+  "id": "kp02_panzer_meeting",
+  "title": "Panzer Meeting",
+  "description": "A German panzer platoon with infantry and an anti-tank gun meets a Soviet tank and rifle force. Stop the enemy before he reaches your position.",
+  "menu": "missions",
+  "base": "tr06",
+  "max_minutes": 45,
+
+  "points": {
+    "own_pos":   [-113, -558],
+    "enemy_pos": [1264, -785]
+  },
+
+  "sides": {
+    "player": {
+      "deploy": { "type": "place", "at": "own_pos", "formation": "line2" },
+      "platoons": [
+        { "callsign": "falcon_01", "unit": "wer_pz_coy_plat1" },
+        { "callsign": "falcon_02", "unit": "wer_mibn_1141_plat@sm01" },
+        { "callsign": "falcon_03", "unit": "wer_mibn_1141_at_plat",
+          "deploy": { "type": "trench", "at": "own_pos", "formation": "line" } }
+      ]
+    },
+    "enemy": {
+      "deploy": { "type": "place", "at": "enemy_pos" },
+      "platoons": [
+        { "callsign": "bear_01", "unit": "ra_tbr_42_bn1_t34_plat", "plan": "attack" },
+        { "callsign": "bear_02", "unit": "ra_rbn_1242_plat2", "plan": "attack" },
+        { "callsign": "bear_03", "unit": "ra_rr1242_smg_plat", "plan": "attack" },
+        { "callsign": "bear_04", "unit": "ra_rbn_1242_hmg" }
+      ],
+      "orders": [
+        { "to": "own_pos", "mode": "attack" }
+      ]
+    }
+  },
+
+  "victory": { "balance": 2.5 },
+  "defeat": { "enemy_reaches": "own_pos", "radius": 250, "share": 0.5 },
+
+  "texts": {
+    "brief_own": "Your battle group: Panzer III platoon, rifle platoon, Pak",
+    "brief_foe": "Soviet tanks and infantry",
+    "info_attack": "The enemy attacks your position"
+  }
+}
