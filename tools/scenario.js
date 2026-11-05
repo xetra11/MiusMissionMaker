@@ -668,7 +668,11 @@ function buildForces(spec, base, tac, qb, catalog, nameMax) {
         const t = cloneRow(trigSrc);
         setU32(t[0], 8, ordinal);
         setCode4(t[0], 12, e.nation);
-        setVec(t[1], [pos[0], pos[1], 0]);
+        // the platoon sets up in a square around this point; shipped missions keep
+        // it on the 256 m grid, so use the centre of the 512 m square holding pos,
+        // which stays inside the start cell of pos
+        const square = v => Math.floor(v / 512) * 512 + 256;
+        setVec(t[1], [square(pos[0]), square(pos[1]), 0]);
         if (ref[rel].trigFlag) ref[rel].trigFlag.copy(t[2].raw);
         trig.table.push(t);
       }
