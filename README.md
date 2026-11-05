@@ -657,6 +657,7 @@ The game must be closed. Before the first change `data\common\shared\config\path
 ```
 MiusMissionMaker/
 ├── README.md                    this guide (section 6 is generated)
+├── CHANGELOG.md                 changes per version; its section becomes the release notes
 ├── scenario.schema.json         JSON Schema for scenario files (generated)
 ├── .github/workflows/release.yml  publishes the ZIP for every pushed tag v*
 ├── docs/UNITS.md                every platoon type of the game (generated)

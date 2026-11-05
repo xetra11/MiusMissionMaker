@@ -29,9 +29,24 @@ jobs:
         run: |
           $pkg = 'dist/MiusMissionMaker'
           New-Item -ItemType Directory -Path $pkg | Out-Null
-          Copy-Item MiusMissionMaker.exe, README.md, scenario.schema.json -Destination $pkg
+          Copy-Item MiusMissionMaker.exe, README.md, CHANGELOG.md, scenario.schema.json -Destination $pkg
           Copy-Item tools, examples, docs -Destination $pkg -Recurse
           Compress-Archive -Path $pkg -DestinationPath dist/MiusMissionMaker-windows.zip
+
+      # the release notes are the section of CHANGELOG.md for this version
+      - name: Release notes
+        shell: pwsh
+        run: |
+          $version = [regex]::Escape(($env:GITHUB_REF_NAME -replace '^v', ''))
+          $lines = Get-Content CHANGELOG.md
+          $start = [array]::FindIndex($lines, [Predicate[string]] { param($l) $l -match "^## v?$version( |$)" })
+          if ($start -lt 0) { throw "CHANGELOG.md has no section for $env:GITHUB_REF_NAME" }
+          $end = [array]::FindIndex($lines, $start + 1, [Predicate[string]] { param($l) $l -match '^## ' })
+          if ($end -lt 0) { $end = $lines.Count }
+          $notes = if ($end - $start -gt 1) { ($lines[($start + 1)..($end - 1)] -join "`n").Trim() }
+          if (-not $notes) { throw "the section for $env:GITHUB_REF_NAME in CHANGELOG.md is empty" }
+          $notes | Out-File -Encoding utf8 dist/notes.md
+          Get-Content dist/notes.md
 
       # the file name stays the same, so the README's "latest" link always works
       - name: Publish
@@ -39,5 +54,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create $env:GITHUB_REF_NAME dist/MiusMissionMaker-windows.zip --title $env:GITHUB_REF_NAME --generate-notes ||
+          gh release create $env:GITHUB_REF_NAME dist/MiusMissionMaker-windows.zip --title $env:GITHUB_REF_NAME --notes-file dist/notes.md --generate-notes
+          if ($LASTEXITCODE) {
             gh release upload $env:GITHUB_REF_NAME dist/MiusMissionMaker-windows.zip --clobber
+            gh release edit $env:GITHUB_REF_NAME --notes-file dist/notes.md
+          }
