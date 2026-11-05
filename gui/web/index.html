@@ -113,6 +113,8 @@ dialog::backdrop { background: #0008; }
 const API = '/api/' + location.hash.slice(1);
 const IN_SERVICE_DATE = 0x19430701; // all bases are set on this date
 let cat, s, tab = 'player', unitSearch = '', unitRole = '', selected = null, hover = null, drag = null;
+// platoon picked on the map, and the platoon waiting for a click on the map
+let picked = null, placing = null;
 
 // ---------------------------------------------------------------- helpers
 function h(tag, props = {}, ...kids) {
@@ -123,7 +125,7 @@ function h(tag, props = {}, ...kids) {
     else if (k in e && k !== 'list') e[k] = v;
     else e.setAttribute(k, v);
   }
-  for (const c of kids.flat()) if (c !== null && c !== undefined) e.append(c);
+  for (const c of kids.flat(3)) if (c !== null && c !== undefined) e.append(c);
   return e;
 }
 const fill = (el, ...kids) => el.replaceChildren(...kids.flat(3).filter(k => k !== null && k !== undefined));
@@ -180,7 +182,17 @@ function clean() {
     const side = o.sides[k];
     if (!side.deploy?.at) delete side.deploy; else prune(side.deploy);
     if (!side.orders?.length) delete side.orders;
-    for (const p of side.platoons) { prune(p); if (p.deploy && !p.deploy.at) delete p.deploy; else if (p.deploy) prune(p.deploy); }
+    for (const d of Object.values(side.groups ?? {})) {
+      if (!d.deploy?.at) delete d.deploy; else prune(d.deploy);
+      if (!d.orders?.length) delete d.orders;
+    }
+    if (side.groups && !Object.keys(side.groups).length) delete side.groups;
+    for (const p of side.platoons) {
+      prune(p);
+      // without a point the deploy only keeps the set-up style of a platoon placed on the map
+      if (p.deploy && !p.deploy.at && !p.position) delete p.deploy;
+      else if (p.deploy) { prune(p.deploy); if (!Object.keys(p.deploy).length) delete p.deploy; }
+    }
   }
   for (const k of ['victory', 'defeat', 'texts', 'camera']) {
     if (!o[k]) continue;
@@ -198,7 +210,11 @@ function renamePoint(from, to) {
     const side = s.sides[k];
     if (side.deploy) side.deploy.at = swap(side.deploy.at);
     for (const o of side.orders ?? []) o.to = swap(o.to);
-    for (const p of side.platoons) if (p.deploy) p.deploy.at = swap(p.deploy.at);
+    for (const d of Object.values(side.groups ?? {})) {
+      if (d.deploy) d.deploy.at = swap(d.deploy.at);
+      for (const o of d.orders ?? []) o.to = swap(o.to);
+    }
+    for (const p of side.platoons) if (p.deploy?.at !== undefined) p.deploy.at = swap(p.deploy.at);
   }
   if (s.victory.own_reaches) s.victory.own_reaches = swap(s.victory.own_reaches);
   if (s.defeat.enemy_reaches) s.defeat.enemy_reaches = swap(s.defeat.enemy_reaches);
@@ -213,6 +229,37 @@ function addPoint(name, x, z) {
   refresh();
   return t;
 }
+// group names share one name space with points and callsigns, across both sides
+const groupNames = () => ['player', 'enemy'].flatMap(k => Object.keys(s.sides[k].groups ?? {}));
+const nameTaken = n => n in s.points || groupNames().includes(n) || ['player', 'enemy'].some(k => s.sides[k].platoons.some(p => p.callsign === n));
+function addGroup(sideKey) {
+  const side = s.sides[sideKey];
+  let i = 1;
+  while (nameTaken(`group_${i}`)) i++;
+  (side.groups ??= {})[`group_${i}`] = {};
+  refreshKeep();
+}
+function renameGroup(sideKey, from, to) {
+  const side = s.sides[sideKey];
+  if (to === from || !/^[a-z][a-z0-9_]{0,30}$/.test(to) || cat.enums.reserved.includes(to) || nameTaken(to)) { refreshKeep(); return; }
+  side.groups = Object.fromEntries(Object.entries(side.groups).map(([k, v]) => [k === from ? to : k, v]));
+  for (const p of side.platoons) if (p.group === from) p.group = to;
+  refreshKeep();
+}
+function removeGroup(sideKey, g) {
+  const side = s.sides[sideKey];
+  delete side.groups[g];
+  for (const p of side.platoons) if (p.group === g) delete p.group;
+  refreshKeep();
+}
+// where a platoon put on the map starts: its group's or side's point, else the middle of its start area
+function startPosition(sideKey, p) {
+  const side = s.sides[sideKey], at = side.groups?.[p.group]?.deploy?.at || side.deploy?.at;
+  if (s.points[at]) return [...s.points[at]];
+  const cells = base().cells.filter(c => c.side === sideKey);
+  if (!cells.length) return [0, 0];
+  return [Math.round(cells.reduce((a, c) => a + c.x, 0) / cells.length), Math.round(cells.reduce((a, c) => a + c.z, 0) / cells.length)];
+}
 function areaOf(x, z) {
   const b = base(), e = b.extent, r = b.cellSize / 2;
   if (x < e.x0 || x > e.x1 || z < e.z0 || z > e.z1) return 'outside';
@@ -225,15 +272,17 @@ function checks() {
   if (/[^\x20-\x7e]/.test((s.title ?? '') + (s.description ?? '').replace(/[äöüÄÖÜß]/g, ''))) out.push('Title/description: plain characters only');
   const seen = new Set();
   for (const [k, nation] of [['player', b.player], ['enemy', b.enemy]]) {
-    const side = s.sides[k];
+    const side = s.sides[k], groups = side.groups ?? {};
     if (!side.platoons.length) out.push(`${k}: no platoons`);
-    if (!side.deploy?.at && side.platoons.some(p => !p.deploy?.at && !p.position)) out.push(`${k}: choose a deployment point`);
+    if (!side.deploy?.at && side.platoons.some(p => !p.deploy?.at && !p.position && !groups[p.group]?.deploy?.at)) out.push(`${k}: choose a deployment point`);
     for (const p of side.platoons) {
       if (seen.has(p.callsign)) out.push(`Callsign ${p.callsign} used twice`);
       seen.add(p.callsign);
       if (unitOf(p.unit)?.nation !== nation) out.push(`${p.callsign}: not a ${nationName(nation)} unit`);
+      if (p.position && areaOf(...p.position) === 'outside') out.push(`${p.callsign} is outside the map`);
     }
   }
+  for (const g of groupNames()) if (g in s.points || seen.has(g)) out.push(`Group ${g}: name already used by a point or callsign`);
   for (const [n, [x, z]] of Object.entries(s.points)) if (areaOf(x, z) === 'outside') out.push(`Point ${n} is outside the map`);
   return out;
 }
@@ -281,7 +330,13 @@ function renderTabs() {
   document.getElementById('tabs').replaceChildren(...names.map(([k, t]) =>
     h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; renderPanel(); renderTabs(); } }, t)));
 }
-function deployForm(d) {
+function deployForm(d, withPoint = true) {
+  if (!withPoint) {
+    return h('div', { class: 'three' },
+      field('Type', select([['', 'as group/side'], ...Object.keys(cat.enums.deployTypes)], d.type, v => { d.type = v; })),
+      field('Formation', select([['', 'default'], ...Object.keys(cat.enums.formations)], d.formation, v => { d.formation = v; })),
+      field('Facing', select([['', 'to other side'], ...cat.enums.facings], d.facing, v => { d.facing = v; })));
+  }
   return [
     h('div', { class: 'two' },
       field('Point', select(pointOptions(), d.at, v => { d.at = v; refreshKeep(); })),
@@ -289,6 +344,54 @@ function deployForm(d) {
     h('div', { class: 'two' },
       field('Formation', select([['', 'default'], ...Object.keys(cat.enums.formations)], d.formation, v => { d.formation = v; })),
       field('Facing', select([['', 'towards other side'], ...cat.enums.facings], d.facing, v => { d.facing = v; }))),
+  ];
+}
+// orders of a side or group; the file keeps seconds, the editor shows minutes
+function ordersForm(owner) {
+  return [
+    (owner.orders ?? []).map((o, i) => h('div', { class: 'row', style: 'margin-bottom:4px' },
+      select(pointOptions(), o.to, v => { o.to = v; draw(); }, { class: 'grow' }),
+      select(Object.keys(cat.enums.modes), o.mode ?? 'attack', v => { o.mode = v; }, { title: 'Movement mode' }),
+      number(o.wait_s === undefined ? undefined : o.wait_s / 60, v => { o.wait_s = v ? Math.round(v * 60) : undefined; draw(); }, {
+        placeholder: 'wait min', step: 0.5, min: 0, style: 'width:78px',
+        title: 'Minutes to wait after the previous order (for the first order: after the battle starts). Empty: start when the previous order is done.',
+      }),
+      h('button', { class: 'icon', onclick: () => { owner.orders.splice(i, 1); refreshKeep(); } }, '×'))),
+    h('button', { onclick: () => { (owner.orders ??= []).push({ to: pointNames()[0] ?? '', mode: 'attack' }); refreshKeep(); } }, 'Add order'),
+  ];
+}
+function groupCard(sideKey, g) {
+  const side = s.sides[sideKey], d = side.groups[g], members = side.platoons.filter(p => p.group === g);
+  return h('div', { class: 'card' },
+    h('div', { class: 'row' },
+      h('input', { value: g, class: 'mono grow', title: 'Group name', onchange: e => renameGroup(sideKey, g, e.target.value.trim()) }),
+      h('span', { class: 'small muted' }, `${members.length} platoon${members.length === 1 ? '' : 's'}`),
+      h('button', { class: 'icon', title: 'Remove group', onclick: () => removeGroup(sideKey, g) }, '×')),
+    h('div', { class: 'small muted', style: 'margin:3px 0' }, members.length ? members.map(p => p.callsign).join(', ') : 'Choose this group on a platoon below.'),
+    h('label', { class: 'small' }, h('input', { type: 'checkbox', checked: !!d.deploy, onchange: e => { if (e.target.checked) d.deploy = { at: '', type: 'place' }; else delete d.deploy; refreshKeep(); } }), ' own set-up point'),
+    d.deploy ? h('div', { style: 'margin-top:6px' }, deployForm(d.deploy)) : null,
+    h('div', { class: 'small muted', style: 'margin:6px 0 3px' }, d.orders?.length ? 'Orders of this group' : 'No orders: follows the orders of the side'),
+    ordersForm(d));
+}
+function placementForm(sideKey, p) {
+  const side = s.sides[sideKey];
+  const mode = p.position ? 'map' : p.deploy?.at !== undefined ? 'point' : 'side';
+  const withWhom = side.groups?.[p.group]?.deploy ? 'with its group' : 'with its side';
+  const change = v => {
+    const style = { ...p.deploy };
+    delete style.at;
+    delete p.position; delete p.deploy;
+    if (v === 'point') p.deploy = { at: '', type: 'trench', ...style };
+    if (v === 'map') { p.position = startPosition(sideKey, p); p.deploy = style; placing = p; }
+    refreshKeep();
+  };
+  return [
+    h('div', { class: 'row small', style: 'margin-top:5px' },
+      h('span', { class: 'muted' }, 'Set up'),
+      select([['side', withWhom], ['point', 'at a point'], ['map', 'on the map']], mode, change, { class: 'grow' }),
+      mode === 'map' ? h('button', { title: 'Click on the map to put the platoon there', onclick: () => { placing = p; refreshKeep(); } }, placing === p ? 'click the map…' : 'Place on map') : null),
+    mode === 'point' ? h('div', { style: 'margin-top:6px' }, deployForm(p.deploy)) : null,
+    mode === 'map' ? h('div', { style: 'margin-top:4px' }, h('div', { class: 'small muted mono', style: 'margin-bottom:4px' }, `x ${p.position[0]}  z ${p.position[1]}, drag it on the map`), deployForm(p.deploy ??= {}, false)) : null,
   ];
 }
 function nextCallsign(sideKey) {
@@ -299,8 +402,8 @@ function nextCallsign(sideKey) {
 }
 function platoonCard(sideKey, p, i, nation) {
   const side = s.sides[sideKey], u = unitOf(p.unit), wrong = u?.nation !== nation;
-  const variants = u?.variants ?? [];
-  return h('div', { class: 'card' + (wrong ? ' wrong' : '') },
+  const variants = u?.variants ?? [], groups = Object.keys(side.groups ?? {});
+  return h('div', { class: 'card' + (wrong ? ' wrong' : ''), id: 'platoon-' + p.callsign, style: picked === p ? 'border-color:var(--accent)' : '' },
     h('div', { class: 'row' },
       input(p.callsign, v => { p.callsign = v; showChecks(); draw(); }, { class: 'mono', style: 'width:105px', list: 'callsigns', title: 'Callsign' }),
       h('div', { class: 'grow small mono', title: p.unit, style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, p.unit),
@@ -310,8 +413,8 @@ function platoonCard(sideKey, p, i, nation) {
       variants.length ? select([[u.key, `strongest (${u.men})`], ...variants.map(v => [v.key, `${v.key.split('@')[1]} (${v.men})`])], p.unit, v => { p.unit = v; refreshKeep(); }, { title: 'Variant' }) : null,
       u?.source === 'database' ? h('label', { title: 'Number of squads' }, 'Size ', number(p.size, v => { p.size = v; }, { style: 'width:52px', min: 1, max: u.maxSquads || 15 })) : null,
       select([['', 'plan: default'], ...cat.enums.plans], p.plan, v => { p.plan = v; }),
-      h('label', {}, h('input', { type: 'checkbox', checked: !!p.deploy, onchange: e => { if (e.target.checked) p.deploy = { at: '', type: 'trench' }; else delete p.deploy; refreshKeep(); } }), ' own position')),
-    p.deploy ? h('div', { style: 'margin-top:6px' }, deployForm(p.deploy)) : null);
+      groups.length ? select([['', 'no group'], ...groups.map(g => [g, 'group: ' + g])], p.group, v => { if (v) p.group = v; else delete p.group; refreshKeep(); }, { title: 'Group' }) : null),
+    placementForm(sideKey, p));
 }
 const summary = list => Object.entries(list.reduce((a, v) => ({ ...a, [v]: (a[v] ?? 0) + 1 }), {})).map(([k, n]) => `${n}x ${k}`).join(', ');
 function unitList(sideKey, nation) {
@@ -348,13 +451,12 @@ function sidePanel(sideKey) {
       input(unitSearch, v => { unitSearch = v; fill(); }, { class: 'grow', placeholder: 'Search: stug, t34, rifle, mortar ...' }),
       select([['', 'all roles'], ...roles], unitRole, v => { unitRole = v; fill(); })),
     list,
-    h('h2', {}, 'Orders'),
-    (side.orders ?? []).map((o, i) => h('div', { class: 'row', style: 'margin-bottom:4px' },
-      select(pointOptions(), o.to, v => { o.to = v; draw(); }, { class: 'grow' }),
-      select(Object.keys(cat.enums.modes), o.mode ?? 'attack', v => { o.mode = v; }, { title: 'Movement mode' }),
-      number(o.wait_s, v => { o.wait_s = v; }, { placeholder: 'wait s', style: 'width:70px', title: 'Wait seconds after the previous order' }),
-      h('button', { class: 'icon', onclick: () => { side.orders.splice(i, 1); refreshKeep(); } }, '×'))),
-    h('button', { onclick: () => { (side.orders ??= []).push({ to: pointNames()[0] ?? '', mode: 'attack' }); refreshKeep(); } }, 'Add order'),
+    h('h2', {}, 'Groups'),
+    h('div', { class: 'small muted', style: 'margin-bottom:6px' }, 'Platoons of a group set up and move together, e.g. a first and a second attack wave. A group with its own orders ignores the orders of the side. Once the enemy has any orders, its platoons without orders hold their positions.'),
+    Object.keys(side.groups ?? {}).map(g => groupCard(sideKey, g)),
+    h('button', { onclick: () => addGroup(sideKey) }, 'Add group'),
+    h('h2', {}, Object.values(side.groups ?? {}).some(d => d.orders?.length) ? 'Orders for platoons outside these groups' : 'Orders'),
+    ordersForm(side),
   ];
 }
 function battlePanel() {
@@ -396,7 +498,7 @@ function renderPanel() {
 }
 function refreshKeep() {
   const p = document.getElementById('panel'), y = p.scrollTop;
-  renderPanel(); p.scrollTop = y; draw(); showChecks();
+  renderPanel(); p.scrollTop = y; setHint(); draw(); showChecks();
 }
 function refresh() {
   renderLeft(); renderTabs(); refreshKeep();
@@ -426,9 +528,31 @@ function usedPoints() {
   const mark = (n, c) => { if (n) m[n] = c; };
   for (const [k, c] of [['player', '--player'], ['enemy', '--enemy']]) {
     mark(s.sides[k].deploy?.at, c);
+    for (const d of Object.values(s.sides[k].groups ?? {})) mark(d.deploy?.at, c);
     for (const p of s.sides[k].platoons) mark(p.deploy?.at, c);
   }
   return m;
+}
+// where a set of platoons stands on the map: a set-up point, else the middle of the placed ones
+function standsAt(platoons, point) {
+  if (s.points[point]) return s.points[point];
+  const at = platoons.map(p => p.position ?? s.points[p.deploy?.at]).filter(Boolean);
+  return at.length ? [at.reduce((a, q) => a + q[0], 0) / at.length, at.reduce((a, q) => a + q[1], 0) / at.length] : null;
+}
+// arrows of all order lists of a side: [label, start, orders]
+function orderRoutes(sideKey) {
+  const side = s.sides[sideKey], groups = side.groups ?? {};
+  const ordered = Object.keys(groups).filter(g => groups[g].orders?.length && side.platoons.some(p => p.group === g));
+  const rest = side.platoons.filter(p => !ordered.includes(p.group));
+  const routes = ordered.map(g => [g, standsAt(side.platoons.filter(p => p.group === g), groups[g].deploy?.at ?? side.deploy?.at), groups[g].orders]);
+  if (side.orders?.length && rest.length) routes.unshift([ordered.length ? '' : null, standsAt(rest, side.deploy?.at), side.orders]);
+  return routes;
+}
+function setHint() {
+  document.getElementById('hint').textContent = placing
+    ? `Click on the map to place ${placing.callsign}. Esc cancels.`
+    : 'Click to add a point, drag points and platoons to move them. Click a village or grey point to use it.';
+  canvas.style.cursor = placing ? 'copy' : 'crosshair';
 }
 function arrow(a, b, color) {
   const [x1, y1] = toScreen(...a), [x2, y2] = toScreen(...b), an = Math.atan2(y2 - y1, x2 - x1);
@@ -470,9 +594,30 @@ function draw() {
   }
   const pts = s.points, used = usedPoints();
   for (const [k, c] of [['player', css('--player')], ['enemy', css('--enemy')]]) {
-    const side = s.sides[k];
-    let from = pts[side.deploy?.at];
-    for (const o of side.orders ?? []) { const to = pts[o.to]; if (from && to && from !== to) arrow(from, to, c); from = to ?? from; }
+    for (const [name, start, orders] of orderRoutes(k)) {
+      let from = start;
+      orders.forEach((o, i) => {
+        const to = pts[o.to];
+        if (from && to && from !== to) {
+          arrow(from, to, c);
+          const wait = o.wait_s ? `+${Math.round(o.wait_s / 6) / 10} min` : '';
+          const text = [i === 0 ? name : '', wait].filter(Boolean).join(' ');
+          if (text) { const [ax, ay] = toScreen((from[0] + to[0]) / 2, (from[1] + to[1]) / 2); label(text, ax + 6, ay - 6, c); }
+        }
+        from = to ?? from;
+      });
+    }
+  }
+  for (const [k, c] of [['player', css('--player')], ['enemy', css('--enemy')]]) {
+    for (const p of s.sides[k].platoons) {
+      if (!p.position) continue;
+      const [px, py] = toScreen(...p.position), r = picked === p || placing === p ? 7 : 5;
+      ctx.fillStyle = c; ctx.strokeStyle = picked === p ? '#fff' : '#000'; ctx.lineWidth = 1.5;
+      ctx.fillRect(px - r, py - r, r * 2, r * 2); ctx.strokeRect(px - r, py - r, r * 2, r * 2);
+      // the number keeps crowded deployments readable; the full callsign on hover
+      const full = hover?.platoon === p || picked === p;
+      label(full ? p.callsign : p.callsign.replace(/^.*_/, ''), px + r + 3, py + 4, full ? '#fff' : '#ccc');
+    }
   }
   for (const [n, [x, z]] of Object.entries(pts)) {
     const [px, py] = toScreen(x, z), color = used[n] ? css(used[n]) : css('--accent');
@@ -488,6 +633,13 @@ function draw() {
   label('1 km', bx, by - 5, '#ddd');
 }
 function pick(px, py) {
+  for (const k of ['player', 'enemy']) {
+    for (const p of s.sides[k].platoons) {
+      if (!p.position) continue;
+      const [sx, sy] = toScreen(...p.position);
+      if (Math.abs(sx - px) < 8 && Math.abs(sy - py) < 8) return { platoon: p, side: k };
+    }
+  }
   for (const [n, [x, z]] of Object.entries(s.points)) { const [sx, sy] = toScreen(x, z); if (Math.hypot(sx - px, sy - py) < 10) return { point: n }; }
   for (const p of base().points) { const [sx, sy] = toScreen(p.x, p.z); if (Math.hypot(sx - px, sy - py) < 7) return { known: p }; }
   for (const p of base().settlements) {
@@ -496,9 +648,23 @@ function pick(px, py) {
   }
   return null;
 }
+// shows the card of a platoon picked on the map
+function showPlatoon(sideKey, p) {
+  picked = p;
+  if (tab !== sideKey) { tab = sideKey; renderTabs(); }
+  refreshKeep();
+  document.getElementById('platoon-' + p.callsign)?.scrollIntoView({ block: 'nearest' });
+}
 canvas.addEventListener('mousedown', e => {
+  const [mx, mz] = toMap(e.offsetX, e.offsetY);
+  if (placing) {
+    if (areaOf(mx, mz) !== 'outside') placing.position = [Math.round(mx), Math.round(mz)];
+    placing = null; setHint(); refreshKeep();
+    return;
+  }
   const hit = pick(e.offsetX, e.offsetY);
-  if (hit?.point) { drag = hit.point; selected = hit.point; draw(); return; }
+  if (hit?.platoon) { drag = { platoon: hit.platoon }; showPlatoon(hit.side, hit.platoon); return; }
+  if (hit?.point) { drag = { point: hit.point }; selected = hit.point; draw(); return; }
   if (hit?.known) { addPoint(hit.known.name, hit.known.x, hit.known.z); return; }
   if (hit?.settlement) { addPoint('village', hit.settlement.x, hit.settlement.z); return; }
   const [x, z] = toMap(e.offsetX, e.offsetY);
@@ -508,13 +674,27 @@ canvas.addEventListener('mousedown', e => {
 canvas.addEventListener('mousemove', e => {
   const [x, z] = toMap(e.offsetX, e.offsetY);
   document.getElementById('coord').textContent = `x ${Math.round(x)}  z ${Math.round(z)}  ${areaOf(x, z)}`;
-  if (drag) { s.points[drag] = [Math.round(x), Math.round(z)]; draw(); return; }
+  if (drag) {
+    const at = [Math.round(x), Math.round(z)];
+    if (drag.point) s.points[drag.point] = at;
+    else if (areaOf(x, z) !== 'outside') drag.platoon.position = at;
+    draw();
+    return;
+  }
   hover = pick(e.offsetX, e.offsetY);
-  canvas.style.cursor = hover ? 'pointer' : 'crosshair';
-  canvas.title = hover?.settlement ? `${hover.settlement.houses} houses, ${hover.settlement.width} x ${hover.settlement.depth} m` : '';
+  if (!placing) canvas.style.cursor = hover ? 'pointer' : 'crosshair';
+  const u = hover?.platoon && unitOf(hover.platoon.unit);
+  canvas.title = hover?.settlement ? `${hover.settlement.houses} houses, ${hover.settlement.width} x ${hover.settlement.depth} m`
+    : hover?.platoon ? `${hover.platoon.callsign}: ${hover.platoon.unit}${u ? ` (${u.role}, ${u.men} men${u.vehicles.length ? ', ' + summary(u.vehicles) : ''})` : ''}` : '';
   draw();
 });
-window.addEventListener('mouseup', () => { if (drag) { drag = null; renderLeft(); showChecks(); } });
+window.addEventListener('mouseup', () => {
+  if (!drag) return;
+  const wasPlatoon = drag.platoon;
+  drag = null;
+  if (wasPlatoon) refreshKeep(); else { renderLeft(); showChecks(); }
+});
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && placing) { placing = null; setHint(); refreshKeep(); } });
 new ResizeObserver(resize).observe(canvas.parentElement);
 
 // ---------------------------------------------------------------- toolbar
@@ -528,11 +708,11 @@ async function fillOpen(current) {
 document.getElementById('open').addEventListener('change', async e => {
   if (!e.target.value) return;
   s = normalise(await api('/scenario?path=' + encodeURIComponent(e.target.value)));
-  selected = null;
+  selected = null; picked = null; placing = null;
   refresh();
   log('Opened ' + e.target.value);
 });
-document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; refresh(); });
+document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; picked = null; placing = null; refresh(); });
 document.getElementById('save').addEventListener('click', async () => {
   try { const r = await api('/save', clean()); log('Saved ' + r.file, 'good'); await fillOpen(`scenarios/${s.id}.json`); } catch (e) { log(e.message, 'err'); }
 });

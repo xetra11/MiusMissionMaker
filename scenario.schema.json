@@ -100,6 +100,8 @@
             "foe",
             "own_main",
             "foe_main",
+            "own_rest",
+            "foe_rest",
             "main",
             "deploy",
             "process",
@@ -250,6 +252,8 @@
                               "foe",
                               "own_main",
                               "foe_main",
+                              "own_rest",
+                              "foe_rest",
                               "main",
                               "deploy",
                               "process",
@@ -825,9 +829,7 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
+                          "required": [],
                           "additionalProperties": false,
                           "properties": {
                             "at": {
@@ -870,7 +872,8 @@
                                 "NW"
                               ]
                             }
-                          }
+                          },
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
                         },
                         "plan": {
                           "enum": [
@@ -884,6 +887,10 @@
                           "minimum": 1,
                           "maximum": 15,
                           "description": "number of squads; repeats the last squad type"
+                        },
+                        "group": {
+                          "type": "string",
+                          "description": "name of a group in \"groups\" of this side"
                         }
                       }
                     }
@@ -972,6 +979,121 @@
                       }
                     }
                   },
+                  "groups": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]{0,30}$",
+                      "not": {
+                        "enum": [
+                          "own",
+                          "foe",
+                          "own_main",
+                          "foe_main",
+                          "own_rest",
+                          "foe_rest",
+                          "main",
+                          "deploy",
+                          "process",
+                          "goto",
+                          "battle_victory",
+                          "battle_defeat",
+                          "foe_later",
+                          "own_later"
+                        ]
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "deploy": {
+                          "type": "object",
+                          "required": [
+                            "at"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "at": {
+                              "type": "string",
+                              "description": "name of a point in \"points\""
+                            },
+                            "type": {
+                              "enum": [
+                                "trench",
+                                "place"
+                              ],
+                              "default": "place"
+                            },
+                            "formation": {
+                              "enum": [
+                                "columnlr",
+                                "line2",
+                                "line",
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
+                              ]
+                            },
+                            "facing": {
+                              "enum": [
+                                "N",
+                                "NE",
+                                "E",
+                                "SE",
+                                "S",
+                                "SW",
+                                "W",
+                                "NW"
+                              ]
+                            }
+                          }
+                        },
+                        "orders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "to"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "to": {
+                                "type": "string"
+                              },
+                              "mode": {
+                                "enum": [
+                                  "assault",
+                                  "attack",
+                                  "march",
+                                  "fast_move",
+                                  "defence",
+                                  "siege",
+                                  "recon",
+                                  "hidden",
+                                  "scan",
+                                  "enter",
+                                  "leave"
+                                ],
+                                "default": "attack"
+                              },
+                              "wait_s": {
+                                "type": "number",
+                                "minimum": 0
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
                   "ai": {
                     "type": "boolean"
                   }
@@ -1004,6 +1126,8 @@
                               "foe",
                               "own_main",
                               "foe_main",
+                              "own_rest",
+                              "foe_rest",
                               "main",
                               "deploy",
                               "process",
@@ -1579,9 +1703,7 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
+                          "required": [],
                           "additionalProperties": false,
                           "properties": {
                             "at": {
@@ -1624,7 +1746,8 @@
                                 "NW"
                               ]
                             }
-                          }
+                          },
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
                         },
                         "plan": {
                           "enum": [
@@ -1638,6 +1761,10 @@
                           "minimum": 1,
                           "maximum": 15,
                           "description": "number of squads; repeats the last squad type"
+                        },
+                        "group": {
+                          "type": "string",
+                          "description": "name of a group in \"groups\" of this side"
                         }
                       }
                     }
@@ -1722,6 +1849,121 @@
                         "wait_s": {
                           "type": "number",
                           "minimum": 0
+                        }
+                      }
+                    }
+                  },
+                  "groups": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]{0,30}$",
+                      "not": {
+                        "enum": [
+                          "own",
+                          "foe",
+                          "own_main",
+                          "foe_main",
+                          "own_rest",
+                          "foe_rest",
+                          "main",
+                          "deploy",
+                          "process",
+                          "goto",
+                          "battle_victory",
+                          "battle_defeat",
+                          "foe_later",
+                          "own_later"
+                        ]
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "deploy": {
+                          "type": "object",
+                          "required": [
+                            "at"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "at": {
+                              "type": "string",
+                              "description": "name of a point in \"points\""
+                            },
+                            "type": {
+                              "enum": [
+                                "trench",
+                                "place"
+                              ],
+                              "default": "place"
+                            },
+                            "formation": {
+                              "enum": [
+                                "columnlr",
+                                "line2",
+                                "line",
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
+                              ]
+                            },
+                            "facing": {
+                              "enum": [
+                                "N",
+                                "NE",
+                                "E",
+                                "SE",
+                                "S",
+                                "SW",
+                                "W",
+                                "NW"
+                              ]
+                            }
+                          }
+                        },
+                        "orders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "to"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "to": {
+                                "type": "string"
+                              },
+                              "mode": {
+                                "enum": [
+                                  "assault",
+                                  "attack",
+                                  "march",
+                                  "fast_move",
+                                  "defence",
+                                  "siege",
+                                  "recon",
+                                  "hidden",
+                                  "scan",
+                                  "enter",
+                                  "leave"
+                                ],
+                                "default": "attack"
+                              },
+                              "wait_s": {
+                                "type": "number",
+                                "minimum": 0
+                              }
+                            }
+                          }
                         }
                       }
                     }
@@ -1783,6 +2025,8 @@
                               "foe",
                               "own_main",
                               "foe_main",
+                              "own_rest",
+                              "foe_rest",
                               "main",
                               "deploy",
                               "process",
@@ -2358,9 +2602,7 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
+                          "required": [],
                           "additionalProperties": false,
                           "properties": {
                             "at": {
@@ -2403,7 +2645,8 @@
                                 "NW"
                               ]
                             }
-                          }
+                          },
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
                         },
                         "plan": {
                           "enum": [
@@ -2417,6 +2660,10 @@
                           "minimum": 1,
                           "maximum": 15,
                           "description": "number of squads; repeats the last squad type"
+                        },
+                        "group": {
+                          "type": "string",
+                          "description": "name of a group in \"groups\" of this side"
                         }
                       }
                     }
@@ -2505,6 +2752,121 @@
                       }
                     }
                   },
+                  "groups": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]{0,30}$",
+                      "not": {
+                        "enum": [
+                          "own",
+                          "foe",
+                          "own_main",
+                          "foe_main",
+                          "own_rest",
+                          "foe_rest",
+                          "main",
+                          "deploy",
+                          "process",
+                          "goto",
+                          "battle_victory",
+                          "battle_defeat",
+                          "foe_later",
+                          "own_later"
+                        ]
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "deploy": {
+                          "type": "object",
+                          "required": [
+                            "at"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "at": {
+                              "type": "string",
+                              "description": "name of a point in \"points\""
+                            },
+                            "type": {
+                              "enum": [
+                                "trench",
+                                "place"
+                              ],
+                              "default": "place"
+                            },
+                            "formation": {
+                              "enum": [
+                                "columnlr",
+                                "line2",
+                                "line",
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
+                              ]
+                            },
+                            "facing": {
+                              "enum": [
+                                "N",
+                                "NE",
+                                "E",
+                                "SE",
+                                "S",
+                                "SW",
+                                "W",
+                                "NW"
+                              ]
+                            }
+                          }
+                        },
+                        "orders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "to"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "to": {
+                                "type": "string"
+                              },
+                              "mode": {
+                                "enum": [
+                                  "assault",
+                                  "attack",
+                                  "march",
+                                  "fast_move",
+                                  "defence",
+                                  "siege",
+                                  "recon",
+                                  "hidden",
+                                  "scan",
+                                  "enter",
+                                  "leave"
+                                ],
+                                "default": "attack"
+                              },
+                              "wait_s": {
+                                "type": "number",
+                                "minimum": 0
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
                   "ai": {
                     "type": "boolean"
                   }
@@ -2537,6 +2899,8 @@
                               "foe",
                               "own_main",
                               "foe_main",
+                              "own_rest",
+                              "foe_rest",
                               "main",
                               "deploy",
                               "process",
@@ -3112,9 +3476,7 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
+                          "required": [],
                           "additionalProperties": false,
                           "properties": {
                             "at": {
@@ -3157,7 +3519,8 @@
                                 "NW"
                               ]
                             }
-                          }
+                          },
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
                         },
                         "plan": {
                           "enum": [
@@ -3171,6 +3534,10 @@
                           "minimum": 1,
                           "maximum": 15,
                           "description": "number of squads; repeats the last squad type"
+                        },
+                        "group": {
+                          "type": "string",
+                          "description": "name of a group in \"groups\" of this side"
                         }
                       }
                     }
@@ -3255,6 +3622,121 @@
                         "wait_s": {
                           "type": "number",
                           "minimum": 0
+                        }
+                      }
+                    }
+                  },
+                  "groups": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9_]{0,30}$",
+                      "not": {
+                        "enum": [
+                          "own",
+                          "foe",
+                          "own_main",
+                          "foe_main",
+                          "own_rest",
+                          "foe_rest",
+                          "main",
+                          "deploy",
+                          "process",
+                          "goto",
+                          "battle_victory",
+                          "battle_defeat",
+                          "foe_later",
+                          "own_later"
+                        ]
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "deploy": {
+                          "type": "object",
+                          "required": [
+                            "at"
+                          ],
+                          "additionalProperties": false,
+                          "properties": {
+                            "at": {
+                              "type": "string",
+                              "description": "name of a point in \"points\""
+                            },
+                            "type": {
+                              "enum": [
+                                "trench",
+                                "place"
+                              ],
+                              "default": "place"
+                            },
+                            "formation": {
+                              "enum": [
+                                "columnlr",
+                                "line2",
+                                "line",
+                                "line1",
+                                "battery",
+                                "line3",
+                                "column",
+                                "col",
+                                "columnl",
+                                "columnr",
+                                "coll",
+                                "colr",
+                                "collr"
+                              ]
+                            },
+                            "facing": {
+                              "enum": [
+                                "N",
+                                "NE",
+                                "E",
+                                "SE",
+                                "S",
+                                "SW",
+                                "W",
+                                "NW"
+                              ]
+                            }
+                          }
+                        },
+                        "orders": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "to"
+                            ],
+                            "additionalProperties": false,
+                            "properties": {
+                              "to": {
+                                "type": "string"
+                              },
+                              "mode": {
+                                "enum": [
+                                  "assault",
+                                  "attack",
+                                  "march",
+                                  "fast_move",
+                                  "defence",
+                                  "siege",
+                                  "recon",
+                                  "hidden",
+                                  "scan",
+                                  "enter",
+                                  "leave"
+                                ],
+                                "default": "attack"
+                              },
+                              "wait_s": {
+                                "type": "number",
+                                "minimum": 0
+                              }
+                            }
+                          }
                         }
                       }
                     }

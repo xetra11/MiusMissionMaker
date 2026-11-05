@@ -38,11 +38,15 @@ If the game is not in the default Steam folder, set its location under **Setting
 
 ![Map with points and enemy orders](docs/img/editor-map.png)
 
-**3. Pick your forces.** In **Player** and **Enemy**, choose where each side sets up and add platoons. The search covers names, roles and vehicles, for example `stug`, `t34` or `mortar`. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. Use **own position** to place a single platoon elsewhere, and **Size** to change the number of squads or vehicles.
+**3. Pick your forces.** In **Player** and **Enemy**, choose where each side sets up and add platoons. The search covers names, roles and vehicles, for example `stug`, `t34` or `mortar`. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. Use **Size** to change the number of squads or vehicles.
+
+Under **Set up** each platoon either stands with its side (or group), at a point of its own, or **on the map**: choose that, click where it should stand and drag its square later. Clicking a square on the map shows its platoon.
 
 ![Searching platoons](docs/img/editor-units.png)
 
-**4. Give the enemy orders.** At the bottom of the **Enemy** tab, add the points the enemy should move to, in order. Leave orders empty and tick **Block AI** for a defender that holds its positions.
+**4. Give the enemy orders.** At the bottom of the **Enemy** tab, add the points the enemy should move to, in order. **wait min** delays an order, for example a second wave that starts 5 minutes after the battle begins. Leave orders empty and tick **Block AI** for a defender that holds its positions.
+
+For several attack groups, add **Groups** (for example `first_wave` and `second_wave`), choose the group on each platoon and give each group its own orders. Platoons without orders, such as mortars or anti-tank guns, hold their positions. The map shows the route of every group. [examples/panzer_vorhut.json](examples/panzer_vorhut.json) attacks on two axes, the second one 5 minutes later.
 
 ![Orders of the enemy](docs/img/editor-orders.png)
 
@@ -171,6 +175,7 @@ Complete examples:
 - [examples/company_vs_company.json](examples/company_vs_company.json) – German infantry company defends against a Soviet rifle company (base `tr04`).
 - [examples/panzer_meeting.json](examples/panzer_meeting.json) – Pz III platoon, rifle platoon and Pak against T-34s, riflemen, SMG troops and a Maxim (base `tr06`, units from five missions).
 - [examples/liberate_village.json](examples/liberate_village.json) – infantry company and two StuG III attack a village held by a Soviet rifle company (base `tr06`, enemy deployed per platoon, victory by taking the village).
+- [examples/panzer_vorhut.json](examples/panzer_vorhut.json) – German Kampfgruppe in overwatch against Soviet tanks attacking on two axes, the second 5 minutes later (base `tr06`, every platoon at its own `position`, enemy `groups` with separate orders, support weapons without orders hold).
 
 JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.g. `"_note": "..."`. To get editor validation and auto-completion add `"$schema": "../scenario.schema.json"` (path relative to the JSON file).
 
@@ -212,8 +217,8 @@ JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.
 
 ```json
 "sides": {
-  "player": { "deploy": { ... }, "platoons": [ ... ], "orders": [ ... ], "ai": true },
-  "enemy":  { "deploy": { ... }, "platoons": [ ... ], "orders": [ ... ], "ai": true }
+  "player": { "deploy": { ... }, "platoons": [ ... ], "orders": [ ... ], "groups": { ... }, "ai": true },
+  "enemy":  { "deploy": { ... }, "platoons": [ ... ], "orders": [ ... ], "groups": { ... }, "ai": true }
 }
 ```
 
@@ -222,7 +227,8 @@ JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.
 | `platoons` | yes | List of platoons of this side (at least 1), see 4.5. |
 | `deploy` | see below | Where and how this side is set up at the start. |
 | `orders` | – | Orders the script gives to this side (usually only for `enemy`). |
-| `ai` | – | `false` blocks this side's own AI so it only follows script orders. If `enemy` has `orders`, its AI is blocked automatically (as in the original missions). |
+| `groups` | – | Named groups of platoons with their own set-up and orders, see below. |
+| `ai` | – | `false` blocks this side's own AI so it only follows script orders. If `enemy` has `orders` (its own or a group's), its AI is blocked automatically (as in the original missions); enemy platoons without orders then hold their positions. |
 
 **`deploy`** – initial set-up:
 
@@ -233,9 +239,11 @@ JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.
 | `formation` | – | see 6.3 | Formation. Default `line2` for `trench`, `columnlr` for `place`. |
 | `facing` | – | `"N"`, `"NE"`, `"E"`, `"SE"`, `"S"`, `"SW"`, `"W"`, `"NW"` | Facing. Default: towards the other side. |
 
-Each side needs a `deploy`, unless every one of its platoons has its own `deploy` or a `position`.
+Each side needs a `deploy`, unless every one of its platoons has its own `deploy`, a `position` or a group with `deploy`.
 
-**`orders`** – executed in sequence, for **all** platoons of the side together, starting when the player unpauses after deployment:
+A platoon is set up by the first of: its own `deploy` with `at`, its `position`, its group's `deploy`, the side's `deploy`.
+
+**`orders`** – executed in sequence, for **all** platoons of the side together (without those in a group with its own orders), starting when the player unpauses after deployment:
 
 ```json
 "orders": [
@@ -249,7 +257,25 @@ Each side needs a `deploy`, unless every one of its platoons has its own `deploy
 |---|---|---|---|
 | `to` | yes | point name | Destination. |
 | `mode` | – | see 6.3 | Kind of movement. Default `attack`. |
-| `wait_s` | – | seconds | Wait this long after the previous order. Without `wait_s` the order is queued and executed once the previous one is done. |
+| `wait_s` | – | seconds | Wait this long after the previous order (the first order: after the battle starts). Without `wait_s` the order is queued and executed once the previous one is done. |
+
+**`groups`** – platoons that set up and move together, e.g. two attack axes or a second wave. Each platoon joins at most one group with `"group": "<name>"`:
+
+```json
+"groups": {
+  "axis_one": { "orders": [ { "to": "german_left", "mode": "attack" } ] },
+  "axis_two": { "deploy": { "at": "wood", "type": "place" },
+                "orders": [ { "to": "german_right", "mode": "attack", "wait_s": 300 } ] }
+}
+```
+
+| Field | Required | Meaning |
+|---|---|---|
+| group name | yes | Like a point name (4.3). Must differ from all point names, callsigns and other groups of both sides, and `<name>_main` and `<name>_later` must be free too. |
+| `deploy` | – | Set-up of the group (same fields as the side's `deploy`), instead of the side's. |
+| `orders` | – | Orders of the group (same fields as the side's `orders`), instead of the side's. Groups run in parallel. |
+
+A group without `orders` follows the side's orders. If every platoon is in a group with orders, the side's `orders` are ignored.
 
 ### 4.5 `platoons`
 
@@ -263,8 +289,9 @@ Each side needs a `deploy`, unless every one of its platoons has its own `deploy
 | `callsign` | yes | Unique callsign, recommended `<name>_<nn>` with a name from 6.3, e.g. `pine_03`. Other names work but trigger a warning and may display oddly in the game. |
 | `unit` | yes | Platoon type from [docs/UNITS.md](docs/UNITS.md), e.g. `wer_mibn_1141_plat`. Without suffix the strongest variant is used (on a tie the base's own variant). A specific variant: `<unit>@<base>`, e.g. `wer_mibn_1141_comcoy@tr04`. Must match the side's nation. |
 | `size` | – | Number of squads (1–15), for tanks effectively the number of vehicles. Repeats the platoon's last squad type, e.g. `wer_spg_bn_43_bat_pl` with `"size": 3` gives 3 StuG III instead of 2. |
-| `position` | – | `[x, z]` – platoon symbol / deployment area on the battle map before set-up. Default: its deployment point. |
-| `deploy` | – | Own set-up for this platoon only (same fields as the side's `deploy`); overrides the side's `deploy`. |
+| `position` | – | `[x, z]` – the platoon sets up exactly here, unless its own `deploy` has an `at`; then it only places the platoon symbol on the battle map before set-up. Default: its deployment point. |
+| `deploy` | – | Own set-up for this platoon only (same fields as the side's `deploy`); overrides the side's and group's `deploy`. With `position`, `at` may be left out to set only `type`, `formation` or `facing`; missing fields come from the group's or side's `deploy`. |
+| `group` | – | Name of a group in the side's `groups`. |
 | `plan` | – | `"attack"`, `"defend"`, `"hold"` – basic AI attitude of this platoon. Default: as usual in the base. |
 
 Limits: at most 60 platoons per scenario, at most 15 platoons of the same pool (same battalion type).
@@ -331,12 +358,12 @@ Then `points`, `orders`, `victory`, `defeat` and `camera` have no effect – eve
 
 ## 5. What the generated script does
 
-1. Defines the points; groups `own` (all player platoons) and `foe` (all enemy platoons).
-2. Blocks the enemy AI if the enemy has `orders`.
-3. Sets up both sides according to `deploy`, positions the camera.
+1. Defines the points (plus `pos_<nn>` for every platoon set up at its `position`); groups `own` (all player platoons), `foe` (all enemy platoons) and one script group per entry of `groups`.
+2. Blocks the enemy AI if the enemy or one of its groups has `orders`.
+3. Sets up both sides according to `deploy`, `groups` and `position`, positions the camera.
 4. Short briefing: camera on own and enemy deployment (`brief_own`, `brief_foe`).
 5. Deployment phase (if `deploy_phase`), then waits until the player unpauses.
-6. Issues the orders, shows `info_attack` at the enemy's first target, applies `time_scale`, watches victory/defeat conditions.
+6. Issues the orders of the sides and groups (delayed ones in parallel functions `<side or group>_later`), shows `info_attack` at the enemy's first target, applies `time_scale`, watches victory/defeat conditions.
 
 ---
 
@@ -529,7 +556,7 @@ The complete list of all allowed `unit` values is in **[docs/UNITS.md](docs/UNIT
 | `orders[].mode` (complete list; meanings inferred) | `assault` (aggressive advance, fighting through to the point), `attack` (attack the point), `march` (move in march order: fast, not ready to fight), `fast_move` (fast move), `defence` (move to the point and take up defence there), `siege` (surround and besiege the point), `recon` (reconnaissance move), `hidden` (concealed move), `scan` (observe the area), `enter` (mount vehicles), `leave` (dismount from vehicles) |
 | `platoons[].plan` | `attack`, `defend`, `hold` |
 | callsign names | `pine`, `linden`, `birch`, `asp`, `beech`, `chestnut`, `willow`, `oak`, `fir`, `broom`, `guelder`, `cedar`, `reed`, `poplar`, `cherry`, `tiger`, `jaguar`, `leopard`, `panther`, `elefant`, `lion`, `beaver`, `viper`, `wolf`, `fox`, `bear`, `lynx`, `hawk`, `eagle`, `crocodile`, `falcon` – use as `<name>_<two digits>`, e.g. `pine_01` |
-| reserved point/callsign names | `own`, `foe`, `own_main`, `foe_main`, `main`, `deploy`, `process`, `goto`, `battle_victory`, `battle_defeat`, `foe_later`, `own_later` |
+| reserved point/callsign names | `own`, `foe`, `own_main`, `foe_main`, `own_rest`, `foe_rest`, `main`, `deploy`, `process`, `goto`, `battle_victory`, `battle_defeat`, `foe_later`, `own_later` |
 | default `texts` keys | `brief_own`, `brief_foe`, `info_end_deploy`, `info_1st_orders`, `info_attack` |
 
 ### 6.4 Script commands

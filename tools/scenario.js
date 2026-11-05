@@ -26,8 +26,8 @@ const NAME_RE = /^[a-z][a-z0-9_]{0,30}$/;
 // callsign names from the game's localisation; others are allowed but may show oddly in-game
 const CALLSIGN_NAMES = ('pine linden birch asp beech chestnut willow oak fir broom guelder cedar reed poplar cherry ' +
   'tiger jaguar leopard panther elefant lion beaver viper wolf fox bear lynx hawk eagle crocodile falcon').split(' ');
-const RESERVED = ['own', 'foe', 'own_main', 'foe_main', 'main', 'deploy', 'process', 'goto', 'battle_victory',
-  'battle_defeat', 'foe_later', 'own_later'];
+const RESERVED = ['own', 'foe', 'own_main', 'foe_main', 'own_rest', 'foe_rest', 'main', 'deploy', 'process', 'goto',
+  'battle_victory', 'battle_defeat', 'foe_later', 'own_later'];
 // all movement modes the script parser knows (adv_game.codelib); descriptions are inferred
 const MODES = {
   assault: 'aggressive advance, fighting through to the point',
@@ -281,18 +281,27 @@ function checkSpec(spec, base, catalog) {
     }
   }
   const needPoint = (n, where) => { if (!(n in points)) fail(`${where}: point "${n}" is not defined in "points"`); };
-  const checkDeploy = (d, where, sideKey) => {
-    needPoint(d.at, where);
+  // a platoon with "position" may leave out "at": it then sets up at its position
+  const checkDeploy = (d, where, sideKey, position) => {
     if (d.type && !DEPLOY_TYPES[d.type]) fail(`${where}: "type" must be ${Object.keys(DEPLOY_TYPES).join(' or ')}`);
     if (d.formation && !FORMATIONS[d.formation]) fail(`${where}: "formation" must be one of ${Object.keys(FORMATIONS).join(', ')}`);
     if (d.facing && !FACINGS.includes(d.facing)) fail(`${where}: "facing" must be one of ${FACINGS.join(', ')}`);
+    if (d.at === undefined && position) return;
+    needPoint(d.at, where);
     const area = areaOf(base, points[d.at]);
     if (area !== sideKey) console.warn(`note: ${where} deploys at "${d.at}", which lies in the ${area} area, not in the ${sideKey} start area`);
+  };
+  const checkOrders = (orders, where) => {
+    for (const [i, o] of (orders ?? []).entries()) {
+      needPoint(o.to, `${where}[${i}]`);
+      if (o.mode && !MODES[o.mode]) fail(`${where}[${i}]: "mode" must be one of ${Object.keys(MODES).join(', ')}`);
+    }
   };
   const seen = new Set();
   for (const [sideKey, nation] of [['player', base.userSide], ['enemy', base.enemySide]]) {
     const side = spec.sides?.[sideKey];
     if (!side?.platoons?.length) fail(`"sides.${sideKey}.platoons" missing or empty`);
+    const groups = side.groups ?? {};
     for (const [i, p] of side.platoons.entries()) {
       const where = `sides.${sideKey}.platoons[${i}]`;
       if (!NAME_RE.test(p.callsign ?? '') || RESERVED.includes(p.callsign)) fail(`${where}: "callsign" missing or invalid (a-z, 0-9, _)`);
@@ -313,18 +322,39 @@ function checkSpec(spec, base, catalog) {
       if (e.period && (base.date < e.period.from || base.date > e.period.to)) {
         console.warn(`note: ${where}: "${p.unit}" is in service ${e.period.text}; the mission date of base ${baseId(base)} lies outside`);
       }
-      if (p.deploy) checkDeploy(p.deploy, where + '.deploy', sideKey);
+      if (p.deploy) checkDeploy(p.deploy, where + '.deploy', sideKey, p.position);
+      if (p.group !== undefined && !(p.group in groups)) fail(`${where}: group "${p.group}" is not defined in "sides.${sideKey}.groups"`);
     }
     if (side.deploy) checkDeploy(side.deploy, `sides.${sideKey}.deploy`, sideKey);
-    for (const [i, o] of (side.orders ?? []).entries()) {
-      needPoint(o.to, `sides.${sideKey}.orders[${i}]`);
-      if (o.mode && !MODES[o.mode]) fail(`sides.${sideKey}.orders[${i}]: "mode" must be one of ${Object.keys(MODES).join(', ')}`);
+    checkOrders(side.orders, `sides.${sideKey}.orders`);
+    for (const [g, d] of Object.entries(groups)) {
+      const where = `sides.${sideKey}.groups.${g}`;
+      if (!d || typeof d !== 'object') fail(`${where} must be an object`);
+      if (d.deploy) checkDeploy(d.deploy, where + '.deploy', sideKey);
+      checkOrders(d.orders, where + '.orders');
+      if (!side.platoons.some(p => p.group === g)) console.warn(`note: ${where} has no platoons and is ignored`);
     }
-    if (!side.deploy && side.platoons.some(p => !p.deploy && !p.position)) {
-      fail(`sides.${sideKey}: without "deploy" every platoon needs "position" or "deploy"`);
+    const ordered = new Set(Object.keys(groups).filter(g => groups[g].orders?.length));
+    if (side.orders?.length && ordered.size && side.platoons.every(p => ordered.has(p.group))) {
+      console.warn(`note: sides.${sideKey}.orders are ignored: every platoon follows the orders of its group`);
+    }
+    if (!side.deploy && side.platoons.some(p => !p.deploy?.at && !p.position && !groups[p.group]?.deploy)) {
+      fail(`sides.${sideKey}: without "deploy" every platoon needs "position", "deploy" or a group with "deploy"`);
     }
   }
   if (seen.size > 60) fail('at most 60 platoons per scenario');
+  // group names share the script's name space with points and callsigns
+  const taken = new Set([...Object.keys(points), ...seen]);
+  for (const sideKey of ['player', 'enemy']) {
+    for (const g of Object.keys(spec.sides[sideKey].groups ?? {})) {
+      const where = `sides.${sideKey}.groups`;
+      if (!NAME_RE.test(g) || RESERVED.includes(g)) fail(`${where}: group name "${g}" is invalid or reserved (a-z, 0-9, _)`);
+      for (const n of [g, g + '_main', g + '_later']) {
+        if (taken.has(n)) fail(`${where}: "${n}" is already used as a point, callsign or group name`);
+        taken.add(n);
+      }
+    }
+  }
   if (spec.defeat?.enemy_reaches) needPoint(spec.defeat.enemy_reaches, 'defeat.enemy_reaches');
   if (spec.victory?.own_reaches) needPoint(spec.victory.own_reaches, 'victory.own_reaches');
   if (spec.camera?.at) needPoint(spec.camera.at, 'camera.at');
@@ -338,38 +368,77 @@ function facingTo(from, to) {
 }
 
 function makeScript(spec) {
-  const pts = spec.points ?? {};
+  const pts = { ...(spec.points ?? {}) };
   const fmt = n => Number.isInteger(n) ? n.toFixed(1) : String(n);
   const own = spec.sides.player, foe = spec.sides.enemy;
+  const sides = [['own', own, foe], ['foe', foe, own]];
+  // a platoon with "position" and no "deploy.at" sets up exactly there, at a generated point
+  const used = new Set([...Object.keys(pts), ...[own, foe].flatMap(s => [...s.platoons.map(p => p.callsign), ...Object.keys(s.groups ?? {})])]);
+  const posPoint = new Map();
+  let free = 0;
+  for (const s of [own, foe]) {
+    for (const p of s.platoons.filter(p => p.position && !p.deploy?.at)) {
+      let name;
+      do name = `pos_${String(++free).padStart(2, '0')}`; while (used.has(name));
+      pts[name] = p.position;
+      posPoint.set(p, name);
+    }
+  }
+  const ownSetup = p => p.deploy?.at || posPoint.has(p);
+  // groups that have platoons: [name, definition, platoons]
+  const groupsOf = s => Object.entries(s.groups ?? {}).map(([g, d]) => [g, d, s.platoons.filter(p => p.group === g)]).filter(([, , ps]) => ps.length);
+  const ordered = s => groupsOf(s).filter(([, d]) => d.orders?.length);
+  // platoons set up by the side's deploy, and those following the side's orders
+  const atSide = s => s.platoons.filter(p => !ownSetup(p) && !s.groups?.[p.group]?.deploy);
+  const restOf = s => { const gs = new Set(ordered(s).map(([g]) => g)); return s.platoons.filter(p => !gs.has(p.group)); };
+  const names = ps => ps.map(p => p.callsign).join(' ');
+
   const L = ['//generated by MiusMissionMaker', 'main()', '{'];
   for (const [n, [x, z]] of Object.entries(pts)) L.push(`\tdef ${n} ${fmt(x)}, 0.0, ${fmt(z)};`);
   L.push('');
-  const groups = [['own', own], ['foe', foe]];
-  for (const [g, s] of groups) L.push(`\tgroup ${g} ${s.platoons.map(p => p.callsign).join(' ')};`);
-  for (const [g, s] of groups) {
-    const rest = s.platoons.filter(p => !p.deploy);
-    if (rest.length && rest.length !== s.platoons.length) L.push(`\tgroup ${g}_main ${rest.map(p => p.callsign).join(' ')};`);
+  for (const [g, s] of sides) L.push(`\tgroup ${g} ${names(s.platoons)};`);
+  for (const [, s] of sides) for (const [g, , ps] of groupsOf(s)) L.push(`\tgroup ${g} ${names(ps)};`);
+  for (const [g, s] of sides) {
+    const rest = atSide(s);
+    if (rest.length && rest.length !== s.platoons.length) L.push(`\tgroup ${g}_main ${names(rest)};`);
   }
+  for (const [, s] of sides) {
+    for (const [g, d, ps] of groupsOf(s)) {
+      const rest = ps.filter(p => !ownSetup(p));
+      if (d.deploy && rest.length && rest.length !== ps.length) L.push(`\tgroup ${g}_main ${names(rest)};`);
+    }
+  }
+  for (const [g, s] of sides) if (s.orders?.length && ordered(s).length && restOf(s).length) L.push(`\tgroup ${g}_rest ${names(restOf(s))};`);
   L.push('');
-  if (foe.orders?.length || foe.ai === false) L.push('\tblock_ai foe;');
+  if (foe.orders?.length || ordered(foe).length || foe.ai === false) L.push('\tblock_ai foe;');
   if (own.ai === false) L.push('\tblock_ai own;');
   L.push('');
   // where a side stands: its deploy point, else its first platoon
-  const anchor = s => pts[s.deploy?.at] ?? s.platoons[0].position ?? pts[s.platoons[0].deploy?.at] ?? [0, 0];
+  const anchor = s => pts[s.deploy?.at] ?? s.platoons[0].position ?? pts[s.platoons[0].deploy?.at] ?? pts[s.groups?.[s.platoons[0].group]?.deploy?.at] ?? [0, 0];
   const deployLine = (target, d, from, other) => {
     const type = d.type ?? 'place';
     const formation = d.formation ?? (type === 'trench' ? 'line2' : 'columnlr');
     return `\t${type === 'trench' ? 'trench' : 'place'} ${target} ${d.at} ${formation} ${d.facing ?? facingTo(from, other)};`;
   };
-  for (const [g, s, o] of [['own', own, foe], ['foe', foe, own]]) {
+  for (const [g, s, o] of sides) {
     const there = anchor(o);
-    const rest = s.platoons.filter(p => !p.deploy);
+    const rest = atSide(s);
     if (s.deploy && rest.length) L.push(deployLine(rest.length === s.platoons.length ? g : g + '_main', s.deploy, pts[s.deploy.at], there));
-    for (const p of s.platoons.filter(p => p.deploy)) L.push(deployLine(p.callsign, p.deploy, pts[p.deploy.at], there));
+    for (const [gn, d, ps] of groupsOf(s)) {
+      const r = ps.filter(p => !ownSetup(p));
+      if (d.deploy && r.length) L.push(deployLine(r.length === ps.length ? gn : gn + '_main', d.deploy, pts[d.deploy.at], there));
+    }
+    // a platoon at its position takes the set-up style of its own deploy, its group or its side
+    for (const p of s.platoons.filter(ownSetup)) {
+      const d = p.deploy?.at ? p.deploy : { ...(s.groups?.[p.group]?.deploy ?? s.deploy), ...p.deploy, at: posPoint.get(p) };
+      L.push(deployLine(p.callsign, d, pts[d.at], there));
+    }
   }
   L.push('');
+  const firstAt = s => s.deploy?.at ?? s.platoons.find(p => p.deploy?.at)?.deploy.at ??
+    groupsOf(s).find(([, d]) => d.deploy)?.[1].deploy.at ?? posPoint.get(s.platoons.find(p => posPoint.has(p)));
   const cam = spec.camera ?? {};
-  const camAt = cam.at ?? own.deploy?.at ?? own.platoons.find(p => p.deploy)?.deploy.at;
+  const camAt = cam.at ?? firstAt(own);
   if (camAt) L.push(`\tcamera ${camAt} ${cam.direction ?? 'NE'} ${cam.zoom ?? 0.3};`);
   if (own.deploy) L.push(`\ttrack own ${own.deploy.at};`);
   L.push('');
@@ -379,7 +448,7 @@ function makeScript(spec) {
   // briefing / deployment phase
   L.push('deploy()', '{');
   if (camAt) L.push(`\tgoto ${camAt} brief_own;`, '\tdelay 6.0;', '\tunmark brief_own;');
-  const foeAt = foe.deploy?.at ?? foe.platoons.find(p => p.deploy)?.deploy.at;
+  const foeAt = firstAt(foe);
   if (foeAt) L.push(`\tgoto ${foeAt} brief_foe;`, '\tdelay 6.0;', '\tunmark brief_foe;');
   if (camAt) L.push(`\tcamera ${camAt};`);
   L.push('');
@@ -388,31 +457,37 @@ function makeScript(spec) {
 
   // battle
   L.push('process()', '{');
-  const orderLines = (g, s) => {
+  const orderLines = (target, orders) => {
     const out = [];
-    (s.orders ?? []).forEach((o, i) => {
+    orders.forEach((o, i) => {
       if (o.wait_s) out.push(`\tdelay ${fmt(o.wait_s)};`);
       const queued = i > 0 && !o.wait_s;
-      out.push(`\t${queued ? '+' : ''}move ${g} ${o.to} ${o.mode ?? 'attack'};`);
+      out.push(`\t${queued ? '+' : ''}move ${target} ${o.to} ${o.mode ?? 'attack'};`);
     });
     return out;
   };
-  const foeOrders = orderLines('foe', foe), ownOrders = orderLines('own', own);
-  const firstFoeTarget = foe.orders?.[0]?.to;
+  // [function name, script group, orders]: the side's orders, then those of its groups;
+  // with group orders the side's orders only go to the platoons outside those groups
+  const orderSets = ([g, s]) => {
+    const gs = ordered(s);
+    const sets = gs.map(([gn, d]) => [gn, gn, d.orders]);
+    if (s.orders?.length && (!gs.length || restOf(s).length)) sets.unshift([g, gs.length ? g + '_rest' : g, s.orders]);
+    return sets;
+  };
   // orders without delays first, delayed ones run in parallel functions
-  const split = lines => { const i = lines.findIndex(l => l.includes('delay')); return i < 0 ? [lines, []] : [lines.slice(0, i), lines.slice(i)]; };
-  const [foeNow, foeLater] = split(foeOrders), [ownNow, ownLater] = split(ownOrders);
-  L.push(...foeNow, ...ownNow);
+  const split = lines => { const i = lines.findIndex(l => l.startsWith('\tdelay ')); return i < 0 ? [lines, []] : [lines.slice(0, i), lines.slice(i)]; };
+  const foeSets = orderSets(sides[1]);
+  const sets = [...foeSets, ...orderSets(sides[0])].map(([fn, target, orders]) => [fn, ...split(orderLines(target, orders))]);
+  const firstFoeTarget = foeSets[0]?.[2][0].to;
+  for (const [, now] of sets) L.push(...now);
   if (firstFoeTarget) L.push(`\tgoto ${firstFoeTarget} info_attack;`, '\tchmark info_attack info_attack 0xff0000;', '\tdelay 7.0;');
   if (spec.time_scale) L.push(`\ttime ${spec.time_scale};`);
   if (spec.victory) L.push('\tgo battle_victory;');
   if (spec.defeat) L.push('\tgo battle_defeat;');
-  if (foeLater.length) L.push('\tgo foe_later;');
-  if (ownLater.length) L.push('\tgo own_later;');
+  for (const [fn, , later] of sets) if (later.length) L.push(`\tgo ${fn}_later;`);
   if (firstFoeTarget) L.push('\tdelay 300.0;', '\tunmark info_attack;');
   L.push('}', '');
-  if (foeLater.length) L.push('foe_later()', '{', ...foeLater, '}', '');
-  if (ownLater.length) L.push('own_later()', '{', ...ownLater, '}', '');
+  for (const [fn, , later] of sets) if (later.length) L.push(`${fn}_later()`, '{', ...later, '}', '');
 
   if (spec.victory) {
     L.push('battle_victory()', '{');
@@ -535,7 +610,7 @@ function buildForces(spec, base, tac, qb, catalog, nameMax) {
       if (idx > 15) fail(`too many platoons from pool ${e.pool[0].str} (max. 15)`);
       const newId = ((poolId | 0x80000) + (seq << 13) + (idx << 9)) >>> 0;
       const srcId = platId(e.plat);
-      const pos = p.position ?? spec.points[p.deploy?.at ?? side.deploy.at];
+      const pos = p.position ?? spec.points[p.deploy?.at ?? side.groups?.[p.group]?.deploy?.at ?? side.deploy.at];
       const famKey = e.squads[0]?.[11].str.split(':')[0] ?? 'sn_ger_fams';
       const namKey = famKey.replace('fams', 'nams');
 
@@ -866,22 +941,28 @@ function schema(missions, catalog, variants, db) {
       callsign: { ...name, description: `unique; recommended: <name>_<nn> with name from ${CALLSIGN_NAMES.join(', ')}` },
       unit: { anyOf: unitDoc(nation) },
       position: xz,
-      deploy,
+      deploy: { ...deploy, required: [], description: '"at" may be left out with "position": the platoon then sets up at its position' },
       plan: { enum: Object.keys(PLANS) },
       size: { type: 'integer', minimum: 1, maximum: 15, description: 'number of squads; repeats the last squad type' },
+      group: { type: 'string', description: 'name of a group in "groups" of this side' },
     },
   });
+  const orders = {
+    type: 'array',
+    items: {
+      type: 'object', required: ['to'], additionalProperties: false,
+      properties: { to: { type: 'string' }, mode: { enum: Object.keys(MODES), default: 'attack' }, wait_s: { type: 'number', minimum: 0 } },
+    },
+  };
   const side = nation => ({
     type: 'object', required: ['platoons'], additionalProperties: false,
     properties: {
       platoons: { type: 'array', minItems: 1, items: platoon(nation) },
       deploy,
-      orders: {
-        type: 'array',
-        items: {
-          type: 'object', required: ['to'], additionalProperties: false,
-          properties: { to: { type: 'string' }, mode: { enum: Object.keys(MODES), default: 'attack' }, wait_s: { type: 'number', minimum: 0 } },
-        },
+      orders,
+      groups: {
+        type: 'object', propertyNames: name,
+        additionalProperties: { type: 'object', additionalProperties: false, properties: { deploy, orders } },
       },
       ai: { type: 'boolean' },
     },

@@ -1,0 +1,50 @@
+{
+  "$schema": "../scenario.schema.json",
+  "id": "panzer_vorhut",
+  "title": "Panzer Vorhut: July 1943",
+  "description": "Your armoured Kampfgruppe holds overwatch positions. Soviet tanks and infantry attack on two axes; the second group follows a few minutes later. Destroy the enemy armour.",
+  "base": "tr06",
+  "max_minutes": 90,
+  "points": {
+    "german_left": [-200, -650],
+    "german_right": [-200, -350]
+  },
+  "sides": {
+    "player": {
+      "platoons": [
+        { "callsign": "panther_01", "unit": "wer_pant_coy_43_plat", "position": [-200, -500], "deploy": { "formation": "line" } },
+        { "callsign": "panther_02", "unit": "wer_spg_bn_43_bat_pl", "position": [-275, -500], "deploy": { "formation": "line" } },
+        { "callsign": "panther_03", "unit": "wer_pz_coy_plat3", "position": [-500, -750] },
+        { "callsign": "panther_04", "unit": "wer_pzd1190_pz_plat", "position": [-575, -750] },
+        { "callsign": "panther_05", "unit": "wer_pz_coy_plat3", "position": [-500, -250] },
+        { "callsign": "panther_06", "unit": "wer_pzd1190_pz_plat", "position": [-575, -250] },
+        { "callsign": "panther_07", "unit": "wer_pz_coy_com2", "position": [-675, -500] },
+        { "callsign": "panther_08", "unit": "wer_mibn_1141_mt_plat", "position": [-400, -500], "deploy": { "formation": "battery" } },
+        { "callsign": "panther_09", "unit": "wer_recbn_1141_plat1", "position": [-350, -850] },
+        { "callsign": "panther_10", "unit": "wer_sct_coy_42_plat", "position": [-350, -150] }
+      ]
+    },
+    "enemy": {
+      "groups": {
+        "axis_one": { "orders": [ { "to": "german_left", "mode": "attack" } ] },
+        "axis_two": { "orders": [ { "to": "german_right", "mode": "attack", "wait_s": 300 } ] }
+      },
+      "platoons": [
+        { "callsign": "pine_01", "unit": "ra_sct_coy_lacar_plat", "position": [1075, -700], "group": "axis_one" },
+        { "callsign": "pine_02", "unit": "ra_tbr_42_bn1_t34_coy", "position": [1150, -700], "group": "axis_one" },
+        { "callsign": "pine_03", "unit": "ra_ogvtpp_42_plat", "position": [1225, -700], "group": "axis_one" },
+        { "callsign": "pine_04", "unit": "ra_rbn_1242_plat2", "position": [1250, -825], "group": "axis_one" },
+        { "callsign": "pine_05", "unit": "ra_rbn_1242_plat2", "position": [1250, -575], "group": "axis_one" },
+        { "callsign": "pine_06", "unit": "ra_rbn_1242_mg_plat", "position": [1375, -700], "group": "axis_one" },
+        { "callsign": "pine_07", "unit": "ra_ogvtpp_42_plat", "position": [1150, -300], "group": "axis_two" },
+        { "callsign": "pine_08", "unit": "ra_rbn_1242_plat2", "position": [1250, -300], "group": "axis_two" },
+        { "callsign": "pine_09", "unit": "ra_rbn_1242_gun_plat", "position": [1325, -300], "deploy": { "type": "trench", "formation": "line1" } },
+        { "callsign": "pine_10", "unit": "ra_rbn_1242_mt50", "position": [1425, -700], "deploy": { "formation": "battery" } },
+        { "callsign": "pine_11", "unit": "ra_rbn_1242_mt50", "position": [1425, -300], "deploy": { "formation": "battery" } },
+        { "callsign": "pine_12", "unit": "ra_rbn_1242_comcoy", "position": [1500, -700] }
+      ]
+    }
+  },
+  "victory": { "balance": 2.0 },
+  "defeat": { "enemy_reaches": "german_left", "radius": 250, "share": 0.5 }
+}
