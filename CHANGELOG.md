@@ -4,6 +4,12 @@ All notable changes to MiusMissionMaker. The release workflow publishes the sect
 
 ## Unreleased
 
+## 0.2.1 – 2026-11-05
+
+### Added
+
+- `CHANGELOG.md`, also in the ZIP. Its section of a version is the text of that version's release.
+
 ## 0.2.0 – 2026-11-05
 
 ### Added
