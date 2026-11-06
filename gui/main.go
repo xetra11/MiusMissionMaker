@@ -20,6 +20,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime/debug"
 	"sort"
 	"strings"
 	"syscall"
@@ -32,6 +33,30 @@ import (
 var webFiles embed.FS
 
 const defaultGameDir = `C:\Program Files (x86)\Steam\steamapps\common\Graviteam Tactics Mius-Front`
+
+// version is set by the release build (-ldflags "-X main.version=v1.2.3")
+var version = "dev"
+
+// versionText adds the commit to builds that are not releases, e.g. "dev 0062827 (modified)"
+func versionText() string {
+	if version != "dev" {
+		return version
+	}
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return version
+	}
+	text := version
+	for _, s := range info.Settings {
+		switch {
+		case s.Key == "vcs.revision" && len(s.Value) >= 7:
+			text += " " + s.Value[:7]
+		case s.Key == "vcs.modified" && s.Value == "true":
+			text += " (modified)"
+		}
+	}
+	return text
+}
 
 var idPattern = regexp.MustCompile(`^[a-z0-9_]{1,40}$`)
 
@@ -160,6 +185,9 @@ func (a *app) routes(prefix string) http.Handler {
 	static, _ := fs.Sub(webFiles, "web")
 	mux.Handle("/", http.FileServer(http.FS(static)))
 
+	mux.HandleFunc(prefix+"/version", func(w http.ResponseWriter, r *http.Request) {
+		writeJSON(w, map[string]string{"version": versionText()})
+	})
 	mux.HandleFunc(prefix+"/catalog", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filepath.Join(a.root, "docs", "catalog.json"))
 	})
@@ -301,7 +329,7 @@ func main() {
 		AutoFocus: true,
 		DataPath:  filepath.Join(cache, "MiusMissionMaker"),
 		WindowOptions: webview2.WindowOptions{
-			Title: "Mius Mission Maker", Width: 1420, Height: 900, Center: true,
+			Title: "Mius Mission Maker " + versionText(), Width: 1420, Height: 900, Center: true,
 		},
 	})
 	if view == nil {

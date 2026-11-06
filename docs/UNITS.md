@@ -12,642 +12,642 @@ Use the value of the `unit` column in a scenario file. Everything listed here ca
 
 ### `p_ss_mibn42` (1942-09 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ss_mibn42_hq` | battalion HQ | 1x wer_com_ss_pzgr_bat, 2x wer_squad_phone | 21 | 1x sdkfz251c1 | 5 | database |
-| `ss_mibn42_coy1` | company HQ | 1x wer_com_ss_pzgr_coym, 1x wer_squad_spam | 11 | 1x opel_blitz_36 | 3 | database |
-| `ss_mibn42_plat1` | infantry | 1x wer_com_ss_pzgr_platm, 3x wer_squad_ss_pzgr_42mm | 33 | - | 5 | database |
-| `ss_mibn42_plat2` | infantry | 1x wer_com_ss_pzgr_platm, 3x wer_squad_ss_pzgr_43am | 33 | - | 5 | database |
-| `ss_mibn42_plat4` | support weapons | 1x wer_com_ss_pzgr_platm, 1x wer_squad_phone, 1x wer_pzb41, 2x wer_com_art_plat, 2x wer_mg42_rc5, 2x wer_grw34 | 43 | 1x pzb41, 2x mg42, 2x grw34 | 13 | database |
-| `ss_mibn42_coy2` | company HQ | 1x wer_com_ss_pzgr_coy | 5 | 1x sdkfz251c10 | 3 | database |
-| `ss_mibn42_plat3` | infantry | 1x wer_com_ss_pzgr_plat, 3x wer_squad_ss_pzgr_43a | 41 | 1x sdkfz251c10, 3x sdkfz251c1 | 0 | database |
-| `ss_mibn42_plat5` | support weapons | 1x wer_com_ss_pzgr_plat, 2x wer_sdkfz251c_1, 4x wer_mg42_rc4, 2x wer_sdkfz251c_2 | 41 | 1x sdkfz251c10, 2x sdkfz251c1, 4x mg42, 2x sdkfz251c2 | 0 | database |
-| `ss_mibn42_mg_coy1` | company HQ | 1x wer_com_ss_pzgr_coym, 1x wer_squad_phone | 12 | - | 3 | database |
-| `ss_mibn42_mt_plat1` | support weapons | 1x wer_com_ss_pzgr_platm, 1x wer_squad_phone, 3x wer_com_ss_art_plat, 6x wer_grw34 | 55 | 6x grw34 | 14 | database |
-| `ss_mibn42_mg_plat1` | support weapons | 1x wer_com_ss_pzgr_platm, 2x wer_com_art_plat, 8x wer_mg42_rc5 | 49 | 8x mg42 | 14 | database |
-| `ss_mibn42_hcoy1` | company HQ | 1x wer_com_ss_pzgr_coym, 1x wer_squad_phone | 12 | - | 3 | database |
-| `ss_mibn42_eng_plat1` | infantry | 1x wer_com_pinf_plat, 2x wer_squad_ss_eng_42m1, 2x wer_squad_ss_eng_42m2 | 47 | - | 8 | database |
-| `ss_mibn42_ig_plat1` | support weapons | 1x wer_com_ss_art_plat, 1x wer_squad_phone, 2x wer_leig18 | 22 | 2x leig18 | 6 | database |
-| `ss_mibn42_at_plat1` | support weapons | 1x wer_com_ss_art_plat, 3x wer_pak40, 3x wer_team_mg_41 | 33 | 3x pak40 | 12 | database |
-| `ss_mibn42_hcoy2` | company HQ | 1x wer_com_ss_pzgr_coy, 1x wer_squad_phone_mech, 1x wer_squad_spam | 18 | 1x sdkfz251c10, 1x sdkfz251c1, 1x opel_blitz_36 | 0 | database |
-| `ss_mibn42_eng_plat2` | infantry | 1x wer_com_pion_plat, 4x wer_squad_eng_43a1 | 37 | 1x sdkfz251c10, 4x sdkfz251c1 | 0 | database |
-| `ss_mibn42_ig_plat2` | support weapons | 1x wer_com_art_plat_apc, 2x wer_leig18, 3x wer_sdkfz251c_1 | 23 | 4x sdkfz251c1, 2x leig18 | 0 | database |
-| `ss_mibn42_gun_plat2` | support weapons | 1x wer_com_art_plat_apc, 2x wer_sdkfz251c_9, 1x wer_sdkfz251c_1 | 17 | 2x sdkfz251c1, 2x sdkfz251c9 | 0 | database |
-| `ss_mibn42_at_plat2` | support weapons | 1x wer_com_art_plat_apc, 3x wer_pak38, 3x wer_team_mg_41, 4x wer_sdkfz251c_1 | 40 | 5x sdkfz251c1, 3x pak38 | 0 | database |
-| `ss_mibn42_atr_plat2` | support weapons | 1x wer_com_ss_pzgr_plat, 3x wer_sdkfz250a_11 | 17 | 1x sdkfz251c10, 3x sdkfz250a11 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ss_mibn42_hq` | Command (HQ coy) | battalion HQ | 1x wer_com_ss_pzgr_bat, 2x wer_squad_phone | 21 | 1x sdkfz251c1 | 5 | database |
+| `ss_mibn42_coy1` | Command (Motor-inf coy) | company HQ | 1x wer_com_ss_pzgr_coym, 1x wer_squad_spam | 11 | 1x opel_blitz_36 | 3 | database |
+| `ss_mibn42_plat1` | Motor-inf platoon (42) (Motor-inf coy) | infantry | 1x wer_com_ss_pzgr_platm, 3x wer_squad_ss_pzgr_42mm | 33 | - | 5 | database |
+| `ss_mibn42_plat2` | Motor-inf platoon (43) (Motor-inf coy) | infantry | 1x wer_com_ss_pzgr_platm, 3x wer_squad_ss_pzgr_43am | 33 | - | 5 | database |
+| `ss_mibn42_plat4` | Hvy weaps platoon (Motor-inf coy) | support weapons | 1x wer_com_ss_pzgr_platm, 1x wer_squad_phone, 1x wer_pzb41, 2x wer_com_art_plat, 2x wer_mg42_rc5, 2x wer_grw34 | 43 | 1x pzb41, 2x mg42, 2x grw34 | 13 | database |
+| `ss_mibn42_coy2` | Command (Motor-inf coy (apc)) | company HQ | 1x wer_com_ss_pzgr_coy | 5 | 1x sdkfz251c10 | 3 | database |
+| `ss_mibn42_plat3` | Motor-inf platoon (Motor-inf coy (apc)) | infantry | 1x wer_com_ss_pzgr_plat, 3x wer_squad_ss_pzgr_43a | 41 | 1x sdkfz251c10, 3x sdkfz251c1 | 0 | database |
+| `ss_mibn42_plat5` | Hvy weaps platoon (Motor-inf coy (apc)) | support weapons | 1x wer_com_ss_pzgr_plat, 2x wer_sdkfz251c_1, 4x wer_mg42_rc4, 2x wer_sdkfz251c_2 | 41 | 1x sdkfz251c10, 2x sdkfz251c1, 4x mg42, 2x sdkfz251c2 | 0 | database |
+| `ss_mibn42_mg_coy1` | Command (HMG coy) | company HQ | 1x wer_com_ss_pzgr_coym, 1x wer_squad_phone | 12 | - | 3 | database |
+| `ss_mibn42_mt_plat1` | Mortar platoon (HMG coy) | support weapons | 1x wer_com_ss_pzgr_platm, 1x wer_squad_phone, 3x wer_com_ss_art_plat, 6x wer_grw34 | 55 | 6x grw34 | 14 | database |
+| `ss_mibn42_mg_plat1` | HMG platoon (HMG coy) | support weapons | 1x wer_com_ss_pzgr_platm, 2x wer_com_art_plat, 8x wer_mg42_rc5 | 49 | 8x mg42 | 14 | database |
+| `ss_mibn42_hcoy1` | Command (Hvy weaps coy) | company HQ | 1x wer_com_ss_pzgr_coym, 1x wer_squad_phone | 12 | - | 3 | database |
+| `ss_mibn42_eng_plat1` | Engineer platoon (Hvy weaps coy) | infantry | 1x wer_com_pinf_plat, 2x wer_squad_ss_eng_42m1, 2x wer_squad_ss_eng_42m2 | 47 | - | 8 | database |
+| `ss_mibn42_ig_plat1` | Inf-gun platoon (Hvy weaps coy) | support weapons | 1x wer_com_ss_art_plat, 1x wer_squad_phone, 2x wer_leig18 | 22 | 2x leig18 | 6 | database |
+| `ss_mibn42_at_plat1` | ATG platoon (Hvy weaps coy) | support weapons | 1x wer_com_ss_art_plat, 3x wer_pak40, 3x wer_team_mg_41 | 33 | 3x pak40 | 12 | database |
+| `ss_mibn42_hcoy2` | Command (Hvy weaps coy (apc)) | company HQ | 1x wer_com_ss_pzgr_coy, 1x wer_squad_phone_mech, 1x wer_squad_spam | 18 | 1x sdkfz251c10, 1x sdkfz251c1, 1x opel_blitz_36 | 0 | database |
+| `ss_mibn42_eng_plat2` | Engineer platoon (Hvy weaps coy (apc)) | infantry | 1x wer_com_pion_plat, 4x wer_squad_eng_43a1 | 37 | 1x sdkfz251c10, 4x sdkfz251c1 | 0 | database |
+| `ss_mibn42_ig_plat2` | Inf-gun platoon (Hvy weaps coy (apc)) | support weapons | 1x wer_com_art_plat_apc, 2x wer_leig18, 3x wer_sdkfz251c_1 | 23 | 4x sdkfz251c1, 2x leig18 | 0 | database |
+| `ss_mibn42_gun_plat2` | Gun platoon (Hvy weaps coy (apc)) | support weapons | 1x wer_com_art_plat_apc, 2x wer_sdkfz251c_9, 1x wer_sdkfz251c_1 | 17 | 2x sdkfz251c1, 2x sdkfz251c9 | 0 | database |
+| `ss_mibn42_at_plat2` | ATG platoon (Hvy weaps coy (apc)) | support weapons | 1x wer_com_art_plat_apc, 3x wer_pak38, 3x wer_team_mg_41, 4x wer_sdkfz251c_1 | 40 | 5x sdkfz251c1, 3x pak38 | 0 | database |
+| `ss_mibn42_atr_plat2` | ATR platoon (Hvy weaps coy (apc)) | support weapons | 1x wer_com_ss_pzgr_plat, 3x wer_sdkfz250a_11 | 17 | 1x sdkfz251c10, 3x sdkfz250a11 | 0 | database |
 
 ### `p_ss_minf42` (1942-09 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ss_minf42_stcoy_hq` | company HQ | 1x wer_com_inf_coy, 1x wer_opel36 | 9 | 1x opel_blitz_36 | 5 | database |
-| `ss_minf42_stcoy_at` | support weapons | 1x wer_com_ss_art_batm, 3x wer_pak40, 4x wer_sdkfz250a_1 | 35 | 3x pak40, 4x sdkfz250a1 | 9 | database |
-| `ss_pz_coy42_ecoy` | company HQ | 1x wer_com_pinf_coy, 1x wer_squad_phone | 12 | - | 4 | database |
-| `ss_pz_coy42_eplat1` | infantry | 1x wer_com_pinf_plat, 2x wer_squad_ss_eng_42m1, 2x wer_squad_ss_eng_42m2 | 47 | - | 9 | database |
-| `ss_pz_coy42_eplat2` | armour | 1x wer_com_ss_pion_plat, 2x wer_squad_ss_eng_43a1, 2x wer_squad_ss_eng_43a2 | 35 | 1x sdkfz251c10, 4x sdkfz251c1 | 0 | database |
-| `ss_pz_coy42_eplat3` | support weapons | 1x wer_com_pinf_plat, 2x wer_mg42_rc5, 2x wer_flamer | 21 | 2x mg42 | 7 | database |
-| `ss_spg_bat_hq1` | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3f8, 3x opel_blitz_36 | 4 | database |
-| `ss_spg_bat_plat1` | mobile support | 1x wer_stug3_com, 1x wer_stug3 | 8 | 2x stug3f8 | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ss_minf42_stcoy_hq` | Command (HQ coy) | company HQ | 1x wer_com_inf_coy, 1x wer_opel36 | 9 | 1x opel_blitz_36 | 5 | database |
+| `ss_minf42_stcoy_at` | ATG platoon (HQ coy) | support weapons | 1x wer_com_ss_art_batm, 3x wer_pak40, 4x wer_sdkfz250a_1 | 35 | 3x pak40, 4x sdkfz250a1 | 9 | database |
+| `ss_pz_coy42_ecoy` | Command (Engineer coy) | company HQ | 1x wer_com_pinf_coy, 1x wer_squad_phone | 12 | - | 4 | database |
+| `ss_pz_coy42_eplat1` | Engineer platoon (Engineer coy) | infantry | 1x wer_com_pinf_plat, 2x wer_squad_ss_eng_42m1, 2x wer_squad_ss_eng_42m2 | 47 | - | 9 | database |
+| `ss_pz_coy42_eplat2` | Engineer platoon (apc) (Engineer coy) | armour | 1x wer_com_ss_pion_plat, 2x wer_squad_ss_eng_43a1, 2x wer_squad_ss_eng_43a2 | 35 | 1x sdkfz251c10, 4x sdkfz251c1 | 0 | database |
+| `ss_pz_coy42_eplat3` | Engineer platoon (hvy) (Engineer coy) | support weapons | 1x wer_com_pinf_plat, 2x wer_mg42_rc5, 2x wer_flamer | 21 | 2x mg42 | 7 | database |
+| `ss_spg_bat_hq1` | Command (SPG battery) | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3f8, 3x opel_blitz_36 | 4 | database |
+| `ss_spg_bat_plat1` | SPG platoon (SPG battery) | mobile support | 1x wer_stug3_com, 1x wer_stug3 | 8 | 2x stug3f8 | 4 | database |
 
 ### `p_ss_pz_bn42` (1942-09 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ss_pz_bn42_com` | battalion HQ | 1x wer_pz3_bcom, 1x wer_pz3_ccom, 1x wer_pz2_com, 5x wer_pz2 | 28 | 1x pz3jbefs, 1x pz3jbef, 6x pz2f | 0 | database |
-| `ss_pz_scoy42_com1` | company HQ | 1x wer_pz6_ccom, 2x wer_pz3 | 15 | 1x pz6h1, 2x pz3n | 0 | database |
-| `ss_pz_scoy42_plat1` | armour | 1x wer_pz6_com, 2x wer_pz3, 1x wer_pz6 | 20 | 2x pz6h1, 2x pz3n | 0 | database |
-| `ss_pz_scoy43_com1` | company HQ | 1x wer_pz6_ccom, 1x wer_pz6 | 10 | 1x pz6e, 1x pz6h1 | 0 | database |
-| `ss_pz_scoy43_plat1` | armour | 1x wer_pz6_com, 3x wer_pz6 | 20 | 4x pz6h1 | 0 | database |
-| `ss_pz_coy42_com` | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4g, 1x pz4ge | 0 | database |
-| `ss_pz_coy42_plat1` | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 1x pz4g, 4x pz4ge | 0 | database |
-| `ss_pz_coy42_plat2` | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 1x pz3m, 4x pz3l | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ss_pz_bn42_com` | Bn Command (HQ coy) | battalion HQ | 1x wer_pz3_bcom, 1x wer_pz3_ccom, 1x wer_pz2_com, 5x wer_pz2 | 28 | 1x pz3jbefs, 1x pz3jbef, 6x pz2f | 0 | database |
+| `ss_pz_scoy42_com1` | Command (Heavy tank coy (42)) | company HQ | 1x wer_pz6_ccom, 2x wer_pz3 | 15 | 1x pz6h1, 2x pz3n | 0 | database |
+| `ss_pz_scoy42_plat1` | Tank platoon (Heavy tank coy (42)) | armour | 1x wer_pz6_com, 2x wer_pz3, 1x wer_pz6 | 20 | 2x pz6h1, 2x pz3n | 0 | database |
+| `ss_pz_scoy43_com1` | Command (Heavy tank coy (43)) | company HQ | 1x wer_pz6_ccom, 1x wer_pz6 | 10 | 1x pz6e, 1x pz6h1 | 0 | database |
+| `ss_pz_scoy43_plat1` | Tank platoon (Heavy tank coy (43)) | armour | 1x wer_pz6_com, 3x wer_pz6 | 20 | 4x pz6h1 | 0 | database |
+| `ss_pz_coy42_com` | Command platoon (Medium tank coy) | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4g, 1x pz4ge | 0 | database |
+| `ss_pz_coy42_plat1` | Tank platoon (PzIV) (Medium tank coy) | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 1x pz4g, 4x pz4ge | 0 | database |
+| `ss_pz_coy42_plat2` | Tank platoon (PzIII) (Medium tank coy) | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 1x pz3m, 4x pz3l | 0 | database |
 
 ### `p_wer_air` (1941-11 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_air` | reconnaissance | 1x wer_com_inf_plat, 1x wer_squad_phone | 14 | - | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_air` | Air spotter | reconnaissance | 1x wer_com_inf_plat, 1x wer_squad_phone | 14 | - | 3 | database |
 
 ### `p_wer_atbn_lid` (1941-11 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_atbn_lid42_plat0` | support weapons | 1x wer_com_art_batm, 3x wer_pzb41, 2x wer_team_mg_41 | 22 | 3x pzb41 | 0 | database |
-| `wer_atbn_lid42_plat1` | support weapons | 1x wer_com_art_batm, 3x wer_pak35, 2x wer_team_mg_41 | 22 | 3x pak35 | 0 | database |
-| `wer_atbn_lid42_plat2` | support weapons | 1x wer_com_art_batm, 3x wer_lepak41, 2x wer_team_mg_41 | 22 | 3x lepak41 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_atbn_lid42_plat0` | ATG platoon (ATG coy) | support weapons | 1x wer_com_art_batm, 3x wer_pzb41, 2x wer_team_mg_41 | 22 | 3x pzb41 | 0 | database |
+| `wer_atbn_lid42_plat1` | ATG platoon Pak-35 (ATG coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak35, 2x wer_team_mg_41 | 22 | 3x pak35 | 0 | database |
+| `wer_atbn_lid42_plat2` | ATG platoon le.Pak-41 (ATG coy) | support weapons | 1x wer_com_art_batm, 3x wer_lepak41, 2x wer_team_mg_41 | 22 | 3x lepak41 | 0 | database |
 
 ### `p_wer_corps_res` (1940-01 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_cr_pznest` | support weapons | 1x wer_com_art_plat, 3x wer_mg_pznest | 9 | 3x mg_pznest | 0 | database |
-| `wer_cr_mrls_bat1` | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_pak35, 2x wer_com_art_plat, 6x wer_nbw | 45 | 1x pak35, 6x nbw41 | 0 | database |
-| `wer_cr_mrls_bat2` | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_pak38, 2x wer_com_art_plat, 6x wer_nbw | 47 | 1x pak38, 6x nbw41 | 0 | database |
-| `wer_cr_mrls_bat3` | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_pak38, 2x wer_com_art_plat, 6x wer_nbw | 47 | 1x pak38, 6x nbw42 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_cr_pznest` | MG Panzernest | support weapons | 1x wer_com_art_plat, 3x wer_mg_pznest | 9 | 3x mg_pznest | 0 | database |
+| `wer_cr_mrls_bat1` | MRLS battery (15 cm) | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_pak35, 2x wer_com_art_plat, 6x wer_nbw | 45 | 1x pak35, 6x nbw41 | 0 | database |
+| `wer_cr_mrls_bat2` | MRLS battery (15 cm) | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_pak38, 2x wer_com_art_plat, 6x wer_nbw | 47 | 1x pak38, 6x nbw41 | 0 | database |
+| `wer_cr_mrls_bat3` | MRLS battery (21 cm) | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_pak38, 2x wer_com_art_plat, 6x wer_nbw | 47 | 1x pak38, 6x nbw42 | 0 | database |
 
 ### `p_wer_ft_tnk_coy_02_41` (1941-02 to 1942-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_ft_pz_coy_com` | company HQ | 1x wer_com_inf_coy, 1x wer_opel36, 1x wer_pz2_com, 1x wer_pz2 | 15 | 1x opel_blitz_36, 2x pz2c | 5 | database |
-| `wer_ft_pz_ft_plat` | armour | 1x wer_pz2fl_com, 3x wer_pz2fl | 12 | 4x pz2d_fl | 6 | database |
-| `wer_ft_pz_plat` | armour | 1x wer_pz2_com, 4x wer_pz2 | 15 | 5x pz2c | 7 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_ft_pz_coy_com` | Command (Flame tank coy) | company HQ | 1x wer_com_inf_coy, 1x wer_opel36, 1x wer_pz2_com, 1x wer_pz2 | 15 | 1x opel_blitz_36, 2x pz2c | 5 | database |
+| `wer_ft_pz_ft_plat` | Fl tank platoon (Flame tank coy) | armour | 1x wer_pz2fl_com, 3x wer_pz2fl | 12 | 4x pz2d_fl | 6 | database |
+| `wer_ft_pz_plat` | Tank platoon (Flame tank coy) | armour | 1x wer_pz2_com, 4x wer_pz2 | 15 | 5x pz2c | 7 | database |
 
 ### `p_wer_ispg_bat_42` (1942-11 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_ispg_bat_42_hq` | battalion HQ | 1x wer_stuig_ccom, 2x wer_squad_phone_mot_rad, 3x wer_squad_spam | 29 | 1x stuig33b, 5x opel_blitz_36 | 7 | database |
-| `wer_ispg_bat_42_pl` | mobile support | 1x wer_stuig_com, 2x wer_stuig | 15 | 3x stuig33b | 5 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_ispg_bat_42_hq` | Command (Assault SPG battery) | battalion HQ | 1x wer_stuig_ccom, 2x wer_squad_phone_mot_rad, 3x wer_squad_spam | 29 | 1x stuig33b, 5x opel_blitz_36 | 7 | database |
+| `wer_ispg_bat_42_pl` | SPG platoon (Assault SPG battery) | mobile support | 1x wer_stuig_com, 2x wer_stuig | 15 | 3x stuig33b | 5 | database |
 
 ### `p_wer_lpz_coy_11_41` (1941-11 to 1942-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_lpz_coy41_com` | company HQ | 1x wer_pz3_ccom, 1x wer_pz3, 1x wer_pz2_com, 4x wer_pz2 | 25 | 1x pz3jbef, 1x pz3jkz, 1x pz2c, 4x pz2f | 0 | database |
-| `wer_lpz_coy41_plat1` | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 5x pz3jkz | 0 | database |
-| `wer_lpz_coy41_plat2` | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 5x pz3jlg | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_lpz_coy41_com` | Command (Light tank coy) | company HQ | 1x wer_pz3_ccom, 1x wer_pz3, 1x wer_pz2_com, 4x wer_pz2 | 25 | 1x pz3jbef, 1x pz3jkz, 1x pz2c, 4x pz2f | 0 | database |
+| `wer_lpz_coy41_plat1` | Tank platoon (Light tank coy) | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 5x pz3jkz | 0 | database |
+| `wer_lpz_coy41_plat2` | Tank platoon (PzIIIlg) (Light tank coy) | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 5x pz3jlg | 0 | database |
 
 ### `p_wer_mar_coy_02_42` (1942-02 to 1943-07)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_mar_coy_42_com` | company HQ | 1x wer_com_inf_coy, 1x wer_sdkfz250a_1, 1x wer_opel36 | 11 | 1x sdkfz250a1, 1x opel_blitz_36 | 4 | database |
-| `wer_mar_42_plat` | mobile support | 1x wer_marder2_com, 2x wer_marder3, 1x wer_sdkfz250a_1 | 14 | 1x marder2_132, 2x marder3_139, 1x sdkfz250a1 | 5 | mission |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_mar_coy_42_com` | Command (Pzjager coy) | company HQ | 1x wer_com_inf_coy, 1x wer_sdkfz250a_1, 1x wer_opel36 | 11 | 1x sdkfz250a1, 1x opel_blitz_36 | 4 | database |
+| `wer_mar_42_plat` | AT platoon (Pzjager coy) | mobile support | 1x wer_marder2_com, 2x wer_marder3, 1x wer_sdkfz250a_1 | 14 | 1x marder2_132, 2x marder3_139, 1x sdkfz250a1 | 5 | mission |
 
 ### `p_wer_mar_coy_06_43` (1943-06 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_mar_coy_43_com` | company HQ | 1x wer_marder2_ccom, 1x wer_marder2, 1x wer_opel36 | 7 | 2x marder2_131, 1x opel_blitz_36 | 4 | database |
-| `wer_mar_43_plat` | mobile support | 1x wer_marder3_com, 1x wer_marder2 | 7 | 1x marder3_139, 1x marder2_131 | 7 | mission |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_mar_coy_43_com` | Command (Pzjager coy) | company HQ | 1x wer_marder2_ccom, 1x wer_marder2, 1x wer_opel36 | 7 | 2x marder2_131, 1x opel_blitz_36 | 4 | database |
+| `wer_mar_43_plat` | AT platoon (Pzjager coy) | mobile support | 1x wer_marder3_com, 1x wer_marder2 | 7 | 1x marder3_139, 1x marder2_131 | 7 | mission |
 
 ### `p_wer_mibn1141` (1941-11 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_mibn_1141_combat` | battalion HQ | 1x wer_com_inf_bat, 1x wer_squad_phone, 1x wer_squad_phone_mot_rad | 15 | 1x opel_blitz_36 | 8 | database |
-| `wer_mibn_1141_comcoy` | company HQ | 1x wer_com_inf_coy, 1x wer_squad_phone_mot_rad, 1x wer_squad_atr, 1x wer_pzb41, 1x wer_opel36 | 24 | 2x opel_blitz_36, 1x pzb41 | 6 | mission, also `wer_mibn_1141_comcoy@sm01` (11), `wer_mibn_1141_comcoy@tr04` (23) |
-| `wer_mibn_1141_plat` | infantry | 1x wer_com_inf_plat, 4x wer_squad_inf_41l, 1x wer_grw36 | 50 | - | 6 | mission, also `wer_mibn_1141_plat@tr02` (27), `wer_mibn_1141_plat@tr04` (50), `wer_mibn_1141_plat@tr05` (47) |
-| `wer_mibn_1141_mg_com` | company HQ | 1x wer_com_inf_coy, 1x wer_squad_phone_mot_rad | 11 | 1x opel_blitz_36 | 5 | database |
-| `wer_mibn_1141_mg_plat1` | support weapons | 1x wer_com_inf_plat, 1x wer_com_art_plat, 4x wer_mg42 | 34 | 4x mg42 | 8 | database |
-| `wer_mibn_1141_mg_plat2` | support weapons | 1x wer_com_art_plat, 1x wer_mg42, 1x wer_mg42_rc5 | 14 | 2x mg42 | 5 | database |
-| `wer_mibn_1141_mg_plat1a` | support weapons | 1x wer_com_inf_plat, 1x wer_com_art_plat, 4x wer_mg34 | 34 | 4x mg34 | 8 | database |
-| `wer_mibn_1141_mg_plat2a` | support weapons | 1x wer_com_art_plat, 2x wer_mg34 | 15 | 2x mg34 | 5 | database |
-| `wer_mibn_1141_mt_plat` | support weapons | 1x wer_com_art_batm, 3x wer_com_art_plat, 6x wer_grw34 | 48 | 6x grw34 | 12 | database |
-| `wer_mibn_1141_at_plat0` | support weapons | 1x wer_com_art_batm, 3x wer_pak35 | 18 | 3x pak35 | 10 | database |
-| `wer_mibn_1141_at_plat` | support weapons | 1x wer_com_art_batm, 1x wer_pak38 | 10 | 1x pak38 | 10 | mission |
-| `wer_mibn_1141_at_plat1` | support weapons | 1x wer_com_art_batm, 3x wer_pak40 | 27 | 3x pak40 | 10 | database |
-| `wer_mibn_1141_at_plat2` | support weapons | 1x wer_com_art_batm, 3x wer_pak36r | 27 | 3x pak36r | 10 | database |
-| `wer_mibn_1141_at_plat3` | support weapons | 1x wer_com_art_batm, 3x wer_pak97_38 | 24 | 3x pak97_38 | 10 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_mibn_1141_combat` | Command (Battalion HQ) | battalion HQ | 1x wer_com_inf_bat, 1x wer_squad_phone, 1x wer_squad_phone_mot_rad | 15 | 1x opel_blitz_36 | 8 | database |
+| `wer_mibn_1141_comcoy` | Command (Infantry coy) | company HQ | 1x wer_com_inf_coy, 1x wer_squad_phone_mot_rad, 1x wer_squad_atr, 1x wer_pzb41, 1x wer_opel36 | 24 | 2x opel_blitz_36, 1x pzb41 | 6 | mission, also `wer_mibn_1141_comcoy@sm01` (11), `wer_mibn_1141_comcoy@tr04` (23) |
+| `wer_mibn_1141_plat` | Infantry platoon (Infantry coy) | infantry | 1x wer_com_inf_plat, 4x wer_squad_inf_41l, 1x wer_grw36 | 50 | - | 6 | mission, also `wer_mibn_1141_plat@tr02` (27), `wer_mibn_1141_plat@tr04` (50), `wer_mibn_1141_plat@tr05` (47) |
+| `wer_mibn_1141_mg_com` | Command (HMG coy) | company HQ | 1x wer_com_inf_coy, 1x wer_squad_phone_mot_rad | 11 | 1x opel_blitz_36 | 5 | database |
+| `wer_mibn_1141_mg_plat1` | 1st HMG group (MG coy) | support weapons | 1x wer_com_inf_plat, 1x wer_com_art_plat, 4x wer_mg42 | 34 | 4x mg42 | 8 | database |
+| `wer_mibn_1141_mg_plat2` | 2nd HMG group (MG coy) | support weapons | 1x wer_com_art_plat, 1x wer_mg42, 1x wer_mg42_rc5 | 14 | 2x mg42 | 5 | database |
+| `wer_mibn_1141_mg_plat1a` | 1nd HMG group (MG-34) (MG coy) | support weapons | 1x wer_com_inf_plat, 1x wer_com_art_plat, 4x wer_mg34 | 34 | 4x mg34 | 8 | database |
+| `wer_mibn_1141_mg_plat2a` | 2nd HMG group (MG-34) (MG coy) | support weapons | 1x wer_com_art_plat, 2x wer_mg34 | 15 | 2x mg34 | 5 | database |
+| `wer_mibn_1141_mt_plat` | Mortar platoon (MG coy) | support weapons | 1x wer_com_art_batm, 3x wer_com_art_plat, 6x wer_grw34 | 48 | 6x grw34 | 12 | database |
+| `wer_mibn_1141_at_plat0` | ATG platoon Pak-35 (MG coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak35 | 18 | 3x pak35 | 10 | database |
+| `wer_mibn_1141_at_plat` | ATG platoon (MG coy) | support weapons | 1x wer_com_art_batm, 1x wer_pak38 | 10 | 1x pak38 | 10 | mission |
+| `wer_mibn_1141_at_plat1` | ATG platoon Pak-40 (MG coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak40 | 27 | 3x pak40 | 10 | database |
+| `wer_mibn_1141_at_plat2` | ATG platoon Pak-36(r) (MG coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak36r | 27 | 3x pak36r | 10 | database |
+| `wer_mibn_1141_at_plat3` | ATG platoon Pak-97/38 (MG coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak97_38 | 24 | 3x pak97_38 | 10 | database |
 
 ### `p_wer_minf1141` (1941-11 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_minf1141_stcoy_hq` | company HQ | 1x wer_com_inf_coy, 1x wer_opel36 | 9 | 1x opel_blitz_36 | 5 | database |
-| `wer_minf1141_stcoy_at` | support weapons | 1x wer_com_art_batm, 3x wer_pak38, 4x wer_sdkfz250a_1 | 32 | 3x pak38, 4x sdkfz250a1 | 9 | database |
-| `wer_minf1141_stcoy_at1` | support weapons | 1x wer_com_art_batm, 3x wer_pak40, 4x wer_sdkfz250a_1 | 35 | 3x pak40, 4x sdkfz250a1 | 9 | database |
-| `wer_minf1141_stcoy_at2` | support weapons | 1x wer_com_art_batm, 3x wer_pak36r, 4x wer_sdkfz250a_1 | 35 | 3x pak36r, 4x sdkfz250a1 | 9 | database |
-| `wer_minf1141_stcoy_at3` | support weapons | 1x wer_com_art_batm, 3x wer_pak97_38, 4x wer_sdkfz250a_1 | 32 | 3x pak97_38, 4x sdkfz250a1 | 9 | database |
-| `wer_minf1141_stcoy_eng` | support weapons | 1x wer_com_pinf_plat, 3x wer_squad_engid_43a1, 3x wer_squad_engid_43a2, 1x wer_flamer, 1x wer_opel36 | 69 | 1x opel_blitz_36 | 9 | database |
-| `wer_minf1141_arty_bat` | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 2x wer_com_art_plat, 4x wer_lefh18 | 48 | 4x lefh18m | 12 | database |
-| `wer_minf1141_arty_bat2` | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 2x wer_com_art_plat, 4x wer_sfh414f | 48 | 4x sfh414f | 12 | database |
-| `wer_minf1141_aa_bat` | support weapons | 1x wer_com_art_plat, 4x wer_flak36, 1x wer_team_mg_41 | 45 | 4x flak36 | 10 | database |
-| `wer_minf1141_igcoy_hq` | company HQ | 1x wer_com_art_div, 1x wer_squad_phone_mot_rad, 1x wer_squad_phone | 16 | 1x sdkfz251c1, 1x opel_blitz_36 | 5 | database |
-| `wer_minf1141_igcoy_lpl` | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 3x wer_com_art_plat, 6x wer_leig18 | 55 | 6x leig18 | 12 | database |
-| `wer_minf1141_igcoy_lfpl` | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_com_art_plat, 2x wer_leig18 | 25 | 2x leig18 | 7 | mission |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_minf1141_stcoy_hq` | Command (HQ coy) | company HQ | 1x wer_com_inf_coy, 1x wer_opel36 | 9 | 1x opel_blitz_36 | 5 | database |
+| `wer_minf1141_stcoy_at` | ATG platoon (HQ coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak38, 4x wer_sdkfz250a_1 | 32 | 3x pak38, 4x sdkfz250a1 | 9 | database |
+| `wer_minf1141_stcoy_at1` | ATG platoon Pak-40 (HQ coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak40, 4x wer_sdkfz250a_1 | 35 | 3x pak40, 4x sdkfz250a1 | 9 | database |
+| `wer_minf1141_stcoy_at2` | ATG platoon Pak-36(r) (HQ coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak36r, 4x wer_sdkfz250a_1 | 35 | 3x pak36r, 4x sdkfz250a1 | 9 | database |
+| `wer_minf1141_stcoy_at3` | ATG platoon Pak-97/38 (HQ coy) | support weapons | 1x wer_com_art_batm, 3x wer_pak97_38, 4x wer_sdkfz250a_1 | 32 | 3x pak97_38, 4x sdkfz250a1 | 9 | database |
+| `wer_minf1141_stcoy_eng` | Engineer platoon (HQ coy) | support weapons | 1x wer_com_pinf_plat, 3x wer_squad_engid_43a1, 3x wer_squad_engid_43a2, 1x wer_flamer, 1x wer_opel36 | 69 | 1x opel_blitz_36 | 9 | database |
+| `wer_minf1141_arty_bat` | Arty battery (Artillery battalion) | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 2x wer_com_art_plat, 4x wer_lefh18 | 48 | 4x lefh18m | 12 | database |
+| `wer_minf1141_arty_bat2` | Arty battery sFH 414 (f) (Artillery battalion) | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 2x wer_com_art_plat, 4x wer_sfh414f | 48 | 4x sfh414f | 12 | database |
+| `wer_minf1141_aa_bat` | Hvy AA gun platoon (Artillery battalion) | support weapons | 1x wer_com_art_plat, 4x wer_flak36, 1x wer_team_mg_41 | 45 | 4x flak36 | 10 | database |
+| `wer_minf1141_igcoy_hq` | Command (Reg gun coy) | company HQ | 1x wer_com_art_div, 1x wer_squad_phone_mot_rad, 1x wer_squad_phone | 16 | 1x sdkfz251c1, 1x opel_blitz_36 | 5 | database |
+| `wer_minf1141_igcoy_lpl` | Gun platoon (Reg gun coy) | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 3x wer_com_art_plat, 6x wer_leig18 | 55 | 6x leig18 | 12 | database |
+| `wer_minf1141_igcoy_lfpl` | Gun section (Reg gun coy) | support weapons | 1x wer_com_art_batm, 1x wer_squad_phone, 1x wer_com_art_plat, 2x wer_leig18 | 25 | 2x leig18 | 7 | mission |
 
 ### `p_wer_okh_arty` (1941-11 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_arty_okh` | reconnaissance | 1x wer_com_art_batm, 1x wer_squad_phone | 10 | - | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_arty_okh` | Arty spotter (Artillery battery) | reconnaissance | 1x wer_com_art_batm, 1x wer_squad_phone | 10 | - | 3 | database |
 
 ### `p_wer_pant_bn_01_43` (1943-06 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pant_bn_43_hq` | battalion HQ | 1x wer_pz5_bcom, 1x wer_pz5_rad, 1x wer_pz5 | 15 | 1x pz5dbefe, 1x pz5dbefl, 1x pz5dl | 0 | database |
-| `wer_pant_bn_43_hq1` | battalion HQ | 1x wer_pz5_bcom, 2x wer_pz5_rad | 15 | 1x pz5dbefe, 2x pz5dbefl | 0 | database |
-| `wer_pant_bn_43_recon` | reconnaissance | 1x wer_pz5_com, 4x wer_pz5 | 25 | 5x pz5dl | 0 | database |
-| `wer_pant_coy_43_cmd` | company HQ | 1x wer_pz5_ccom, 1x wer_pz5 | 10 | 2x pz5dl | 0 | database |
-| `wer_pant_coy_43_plat` | armour | 1x wer_pz5_com, 4x wer_pz5 | 25 | 5x pz5dl | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pant_bn_43_hq` | Command (Panther battalion) | battalion HQ | 1x wer_pz5_bcom, 1x wer_pz5_rad, 1x wer_pz5 | 15 | 1x pz5dbefe, 1x pz5dbefl, 1x pz5dl | 0 | database |
+| `wer_pant_bn_43_hq1` | Command (Panther battalion) | battalion HQ | 1x wer_pz5_bcom, 2x wer_pz5_rad | 15 | 1x pz5dbefe, 2x pz5dbefl | 0 | database |
+| `wer_pant_bn_43_recon` | Recon platoon (Panther tank coy) | reconnaissance | 1x wer_pz5_com, 4x wer_pz5 | 25 | 5x pz5dl | 0 | database |
+| `wer_pant_coy_43_cmd` | Command (Panther tank coy) | company HQ | 1x wer_pz5_ccom, 1x wer_pz5 | 10 | 2x pz5dl | 0 | database |
+| `wer_pant_coy_43_plat` | Tank platoon (Panther tank coy) | armour | 1x wer_pz5_com, 4x wer_pz5 | 25 | 5x pz5dl | 0 | database |
 
 ### `p_wer_pz_coy_01_43` (1943-01 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pz_coy_lplat1` | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 1x pz3jlg, 4x pz3l | 0 | database |
-| `wer_pz_coy_com1` | company HQ | 1x wer_pz3_ccom, 1x wer_pz3 | 10 | 2x pz3l | 0 | database |
-| `wer_pz_coy_plat1` | armour | 1x wer_pz3_com, 3x wer_pz3 | 20 | 1x pz3jlg, 3x pz3m | 0 | mission |
-| `wer_pz_coy_com2` | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4g, 1x pz4ge | 0 | database |
-| `wer_pz_coy_plat2` | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 1x pz4f2, 4x pz4ge | 0 | database |
-| `wer_pz_coy_com3` | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4ga, 1x pz4ge | 0 | database |
-| `wer_pz_coy_plat3` | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 1x pz4g, 4x pz4ge | 0 | database |
-| `wer_pz_coy_com4` | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4gl, 1x pz4gle | 0 | database |
-| `wer_pz_coy_plat4` | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 2x pz4gl, 1x pz4gle, 2x pz4g | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pz_coy_lplat1` | Lt tank platoon (Tank regiment HQ) | armour | 1x wer_pz3_com, 4x wer_pz3 | 25 | 1x pz3jlg, 4x pz3l | 0 | database |
+| `wer_pz_coy_com1` | Command (Medium tank coy (PzIII)) | company HQ | 1x wer_pz3_ccom, 1x wer_pz3 | 10 | 2x pz3l | 0 | database |
+| `wer_pz_coy_plat1` | Tank platoon (Medium tank coy) | armour | 1x wer_pz3_com, 3x wer_pz3 | 20 | 1x pz3jlg, 3x pz3m | 0 | mission |
+| `wer_pz_coy_com2` | Command (Medium tank coy (PzIV F2/G)) | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4g, 1x pz4ge | 0 | database |
+| `wer_pz_coy_plat2` | Tank platoon (Medium tank coy (PzIV F2/G)) | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 1x pz4f2, 4x pz4ge | 0 | database |
+| `wer_pz_coy_com3` | Command (Medium tank coy (PzIV G)) | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4ga, 1x pz4ge | 0 | database |
+| `wer_pz_coy_plat3` | Tank platoon (Medium tank coy (PzIV G)) | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 1x pz4g, 4x pz4ge | 0 | database |
+| `wer_pz_coy_com4` | Command (Medium tank coy (PzIV G scr)) | company HQ | 1x wer_pz4_ccom, 1x wer_pz4 | 10 | 1x pz4gl, 1x pz4gle | 0 | database |
+| `wer_pz_coy_plat4` | Tank platoon (Medium tank coy (PzIV G scr)) | armour | 1x wer_pz4_com, 4x wer_pz4 | 25 | 2x pz4gl, 1x pz4gle, 2x pz4g | 0 | database |
 
 ### `p_wer_pz_coy_11_41` (1941-11 to 1942-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pz_coy41_com` | company HQ | 1x wer_pz4_ccom, 1x wer_pz4, 1x wer_pz2_com, 4x wer_pz2 | 25 | 2x pz4f1, 5x pz2f | 3 | database |
-| `wer_pz_coy41_plat1` | armour | 1x wer_pz4_com, 3x wer_pz4 | 20 | 4x pz4f1 | 0 | database |
-| `wer_pz_coy41_plat2` | armour | 1x wer_pz4_com, 3x wer_pz4 | 20 | 4x pz4f2 | 0 | database |
-| `wer_pz_coy41_plat3` | armour | 1x wer_pz4_com, 3x wer_pz4 | 20 | 4x pz4ge | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pz_coy41_com` | Command platoon (Medium tank coy) | company HQ | 1x wer_pz4_ccom, 1x wer_pz4, 1x wer_pz2_com, 4x wer_pz2 | 25 | 2x pz4f1, 5x pz2f | 3 | database |
+| `wer_pz_coy41_plat1` | Tank platoon (Medium tank coy) | armour | 1x wer_pz4_com, 3x wer_pz4 | 20 | 4x pz4f1 | 0 | database |
+| `wer_pz_coy41_plat2` | Tank platoon (PzIVF/2) (Medium tank coy) | armour | 1x wer_pz4_com, 3x wer_pz4 | 20 | 4x pz4f2 | 0 | database |
+| `wer_pz_coy41_plat3` | Tank platoon (PzIVF2/G) (Medium tank coy) | armour | 1x wer_pz4_com, 3x wer_pz4 | 20 | 4x pz4ge | 0 | database |
 
 ### `p_wer_pz66_42` (1942-05 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pz_ltank_as` | armour | 1x wer_pz1f_com, 5x wer_pz1f | 12 | 6x pz1f | 6 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pz_ltank_as` | Tank platoon (assault) (Tank battalion) | armour | 1x wer_pz1f_com, 5x wer_pz1f | 12 | 6x pz1f | 6 | database |
 
 ### `p_wer_pzd_01_43` (1943-01 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pzd1190_hq` | company HQ | 1x wer_com_pzgr_coy, 1x wer_squad_phone_mech | 12 | 1x sdkfz251c10, 1x sdkfz251c1 | 5 | database |
-| `wer_pzd1190_pz_coy_hq` | company HQ | 1x wer_com_pzgr_coy, 1x wer_squad_phone_mech | 12 | 1x sdkfz251c10, 1x sdkfz251c1 | 0 | database |
-| `wer_pzd1190_pz_plat` | armour | 1x wer_com_pzgr_plat, 3x wer_squad_pzgr_43a | 41 | 1x sdkfz251c10, 3x sdkfz251c1 | 0 | database |
-| `wer_pzd1190_tfl_coy_hq` | company HQ | 1x wer_pz3fl_ccom | 3 | 1x pz3fl | 2 | database |
-| `wer_pzd1190_tfl_plat` | mobile support | 1x wer_pz3fl_com, 2x wer_pz3fl | 9 | 3x pz3fl | 4 | database |
-| `wer_pzd1190_tfl_coy` | mobile support | 1x wer_pz3fl_ccom, 2x wer_pz3fl_com, 4x wer_pz3fl | 21 | 7x pz3fl | 8 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pzd1190_hq` | Command (HQ coy) | company HQ | 1x wer_com_pzgr_coy, 1x wer_squad_phone_mech | 12 | 1x sdkfz251c10, 1x sdkfz251c1 | 5 | database |
+| `wer_pzd1190_pz_coy_hq` | Command (Coy on APC) | company HQ | 1x wer_com_pzgr_coy, 1x wer_squad_phone_mech | 12 | 1x sdkfz251c10, 1x sdkfz251c1 | 0 | database |
+| `wer_pzd1190_pz_plat` | Mot. infantry platoon (Coy on APC) | armour | 1x wer_com_pzgr_plat, 3x wer_squad_pzgr_43a | 41 | 1x sdkfz251c10, 3x sdkfz251c1 | 0 | database |
+| `wer_pzd1190_tfl_coy_hq` | Command (Fl. tank coy) | company HQ | 1x wer_pz3fl_ccom | 3 | 1x pz3fl | 2 | database |
+| `wer_pzd1190_tfl_plat` | Tank platoon (Fl. tank coy) | mobile support | 1x wer_pz3fl_com, 2x wer_pz3fl | 9 | 3x pz3fl | 4 | database |
+| `wer_pzd1190_tfl_coy` | Fl. tank coy | mobile support | 1x wer_pz3fl_ccom, 2x wer_pz3fl_com, 4x wer_pz3fl | 21 | 7x pz3fl | 8 | database |
 
 ### `p_wer_pzj_coy_11_41` (1941-11 to 1942-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pzj_coy_com` | company HQ | 1x wer_com_inf_coy, 1x wer_sdkfz250a_1, 1x wer_opel36 | 11 | 1x sdkfz250a1, 1x opel_blitz_36 | 4 | database |
-| `wer_pzj_plat` | mobile support | 1x wer_pzj_com, 2x wer_pzj, 1x wer_sdkfz250a_1 | 11 | 3x pzj1, 1x sdkfz250a1 | 5 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pzj_coy_com` | Command (Pzjager coy) | company HQ | 1x wer_com_inf_coy, 1x wer_sdkfz250a_1, 1x wer_opel36 | 11 | 1x sdkfz250a1, 1x opel_blitz_36 | 4 | database |
+| `wer_pzj_plat` | AT platoon (Pzjager coy) | mobile support | 1x wer_pzj_com, 2x wer_pzj, 1x wer_sdkfz250a_1 | 11 | 3x pzj1, 1x sdkfz250a1 | 5 | database |
 
 ### `p_wer_recbn1141` (1941-11 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_recbn_1141_combat` | battalion HQ | 1x wer_com_inf_bat, 1x wer_squad_phone, 1x wer_squad_phone_mot_rad | 15 | 1x opel_blitz_36 | 0 | database |
-| `wer_recbn_1141_comcoy` | company HQ | 1x wer_com_inf_coy, 1x wer_squad_phone_mot_rad | 11 | 1x opel_blitz_36 | 0 | database |
-| `wer_recbn_1141_plat1` | reconnaissance | 1x wer_sdkfz232_8_com, 2x wer_sdkfz232_8, 3x wer_sdkfz231_8 | 24 | 6x sdkfz232_8 | 0 | database |
-| `wer_recbn_1141_plat2` | reconnaissance | 1x wer_sdkfz232_8_com, 1x wer_sdkfz232_8, 4x wer_sdkfz231_8 | 24 | 6x sdkfz232_8 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_recbn_1141_combat` | Command (Recon battalion HQ) | battalion HQ | 1x wer_com_inf_bat, 1x wer_squad_phone, 1x wer_squad_phone_mot_rad | 15 | 1x opel_blitz_36 | 0 | database |
+| `wer_recbn_1141_comcoy` | Command (Armored car coy) | company HQ | 1x wer_com_inf_coy, 1x wer_squad_phone_mot_rad | 11 | 1x opel_blitz_36 | 0 | database |
+| `wer_recbn_1141_plat1` | 1st Platoon (Armored car coy) | reconnaissance | 1x wer_sdkfz232_8_com, 2x wer_sdkfz232_8, 3x wer_sdkfz231_8 | 24 | 6x sdkfz232_8 | 0 | database |
+| `wer_recbn_1141_plat2` | 2nd Platoon (Armored car coy) | reconnaissance | 1x wer_sdkfz232_8_com, 1x wer_sdkfz232_8, 4x wer_sdkfz231_8 | 24 | 6x sdkfz232_8 | 0 | database |
 
 ### `p_wer_sct_coy_03_42` (1942-03 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_sct_coy_42_com` | company HQ | 1x wer_com_pzgr_scout_coy, 1x wer_com_pzgr_scout_coy1 | 10 | 2x sdkfz250a1 | 3 | database |
-| `wer_sct_coy_42_plat` | armour | 1x wer_com_pzgr_scout_plat, 1x wer_sdkfz250a_10, 3x wer_squad_pzgr_scout_42m, 3x wer_squad_pzgr_scout_43a | 46 | 7x sdkfz250a1, 1x sdkfz250a10 | 9 | database |
-| `wer_sct_coy_42_hplat` | mobile support | 1x wer_com_pzgr_scout_plat, 2x wer_squad_pzgr_scout_42m, 4x wer_sdkfz250a_1, 2x wer_mg42_rc4, 2x wer_sdkfz251c_2 | 50 | 7x sdkfz250a1, 2x mg42, 2x sdkfz251c2 | 12 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_sct_coy_42_com` | Command (Light rifle coy (arm)) | company HQ | 1x wer_com_pzgr_scout_coy, 1x wer_com_pzgr_scout_coy1 | 10 | 2x sdkfz250a1 | 3 | database |
+| `wer_sct_coy_42_plat` | APC platoon (Light rifle coy (arm)) | armour | 1x wer_com_pzgr_scout_plat, 1x wer_sdkfz250a_10, 3x wer_squad_pzgr_scout_42m, 3x wer_squad_pzgr_scout_43a | 46 | 7x sdkfz250a1, 1x sdkfz250a10 | 9 | database |
+| `wer_sct_coy_42_hplat` | Hvy APC platoon (Light rifle coy (arm)) | mobile support | 1x wer_com_pzgr_scout_plat, 2x wer_squad_pzgr_scout_42m, 4x wer_sdkfz250a_1, 2x wer_mg42_rc4, 2x wer_sdkfz251c_2 | 50 | 7x sdkfz250a1, 2x mg42, 2x sdkfz251c2 | 12 | database |
 
 ### `p_wer_spg_bat_42` (1941-11 to 1942-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_spg_bn_42_hq` | battalion HQ | 1x wer_com_art_div, 1x wer_squad_phone_mech | 13 | 2x sdkfz251c1 | 4 | database |
-| `wer_spg_bn_42_spam` | recovery/repair | 1x wer_com_spam, 3x wer_squad_spam | 20 | 4x opel_blitz_36 | 5 | database |
-| `wer_spg_bn_42_bat_hqe` | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3e, 3x opel_blitz_36 | 4 | database |
-| `wer_spg_bn_42_bat_hq` | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3f8, 3x opel_blitz_36 | 4 | database |
-| `wer_spg_bn_42_bat_ple` | mobile support | 1x wer_stug3_com, 1x wer_stug3, 1x wer_sdkfz250a_1 | 10 | 2x stug3cd, 1x sdkfz250a1 | 3 | database |
-| `wer_spg_bn_42_bat_pl` | mobile support | 1x wer_stug3_com, 1x wer_stug3, 1x wer_sdkfz250a_1 | 10 | 2x stug3f8, 1x sdkfz250a1 | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_spg_bn_42_hq` | HQ (SPG battalion) | battalion HQ | 1x wer_com_art_div, 1x wer_squad_phone_mech | 13 | 2x sdkfz251c1 | 4 | database |
+| `wer_spg_bn_42_spam` | Repair platoon (HQ battery) | recovery/repair | 1x wer_com_spam, 3x wer_squad_spam | 20 | 4x opel_blitz_36 | 5 | database |
+| `wer_spg_bn_42_bat_hqe` | Command (SPG battery (early)) | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3e, 3x opel_blitz_36 | 4 | database |
+| `wer_spg_bn_42_bat_hq` | Command (SPG battery) | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3f8, 3x opel_blitz_36 | 4 | database |
+| `wer_spg_bn_42_bat_ple` | SPG platoon (SPG battery (early)) | mobile support | 1x wer_stug3_com, 1x wer_stug3, 1x wer_sdkfz250a_1 | 10 | 2x stug3cd, 1x sdkfz250a1 | 3 | database |
+| `wer_spg_bn_42_bat_pl` | SPG platoon (SPG battery) | mobile support | 1x wer_stug3_com, 1x wer_stug3, 1x wer_sdkfz250a_1 | 10 | 2x stug3f8, 1x sdkfz250a1 | 3 | database |
 
 ### `p_wer_spg_bat_43` (1942-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_spg_bn_43_hq` | battalion HQ | 1x wer_stug3_bcom, 1x wer_squad_phone_mech | 11 | 1x stug3f8, 1x sdkfz251c1 | 4 | database |
-| `wer_spg_bn_43_spam` | recovery/repair | 1x wer_com_spam, 1x wer_squad_spam | 8 | 2x opel_blitz_36 | 5 | mission |
-| `wer_spg_bn_43_bat_hq` | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3f8, 3x opel_blitz_36 | 4 | database |
-| `wer_spg_bn_43_bat_pl` | mobile support | 1x wer_stug3_com, 1x wer_stug3 | 8 | 2x stug3f8 | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_spg_bn_43_hq` | HQ (SPG battalion) | battalion HQ | 1x wer_stug3_bcom, 1x wer_squad_phone_mech | 11 | 1x stug3f8, 1x sdkfz251c1 | 4 | database |
+| `wer_spg_bn_43_spam` | Repair platoon (HQ battery) | recovery/repair | 1x wer_com_spam, 1x wer_squad_spam | 8 | 2x opel_blitz_36 | 5 | mission |
+| `wer_spg_bn_43_bat_hq` | Command (SPG battery) | company HQ | 1x wer_stug3_ccom, 2x wer_squad_phone_mot_rad, 1x wer_squad_spam | 16 | 1x stug3f8, 3x opel_blitz_36 | 4 | database |
+| `wer_spg_bn_43_bat_pl` | SPG platoon (SPG battery) | mobile support | 1x wer_stug3_com, 1x wer_stug3 | 8 | 2x stug3f8 | 4 | database |
 
 ### `p_wer_spz_coy_03_43` (1943-03 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pz_shw2_com` | company HQ | 1x wer_pz6_ccom, 1x wer_pz6 | 10 | 2x pz6h1 | 3 | database |
-| `wer_pz_shw2_plat` | armour | 1x wer_pz6_com, 3x wer_pz6 | 20 | 4x pz6h1 | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pz_shw2_com` | Command (Heavy tank coy) | company HQ | 1x wer_pz6_ccom, 1x wer_pz6 | 10 | 2x pz6h1 | 3 | database |
+| `wer_pz_shw2_plat` | Tank platoon (Heavy tank coy) | armour | 1x wer_pz6_com, 3x wer_pz6 | 20 | 4x pz6h1 | 4 | database |
 
 ### `p_wer_spz_coy_08_42` (1942-08 to 1943-05)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `wer_pz_shw1_com` | company HQ | 1x wer_pz6_ccom, 2x wer_pz3 | 15 | 1x pz6h1, 2x pz3l | 4 | database |
-| `wer_pz_shw1_plat` | armour | 1x wer_pz6_com, 1x wer_pz6, 2x wer_pz3 | 20 | 2x pz6h1, 2x pz3n | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `wer_pz_shw1_com` | Command (Heavy tank coy) | company HQ | 1x wer_pz6_ccom, 2x wer_pz3 | 15 | 1x pz6h1, 2x pz3l | 4 | database |
+| `wer_pz_shw1_plat` | Tank platoon (Heavy tank coy) | armour | 1x wer_pz6_com, 1x wer_pz6, 2x wer_pz3 | 20 | 2x pz6h1, 2x pz3n | 4 | database |
 
 ## Soviet (`USSR`)
 
 ### `p_ra_air` (1942-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_air` | reconnaissance | 1x rkka_com_inf_plat, 1x rkka_squad_phone | 10 | - | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_air` | Air spotter | reconnaissance | 1x rkka_com_inf_plat, 1x rkka_squad_phone | 10 | - | 3 | database |
 
 ### `p_ra_areg_rd_42` (1942-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_areg_rd_42_guns` | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_zis3 | 42 | 4x zis3 | 12 | database |
-| `ra_areg_rd_42_howit` | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_m30_m38, 2x rkka_ptr | 50 | 4x m30m38 | 14 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_areg_rd_42_guns` | 76 mm gun battery (Arty regiment) | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_zis3 | 42 | 4x zis3 | 12 | database |
+| `ra_areg_rd_42_howit` | Howitizer battery (Arty regiment) | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_m30_m38, 2x rkka_ptr | 50 | 4x m30m38 | 14 | database |
 
 ### `p_ra_cr0143` (1943-01 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_cr_0143_hq` | battalion HQ | 1x rkka_com_cav_reg, 1x rkka_squad_phone | 12 | - | 3 | database |
-| `ra_cr_0143_sap` | support weapons | 1x rkka_com_eng_plat, 3x rkka_squad_eng_43a | 30 | - | 5 | database |
-| `ra_cr_0143_artybat` | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_pp27 | 42 | 4x m27 | 0 | database |
-| `ra_cr_0143_atbat` | support weapons | 1x rkka_com_art_bat, 2x rkka_com_art_fplat, 4x rkka_53k | 31 | 4x 53k | 0 | database |
-| `ra_cr_0143_mt82_com` | company HQ | 1x rkka_com_art_bat, 1x rkka_squad_phone | 10 | - | 0 | mission |
-| `ra_cr_0143_mt82_fplat` | support weapons | 1x rkka_com_art_fplat, 3x rkka_mt82 | 17 | 3x mt82 | 0 | mission |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_cr_0143_hq` | Regiment commander (Cavalry regiment) | battalion HQ | 1x rkka_com_cav_reg, 1x rkka_squad_phone | 12 | - | 3 | database |
+| `ra_cr_0143_sap` | Engineer platoon (Cavalry regiment) | support weapons | 1x rkka_com_eng_plat, 3x rkka_squad_eng_43a | 30 | - | 5 | database |
+| `ra_cr_0143_artybat` | Arty battery (Cavalry regiment) | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_pp27 | 42 | 4x m27 | 0 | database |
+| `ra_cr_0143_atbat` | AT battery (Cavalry regiment) | support weapons | 1x rkka_com_art_bat, 2x rkka_com_art_fplat, 4x rkka_53k | 31 | 4x 53k | 0 | database |
+| `ra_cr_0143_mt82_com` | Command (Mortar battery) | company HQ | 1x rkka_com_art_bat, 1x rkka_squad_phone | 10 | - | 0 | mission |
+| `ra_cr_0143_mt82_fplat` | Mortar platoon (Mortar battery) | support weapons | 1x rkka_com_art_fplat, 3x rkka_mt82 | 17 | 3x mt82 | 0 | mission |
 
 ### `p_ra_csq0143` (1943-01 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_ssq_0143_comsq` | company HQ | 1x rkka_com_cav_coy, 1x rkka_squad_phone | 10 | - | 4 | mission |
-| `ra_ssq_0143_plat` | infantry | 1x rkka_com_cav_plat, 2x rkka_squad_cav_43a | 17 | - | 4 | mission |
-| `ra_ssq_0143_mgs` | support weapons | 1x rkka_com_cav_plat, 4x rkka_maxim | 27 | - | 0 | database |
-| `ra_ssq_0143_atr` | support weapons | 1x rkka_com_cav_plat, 3x rkka_squad_cav_atr | 18 | - | 0 | mission |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_ssq_0143_comsq` | Squadron commander (Sabre squadron) | company HQ | 1x rkka_com_cav_coy, 1x rkka_squad_phone | 10 | - | 4 | mission |
+| `ra_ssq_0143_plat` | Cavalry platoon (Sabre squadron) | infantry | 1x rkka_com_cav_plat, 2x rkka_squad_cav_43a | 17 | - | 4 | mission |
+| `ra_ssq_0143_mgs` | MG platoon (Sabre squadron) | support weapons | 1x rkka_com_cav_plat, 4x rkka_maxim | 27 | - | 0 | database |
+| `ra_ssq_0143_atr` | ATR platoon (Sabre squadron) | support weapons | 1x rkka_com_cav_plat, 3x rkka_squad_cav_atr | 18 | - | 0 | mission |
 
 ### `p_ra_lap_06_42` (1942-06 to 1943-08)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_lap_bty_76` | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_zis3 | 42 | 4x zis3 | 12 | database |
-| `ra_lap_bty_85` | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_52k | 42 | 4x 52k | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_lap_bty_76` | Arty battery (76 mm) (Artillery battalion) | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_zis3 | 42 | 4x zis3 | 12 | database |
+| `ra_lap_bty_85` | Arty battery (85 mm) (Artillery battalion) | support weapons | 1x rkka_com_art_bat, 1x rkka_squad_phone, 2x rkka_com_art_fplat, 4x rkka_52k | 42 | 4x 52k | 0 | database |
 
 ### `p_ra_ltbr_12_39` (1939-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_ltbr_bat_coy_hq` | company HQ | 1x rkka_ltank_ccom, 1x rkka_ltank | 6 | 1x t26_m36_rad, 1x t26_m35 | 4 | database |
-| `ra_ltbr_bat_ltank1` | armour | 1x rkka_ltank_com, 4x rkka_ltank | 15 | 1x t26_m35_rad, 4x t26_m35 | 0 | database |
-| `ra_ltbr_bat_ltank2` | armour | 1x rkka_ltank_com, 4x rkka_ltank | 15 | 2x t26_m36_rad, 3x t26_m35 | 0 | database |
-| `ra_ltbr_bat_ltank3` | armour | 1x rkka_ltank_com, 4x rkka_ltank | 15 | 1x t26_m40_rad, 2x t26_m39, 1x t26_m40, 1x t26_m39_aa | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_ltbr_bat_coy_hq` | Command (Light tank company) | company HQ | 1x rkka_ltank_ccom, 1x rkka_ltank | 6 | 1x t26_m36_rad, 1x t26_m35 | 4 | database |
+| `ra_ltbr_bat_ltank1` | Tank platoon (mod 1935) (Light tank company) | armour | 1x rkka_ltank_com, 4x rkka_ltank | 15 | 1x t26_m35_rad, 4x t26_m35 | 0 | database |
+| `ra_ltbr_bat_ltank2` | Tank platoon (mod 1936) (Light tank company) | armour | 1x rkka_ltank_com, 4x rkka_ltank | 15 | 2x t26_m36_rad, 3x t26_m35 | 0 | database |
+| `ra_ltbr_bat_ltank3` | Tank platoon (mod 1939) (Light tank company) | armour | 1x rkka_ltank_com, 4x rkka_ltank | 15 | 1x t26_m40_rad, 2x t26_m39, 1x t26_m40, 1x t26_m39_aa | 0 | database |
 
 ### `p_ra_ogvtpp_10_267` (1942-10 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_ogvtpp_42_reg_hq` | battalion HQ | 1x rkka_htank_rcom, 1x rkka_squad_phone, 1x rkka_gazmm, 3x rkka_ba64 | 19 | 1x kv1s, 1x gazmm_42, 3x ba64 | 7 | database |
-| `ra_ogvtpp_42_coy_cmd` | company HQ | 1x rkka_htank_ccom | 5 | 1x kv1s | 2 | database |
-| `ra_ogvtpp_42_plat` | armour | 1x rkka_htank_com, 1x rkka_htank | 10 | 1x kv1se, 1x kv1s | 3 | mission |
-| `ra_ogvtpp_42_coy` | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 2x rkka_htank | 25 | 3x kv1s, 2x kv1se | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_ogvtpp_42_reg_hq` | Command (Det. gds. brt. tank reg) | battalion HQ | 1x rkka_htank_rcom, 1x rkka_squad_phone, 1x rkka_gazmm, 3x rkka_ba64 | 19 | 1x kv1s, 1x gazmm_42, 3x ba64 | 7 | database |
+| `ra_ogvtpp_42_coy_cmd` | Command (Tank company) | company HQ | 1x rkka_htank_ccom | 5 | 1x kv1s | 2 | database |
+| `ra_ogvtpp_42_plat` | Tank platoon (Tank company) | armour | 1x rkka_htank_com, 1x rkka_htank | 10 | 1x kv1se, 1x kv1s | 3 | mission |
+| `ra_ogvtpp_42_coy` | Tank company (Tank battalion) | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 2x rkka_htank | 25 | 3x kv1s, 2x kv1se | 0 | database |
 
 ### `p_ra_ogvtpp_10_267_4` (1942-10 to 1943-06)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_ogvtpp_42_reg_hq1` | battalion HQ | 1x rkka_htank_rcom, 1x rkka_squad_phone, 1x rkka_gazmm, 3x rkka_ba64 | 19 | 1x church2, 1x gazmm_42, 3x ba64 | 7 | database |
-| `ra_ogvtpp_42_coy_cmd1` | company HQ | 1x rkka_htank_ccom | 5 | 1x church2 | 2 | database |
-| `ra_ogvtpp_42_plat1` | armour | 1x rkka_htank_com, 1x rkka_htank | 10 | 2x church2 | 3 | database |
-| `ra_ogvtpp_42_coy1` | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 2x rkka_htank | 25 | 5x church2 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_ogvtpp_42_reg_hq1` | Command (Det. gds. brt. tank reg (MkIV)) | battalion HQ | 1x rkka_htank_rcom, 1x rkka_squad_phone, 1x rkka_gazmm, 3x rkka_ba64 | 19 | 1x church2, 1x gazmm_42, 3x ba64 | 7 | database |
+| `ra_ogvtpp_42_coy_cmd1` | Command (Tank company (MkIV)) | company HQ | 1x rkka_htank_ccom | 5 | 1x church2 | 2 | database |
+| `ra_ogvtpp_42_plat1` | Tank platoon (Tank company (MkIV)) | armour | 1x rkka_htank_com, 1x rkka_htank | 10 | 2x church2 | 3 | database |
+| `ra_ogvtpp_42_coy1` | Tank company (Tank battalion (MkIV)) | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 2x rkka_htank | 25 | 5x church2 | 0 | database |
 
 ### `p_ra_ootb_10_366` (1942-06 to 1943-06)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_ootb_42_bn_hq` | battalion HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
-| `ra_ootb_42_hcoy_cmd` | company HQ | 1x rkka_hftank_ccom | 4 | 1x kv8_42_uztm | 2 | database |
-| `ra_ootb_42_hplat` | armour | 1x rkka_hftank_com, 1x rkka_hftank | 8 | 2x kv8_42_uztm | 3 | database |
-| `ra_ootb_42_coy_cmd` | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 2 | database |
-| `ra_ootb_42_plat` | armour | 1x rkka_mftank_com, 2x rkka_mftank | 9 | 3x ot34_stz_m41 | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_ootb_42_bn_hq` | Command (Det. flame tank battalion) | battalion HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
+| `ra_ootb_42_hcoy_cmd` | Command (Hvy tank coy) | company HQ | 1x rkka_hftank_ccom | 4 | 1x kv8_42_uztm | 2 | database |
+| `ra_ootb_42_hplat` | Tank platoon (Hvy tank coy) | armour | 1x rkka_hftank_com, 1x rkka_hftank | 8 | 2x kv8_42_uztm | 3 | database |
+| `ra_ootb_42_coy_cmd` | Command (Med tank coy) | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 2 | database |
+| `ra_ootb_42_plat` | Tank platoon (Med tank coy) | armour | 1x rkka_mftank_com, 2x rkka_mftank | 9 | 3x ot34_stz_m41 | 3 | database |
 
 ### `p_ra_ootb_10_366_43` (1943-03 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_ootb_43_bn_hq` | battalion HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42 | 3 | database |
-| `ra_ootb_43_coy_cmd` | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42 | 2 | database |
-| `ra_ootb_43_plat` | armour | 1x rkka_mftank_com, 2x rkka_mftank | 9 | 3x ot34_stz_m41 | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_ootb_43_bn_hq` | Command (Det. flame tank battalion) | battalion HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42 | 3 | database |
+| `ra_ootb_43_coy_cmd` | Command (Med tank coy) | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42 | 2 | database |
+| `ra_ootb_43_plat` | Tank platoon (Med tank coy) | armour | 1x rkka_mftank_com, 2x rkka_mftank | 9 | 3x ot34_stz_m41 | 3 | database |
 
 ### `p_ra_ootb_10_366_43_508` (1943-03 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_ootb_43_508_bn_hq` | battalion HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
-| `ra_ootb_43_508_hcoy_cmd` | company HQ | 1x rkka_hftank_ccom | 4 | 1x kv8s | 2 | database |
-| `ra_ootb_43_508_hplat` | armour | 1x rkka_hftank_com, 1x rkka_hftank | 8 | 2x kv8s | 3 | database |
-| `ra_ootb_43_508_coy_cmd` | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 2 | database |
-| `ra_ootb_43_508_plat` | armour | 1x rkka_mftank_com, 2x rkka_mftank | 9 | 3x ot34_stz_m41 | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_ootb_43_508_bn_hq` | Command (Det. flame tank battalion) | battalion HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
+| `ra_ootb_43_508_hcoy_cmd` | Command (Hvy tank coy) | company HQ | 1x rkka_hftank_ccom | 4 | 1x kv8s | 2 | database |
+| `ra_ootb_43_508_hplat` | Tank platoon (Hvy tank coy) | armour | 1x rkka_hftank_com, 1x rkka_hftank | 8 | 2x kv8s | 3 | database |
+| `ra_ootb_43_508_coy_cmd` | Command (Med tank coy) | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 2 | database |
+| `ra_ootb_43_508_plat` | Tank platoon (Med tank coy) | armour | 1x rkka_mftank_com, 2x rkka_mftank | 9 | 3x ot34_stz_m41 | 3 | database |
 
 ### `p_ra_orro_06_42` (1941-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_orro_plat` | armour | 1x rkka_com_eng_plat, 6x rkka_flamer | 15 | - | 7 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_orro_plat` | FT platoon (Det. FT coy) | armour | 1x rkka_com_eng_plat, 6x rkka_flamer | 15 | - | 7 | database |
 
 ### `p_ra_otbn_0242` (1942-02 to 1943-01)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_otbr_42_bn_kv_cc` | company HQ | 1x rkka_htank_ccom | 5 | 1x kv1_42_uztm | 2 | database |
-| `ra_otbr_42_bn_kv_plat` | armour | 1x rkka_htank_com, 1x rkka_htank | 10 | 2x kv1_42_uztm | 3 | database |
-| `ra_otbr_42_bn_kv_coy` | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 2x rkka_htank | 25 | 5x kv1_42_uztm | 0 | database |
-| `ra_otbr_42_bn_t34_cc` | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
-| `ra_otbr_42_bn_t34_plat` | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_stz_m41 | 4 | database |
-| `ra_otbr_42_bn_t34_coy` | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_stz_m41 | 0 | database |
-| `ra_otbr_42_bn_sm_cc` | company HQ | 1x rkka_ltank_ccom, 1x rkka_ltank | 4 | 2x t60 | 3 | database |
-| `ra_otbr_42_bn_sm_plat` | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
-| `ra_otbr_42_bn_sm_coy` | armour | 1x rkka_ltank_ccom, 7x rkka_ltank, 3x rkka_ltank_com | 22 | 11x t60 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_otbr_42_bn_kv_cc` | Command (KV tank coy) | company HQ | 1x rkka_htank_ccom | 5 | 1x kv1_42_uztm | 2 | database |
+| `ra_otbr_42_bn_kv_plat` | Tank platoon (KV tank coy) | armour | 1x rkka_htank_com, 1x rkka_htank | 10 | 2x kv1_42_uztm | 3 | database |
+| `ra_otbr_42_bn_kv_coy` | KV tank coy (Tank battalion) | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 2x rkka_htank | 25 | 5x kv1_42_uztm | 0 | database |
+| `ra_otbr_42_bn_t34_cc` | Command (T-34 tank coy) | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
+| `ra_otbr_42_bn_t34_plat` | Tank platoon (T-34 tank coy) | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_stz_m41 | 4 | database |
+| `ra_otbr_42_bn_t34_coy` | T-34 tank coy (Tank battalion) | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_stz_m41 | 0 | database |
+| `ra_otbr_42_bn_sm_cc` | Command (Light tank coy) | company HQ | 1x rkka_ltank_ccom, 1x rkka_ltank | 4 | 2x t60 | 3 | database |
+| `ra_otbr_42_bn_sm_plat` | Tank platoon (Light tank coy) | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
+| `ra_otbr_42_bn_sm_coy` | Light tank coy (Tank battalion) | armour | 1x rkka_ltank_ccom, 7x rkka_ltank, 3x rkka_ltank_com | 22 | 11x t60 | 0 | database |
 
 ### `p_ra_otbn_eng_10_395` (1942-02 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_otbn_eng_coy_hq` | company HQ | 1x rkka_mtank_ccom | 4 | 1x mk2_4 | 3 | database |
-| `ra_otbn_eng_mtank_plat1` | armour | 1x rkka_mtank_com, 1x rkka_mtank | 8 | 2x mk2_4 | 4 | database |
-| `ra_otbn_eng_mtank_plat2` | mobile support | 1x rkka_mtank_com, 1x rkka_mtank | 8 | 2x mk2_4cs | 4 | database |
-| `ra_otbn_eng_mtank_coy` | armour | 1x rkka_mtank_ccom, 2x rkka_mtank_com, 2x rkka_mtank | 20 | 3x mk2_4, 2x mk2_4cs | 0 | database |
-| `ra_otbn_eng_coy_hq1` | company HQ | 1x rkka_ltank_ccom | 3 | 1x mk3_2 | 3 | database |
-| `ra_otbn_eng_ltank_plat1` | armour | 1x rkka_ltank_com, 2x rkka_ltank | 9 | 3x mk3_2 | 4 | database |
-| `ra_otbn_eng_ltank_plat2` | reconnaissance | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
-| `ra_otbn_eng_ltank_plat3` | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t70m | 4 | database |
-| `ra_otbn_eng_ltank_coy` | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 30 | 10x mk3_2 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_otbn_eng_coy_hq` | Command (Med tank company) | company HQ | 1x rkka_mtank_ccom | 4 | 1x mk2_4 | 3 | database |
+| `ra_otbn_eng_mtank_plat1` | Tank platoon (Med tank company) | armour | 1x rkka_mtank_com, 1x rkka_mtank | 8 | 2x mk2_4 | 4 | database |
+| `ra_otbn_eng_mtank_plat2` | Tank platoon (CS) (Med tank company) | mobile support | 1x rkka_mtank_com, 1x rkka_mtank | 8 | 2x mk2_4cs | 4 | database |
+| `ra_otbn_eng_mtank_coy` | Tank company (Med tank battalion) | armour | 1x rkka_mtank_ccom, 2x rkka_mtank_com, 2x rkka_mtank | 20 | 3x mk2_4, 2x mk2_4cs | 0 | database |
+| `ra_otbn_eng_coy_hq1` | Command (Light tank company) | company HQ | 1x rkka_ltank_ccom | 3 | 1x mk3_2 | 3 | database |
+| `ra_otbn_eng_ltank_plat1` | Tank platoon (Mk3) (Light tank company) | armour | 1x rkka_ltank_com, 2x rkka_ltank | 9 | 3x mk3_2 | 4 | database |
+| `ra_otbn_eng_ltank_plat2` | Tank platoon (T-60) (Light tank company) | reconnaissance | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
+| `ra_otbn_eng_ltank_plat3` | Tank platoon (T-70) (Light tank company) | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t70m | 4 | database |
+| `ra_otbn_eng_ltank_coy` | Tank company (Light tank battalion) | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 30 | 10x mk3_2 | 0 | database |
 
 ### `p_ra_rbn1242` (1942-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_rbn_1242_combat` | battalion HQ | 1x rkka_com_inf_bat, 1x rkka_squad_phone | 12 | - | 5 | mission |
-| `ra_rbn_1242_gun_plat` | support weapons | 1x rkka_com_art_fplat, 2x rkka_53k | 14 | 2x 53k | 3 | database |
-| `ra_rbn_1242_comcoy` | company HQ | 1x rkka_com_inf_coy, 1x rkka_squad_sniper | 5 | - | 4 | mission |
-| `ra_rbn_1242_plat1` | infantry | 1x rkka_com_smg_plat, 3x rkka_squad_smg_43a | 33 | - | 5 | database |
-| `ra_rbn_1242_plat2` | infantry | 1x rkka_com_inf_plat, 2x rkka_squad_inf_43a, 2x rkka_squad_inf_43a2 | 39 | - | 6 | mission, also `ra_rbn_1242_plat2@tr02` (21) |
-| `ra_rbn_1242_mt50` | support weapons | 1x rkka_com_art_fplat, 2x rkka_mt50 | 8 | - | 4 | database |
-| `ra_rbn_1242_hmg` | support weapons | 1x rkka_maxim | 6 | - | 4 | mission |
-| `ra_rbn_1242_hmg2` | support weapons | 1x rkka_com_art_fplat, 2x rkka_ds39 | 12 | - | 4 | database |
-| `ra_rbn_1242_mg_com` | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | database |
-| `ra_rbn_1242_mg_plat` | support weapons | 1x rkka_com_art_fplat, 4x rkka_maxim | 26 | - | 5 | database |
-| `ra_rbn_1242_mg_plat2` | support weapons | 1x rkka_com_art_fplat, 4x rkka_ds39 | 22 | - | 5 | database |
-| `ra_rbn_1242_atr_com` | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | database |
-| `ra_rbn_1242_atr_plat` | support weapons | 1x rkka_com_art_fplat, 3x rkka_squad_atr, 1x rkka_ptr | 25 | - | 5 | database |
-| `ra_rbn_1242_mt82_com` | company HQ | 1x rkka_com_art_bat, 1x rkka_squad_phone | 10 | - | 3 | database |
-| `ra_rbn_1242_mt82_plat` | support weapons | 1x rkka_com_art_fplat, 3x rkka_mt82 | 17 | 3x mt82 | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_rbn_1242_combat` | Commander (Rifle battalion) | battalion HQ | 1x rkka_com_inf_bat, 1x rkka_squad_phone | 12 | - | 5 | mission |
+| `ra_rbn_1242_gun_plat` | 45 mm gun platoon (Rifle battalion) | support weapons | 1x rkka_com_art_fplat, 2x rkka_53k | 14 | 2x 53k | 3 | database |
+| `ra_rbn_1242_comcoy` | Command (Rifle coy) | company HQ | 1x rkka_com_inf_coy, 1x rkka_squad_sniper | 5 | - | 4 | mission |
+| `ra_rbn_1242_plat1` | SMG platoon (Rifle coy) | infantry | 1x rkka_com_smg_plat, 3x rkka_squad_smg_43a | 33 | - | 5 | database |
+| `ra_rbn_1242_plat2` | Rifle platoon (Rifle coy) | infantry | 1x rkka_com_inf_plat, 2x rkka_squad_inf_43a, 2x rkka_squad_inf_43a2 | 39 | - | 6 | mission, also `ra_rbn_1242_plat2@tr02` (21) |
+| `ra_rbn_1242_mt50` | Mortar platoon (Rifle coy) | support weapons | 1x rkka_com_art_fplat, 2x rkka_mt50 | 8 | - | 4 | database |
+| `ra_rbn_1242_hmg` | HMG platoon (Rifle coy) | support weapons | 1x rkka_maxim | 6 | - | 4 | mission |
+| `ra_rbn_1242_hmg2` | HMG platoon (DS-39) (Rifle coy) | support weapons | 1x rkka_com_art_fplat, 2x rkka_ds39 | 12 | - | 4 | database |
+| `ra_rbn_1242_mg_com` | Command (Machinegun coy) | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | database |
+| `ra_rbn_1242_mg_plat` | HMG platoon (Machinegun coy) | support weapons | 1x rkka_com_art_fplat, 4x rkka_maxim | 26 | - | 5 | database |
+| `ra_rbn_1242_mg_plat2` | HMG platoon (DS-39) (Machinegun coy) | support weapons | 1x rkka_com_art_fplat, 4x rkka_ds39 | 22 | - | 5 | database |
+| `ra_rbn_1242_atr_com` | Command (ATR coy) | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | database |
+| `ra_rbn_1242_atr_plat` | ATR platoon (ATR coy) | support weapons | 1x rkka_com_art_fplat, 3x rkka_squad_atr, 1x rkka_ptr | 25 | - | 5 | database |
+| `ra_rbn_1242_mt82_com` | Command (82 mm mortar coy) | company HQ | 1x rkka_com_art_bat, 1x rkka_squad_phone | 10 | - | 3 | database |
+| `ra_rbn_1242_mt82_plat` | Mortar platoon (82 mm mortar coy) | support weapons | 1x rkka_com_art_fplat, 3x rkka_mt82 | 17 | 3x mt82 | 4 | database |
 
 ### `p_ra_rgk_arty` (1942-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_arty_rgk` | reconnaissance | 1x rkka_com_art_fplat, 1x rkka_squad_phone | 9 | - | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_arty_rgk` | Arty spotter (Artillery battery) | reconnaissance | 1x rkka_com_art_fplat, 1x rkka_squad_phone | 9 | - | 3 | database |
 
 ### `p_ra_rr1242` (1942-12 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_rr1242_foot_scout` | reconnaissance | 1x rkka_com_scout_plat, 3x rkka_squad_scout_43a, 1x rkka_corr_art | 41 | - | 5 | mission |
-| `ra_rr1242_sap_plat` | support weapons | 1x rkka_com_eng_plat, 3x rkka_squad_eng_43a | 30 | - | 6 | database |
-| `ra_rr1242_bat76_hq` | company HQ | 1x rkka_com_art_bat, 1x rkka_squad_phone, 1x rkka_squad_scout_43a | 22 | - | 4 | database |
-| `ra_rr1242_bat76_fplat` | support weapons | 1x rkka_com_art_fplat, 2x rkka_pp27 | 16 | 2x m27 | 5 | database |
-| `ra_rr1242_atbat45_hq` | company HQ | 1x rkka_com_art_bat | 3 | - | 2 | database |
-| `ra_rr1242_atbat45_fplat` | support weapons | 1x rkka_com_art_fplat, 2x rkka_53k | 14 | 2x 53k | 5 | database |
-| `ra_rr1242_smg_hq` | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | mission |
-| `ra_rr1242_smg_plat` | infantry | 1x rkka_com_smg_plat, 3x rkka_squad_smg_43a | 33 | - | 5 | mission |
-| `ra_rr1242_atr_hq` | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | database |
-| `ra_rr1242_atr_plat` | support weapons | 1x rkka_com_inf_plat, 3x rkka_squad_atr | 24 | - | 5 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_rr1242_foot_scout` | Recon platoon (Gds rifle regiment) | reconnaissance | 1x rkka_com_scout_plat, 3x rkka_squad_scout_43a, 1x rkka_corr_art | 41 | - | 5 | mission |
+| `ra_rr1242_sap_plat` | Sapper platoon (Gds rifle regiment) | support weapons | 1x rkka_com_eng_plat, 3x rkka_squad_eng_43a | 30 | - | 6 | database |
+| `ra_rr1242_bat76_hq` | Command (76 mm gun battery) | company HQ | 1x rkka_com_art_bat, 1x rkka_squad_phone, 1x rkka_squad_scout_43a | 22 | - | 4 | database |
+| `ra_rr1242_bat76_fplat` | Firing platoon (76 mm gun battery) | support weapons | 1x rkka_com_art_fplat, 2x rkka_pp27 | 16 | 2x m27 | 5 | database |
+| `ra_rr1242_atbat45_hq` | Command (45 mm gun AT destr battery) | company HQ | 1x rkka_com_art_bat | 3 | - | 2 | database |
+| `ra_rr1242_atbat45_fplat` | Firing platoon (45 mm gun AT destr battery) | support weapons | 1x rkka_com_art_fplat, 2x rkka_53k | 14 | 2x 53k | 5 | database |
+| `ra_rr1242_smg_hq` | Command (SMG company) | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | mission |
+| `ra_rr1242_smg_plat` | SMG platoon (SMG company) | infantry | 1x rkka_com_smg_plat, 3x rkka_squad_smg_43a | 33 | - | 5 | mission |
+| `ra_rr1242_atr_hq` | Command (ATR company) | company HQ | 1x rkka_com_inf_coy | 3 | - | 2 | database |
+| `ra_rr1242_atr_plat` | ATR platoon (ATR company) | support weapons | 1x rkka_com_inf_plat, 3x rkka_squad_atr | 24 | - | 5 | database |
 
 ### `p_ra_sct_coy_10_426` (1943-02 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_sct_coy_hq` | company HQ | 1x rkka_ba64_ccom, 1x rkka_ba64_com | 4 | 2x ba64 | 3 | database |
-| `ra_sct_coy_lacar_plat` | reconnaissance | 1x rkka_ba64_com, 4x rkka_ba64 | 10 | 5x ba64 | 6 | database |
-| `ra_sct_coy_lacar_plat2` | reconnaissance | 1x rkka_ba20_com, 4x rkka_ba20 | 15 | 5x ba20 | 6 | database |
-| `ra_sct_coy_smg_plat` | infantry | 1x rkka_com_smg_plat, 3x rkka_squad_smg_43m | 33 | - | 5 | database |
-| `ra_sct_coy_apc_plat` | reconnaissance | 1x rkka_com_apc_m3a1, 2x rkka_squad_apc_m3a1 | 28 | 3x m3a1_scout | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_sct_coy_hq` | Command (MR Bde recon coy on APC) | company HQ | 1x rkka_ba64_ccom, 1x rkka_ba64_com | 4 | 2x ba64 | 3 | database |
+| `ra_sct_coy_lacar_plat` | Light AC plt (MR Bde recon coy on APC) | reconnaissance | 1x rkka_ba64_com, 4x rkka_ba64 | 10 | 5x ba64 | 6 | database |
+| `ra_sct_coy_lacar_plat2` | Light AC plt (BA-20) (MR Bde recon coy on APC) | reconnaissance | 1x rkka_ba20_com, 4x rkka_ba20 | 15 | 5x ba20 | 6 | database |
+| `ra_sct_coy_smg_plat` | SMG platoon (MR Bde recon coy on APC) | infantry | 1x rkka_com_smg_plat, 3x rkka_squad_smg_43m | 33 | - | 5 | database |
+| `ra_sct_coy_apc_plat` | APC platoon (MR Bde recon coy on APC) | reconnaissance | 1x rkka_com_apc_m3a1, 2x rkka_squad_apc_m3a1 | 28 | 3x m3a1_scout | 4 | database |
 
 ### `p_ra_sepatdiv_rd_42` (1942-03 to 1943-05)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_sepatdiv_42_hq` | battalion HQ | 1x rkka_com_art_div, 1x rkka_squad_phone, 1x rkka_squad_scout_42m, 1x rkka_gazmm | 26 | 1x gazmm_42 | 5 | database |
-| `ra_sepatdiv_42_bat_cmd` | company HQ | 1x rkka_com_art_bat | 3 | - | 5 | database |
-| `ra_sepatdiv_42_fplat` | support weapons | 1x rkka_com_art_fplat, 2x rkka_53k_at, 2x rkka_t20 | 16 | 2x 53k, 2x t20 | 6 | database |
-| `ra_sepatdiv_42_atr_cmd` | company HQ | 1x rkka_com_inf_coy | 3 | - | 3 | database |
-| `ra_sepatdiv_42_atr_plat` | support weapons | 1x rkka_com_inf_plat, 3x rkka_squad_atr | 24 | - | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_sepatdiv_42_hq` | Command (Detached AT battalion of RD) | battalion HQ | 1x rkka_com_art_div, 1x rkka_squad_phone, 1x rkka_squad_scout_42m, 1x rkka_gazmm | 26 | 1x gazmm_42 | 5 | database |
+| `ra_sepatdiv_42_bat_cmd` | Command (45 mm gun battery) | company HQ | 1x rkka_com_art_bat | 3 | - | 5 | database |
+| `ra_sepatdiv_42_fplat` | Firing platoon (45 mm gun battery) | support weapons | 1x rkka_com_art_fplat, 2x rkka_53k_at, 2x rkka_t20 | 16 | 2x 53k, 2x t20 | 6 | database |
+| `ra_sepatdiv_42_atr_cmd` | Command (ATR company) | company HQ | 1x rkka_com_inf_coy | 3 | - | 3 | database |
+| `ra_sepatdiv_42_atr_plat` | ATR platoon (ATR company) | support weapons | 1x rkka_com_inf_plat, 3x rkka_squad_atr | 24 | - | 4 | database |
 
 ### `p_ra_tbde_0642` (1942-07 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tbr_42_cmd_coy_sct` | reconnaissance | 1x rkka_com_uc_mk1, 2x rkka_squad_scoutm_43a | 20 | 1x uc_mk1, 2x uc_mk1_lin | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tbr_42_cmd_coy_sct` | Scout platoon (Command coy) | reconnaissance | 1x rkka_com_uc_mk1, 2x rkka_squad_scoutm_43a | 20 | 1x uc_mk1, 2x uc_mk1_lin | 0 | database |
 
 ### `p_ra_tbn_kv_0642` (1942-06 to 1943-01)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tbrkv_42_bn_hq` | battalion HQ | 1x rkka_htank_com, 1x rkka_ltank_com, 1x rkka_ltank, 1x rkka_squad_phone, 1x rkka_gazmm | 17 | 1x kv1_42_uztm, 2x t60, 1x gazmm_42 | 6 | database |
-| `ra_tbrkv_42_bn_kv_cc` | company HQ | 1x rkka_htank_ccom | 5 | 1x kv1_42_uztm | 2 | database |
-| `ra_tbrkv_42_bn_kv_plat` | armour | 1x rkka_htank_com, 2x rkka_htank | 15 | 3x kv1_42_uztm | 4 | database |
-| `ra_tbrkv_42_bn_kv_coy` | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 4x rkka_htank | 35 | 7x kv1_42_uztm | 0 | database |
-| `ra_tbrkv_42_bn_sm_cc` | company HQ | 1x rkka_ltank_ccom | 2 | 1x t70m | 2 | database |
-| `ra_tbrkv_42_bn_sm_plat` | reconnaissance | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
-| `ra_tbrkv_42_bn_sm_coy` | reconnaissance | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 20 | 1x t70m, 9x t60 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tbrkv_42_bn_hq` | Command (Tank battalion) | battalion HQ | 1x rkka_htank_com, 1x rkka_ltank_com, 1x rkka_ltank, 1x rkka_squad_phone, 1x rkka_gazmm | 17 | 1x kv1_42_uztm, 2x t60, 1x gazmm_42 | 6 | database |
+| `ra_tbrkv_42_bn_kv_cc` | Command (KV tank coy) | company HQ | 1x rkka_htank_ccom | 5 | 1x kv1_42_uztm | 2 | database |
+| `ra_tbrkv_42_bn_kv_plat` | Tank platoon (KV tank coy) | armour | 1x rkka_htank_com, 2x rkka_htank | 15 | 3x kv1_42_uztm | 4 | database |
+| `ra_tbrkv_42_bn_kv_coy` | KV tank coy (Tank battalion) | armour | 1x rkka_htank_ccom, 2x rkka_htank_com, 4x rkka_htank | 35 | 7x kv1_42_uztm | 0 | database |
+| `ra_tbrkv_42_bn_sm_cc` | Command (Light tank coy) | company HQ | 1x rkka_ltank_ccom | 2 | 1x t70m | 2 | database |
+| `ra_tbrkv_42_bn_sm_plat` | Tank platoon (Light tank coy) | reconnaissance | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
+| `ra_tbrkv_42_bn_sm_coy` | Light tank coy (Tank battalion) | reconnaissance | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 20 | 1x t70m, 9x t60 | 0 | database |
 
 ### `p_ra_tbn_t34_0642` (1942-06 to 1943-01)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tbrt34_42_bn_hq` | battalion HQ | 1x rkka_mtank_com, 1x rkka_ltank_com, 2x rkka_ltank, 1x rkka_squad_phone, 1x rkka_gazmm | 18 | 1x t34_utz_m42, 3x t60, 1x gazmm_42 | 7 | database |
-| `ra_tbrt34_42_bn_t34_cc` | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42 | 2 | database |
-| `ra_tbrt34_42_bn_t34_plat` | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_utz_m42 | 4 | database |
-| `ra_tbrt34_42_bn_t34_coy` | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_utz_m42 | 0 | database |
-| `ra_tbrt34_42_bn_sm_cc` | company HQ | 1x rkka_ltank_ccom | 2 | 1x t70m | 2 | database |
-| `ra_tbrt34_42_bn_sm_plat` | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
-| `ra_tbrt34_42_bn_sm_coy` | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 20 | 1x t70m, 9x t60 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tbrt34_42_bn_hq` | Command (Tank battalion) | battalion HQ | 1x rkka_mtank_com, 1x rkka_ltank_com, 2x rkka_ltank, 1x rkka_squad_phone, 1x rkka_gazmm | 18 | 1x t34_utz_m42, 3x t60, 1x gazmm_42 | 7 | database |
+| `ra_tbrt34_42_bn_t34_cc` | Command (T-34 tank coy) | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42 | 2 | database |
+| `ra_tbrt34_42_bn_t34_plat` | Tank platoon (T-34 tank coy) | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_utz_m42 | 4 | database |
+| `ra_tbrt34_42_bn_t34_coy` | T-34 tank coy (Tank battalion) | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_utz_m42 | 0 | database |
+| `ra_tbrt34_42_bn_sm_cc` | Command (Light tank coy) | company HQ | 1x rkka_ltank_ccom | 2 | 1x t70m | 2 | database |
+| `ra_tbrt34_42_bn_sm_plat` | Tank platoon (Light tank coy) | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t60 | 4 | database |
+| `ra_tbrt34_42_bn_sm_coy` | Light tank coy (Tank battalion) | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 20 | 1x t70m, 9x t60 | 0 | database |
 
 ### `p_ra_tbn_usa_09_42` (1942-09 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tbn_usat_ltank_plat` | armour | 1x rkka_ltank_com, 2x rkka_ltank | 12 | 3x m3a1_stuart | 0 | database |
-| `ra_tbn_usat_ltank_coy` | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 40 | 10x m3a1_stuart | 0 | database |
-| `ra_tbn_usat_mtank_plat` | armour | 1x rkka_mtank_com, 2x rkka_mtank | 15 | 3x m4a2_sherman | 0 | database |
-| `ra_tbn_usat_mtank_coy` | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 50 | 10x m4a2_sherman | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tbn_usat_ltank_plat` | Tank platoon (Light tank company) | armour | 1x rkka_ltank_com, 2x rkka_ltank | 12 | 3x m3a1_stuart | 0 | database |
+| `ra_tbn_usat_ltank_coy` | Light tank company (Tank battalion) | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 40 | 10x m3a1_stuart | 0 | database |
+| `ra_tbn_usat_mtank_plat` | Tank platoon (Medium tank company) | armour | 1x rkka_mtank_com, 2x rkka_mtank | 15 | 3x m4a2_sherman | 0 | database |
+| `ra_tbn_usat_mtank_coy` | Medium tank company (Tank battalion) | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 50 | 10x m4a2_sherman | 0 | database |
 
 ### `p_ra_tbn1_0642` (1942-07 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tbr_42_bn1_hq` | battalion HQ | 1x rkka_mtank_com, 1x rkka_squad_phone, 1x rkka_gazmm | 12 | 1x t34_utz_m42, 1x gazmm_42 | 5 | database |
-| `ra_tbr_42_bn1_t34_cc` | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42_late | 3 | mission |
-| `ra_tbr_42_bn1_t34_plat` | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_utz_m42_late | 4 | mission, also `ra_tbr_42_bn1_t34_plat@tr01` (4), `ra_tbr_42_bn1_t34_plat@tr06` (12) |
-| `ra_tbr_42_bn1_t34_coy` | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_utz_m42 | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tbr_42_bn1_hq` | Command (1st tank battalion) | battalion HQ | 1x rkka_mtank_com, 1x rkka_squad_phone, 1x rkka_gazmm | 12 | 1x t34_utz_m42, 1x gazmm_42 | 5 | database |
+| `ra_tbr_42_bn1_t34_cc` | Coy command (T-34 tank coy) | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_utz_m42_late | 3 | mission |
+| `ra_tbr_42_bn1_t34_plat` | Tank platoon (T-34 tank coy) | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_utz_m42_late | 4 | mission, also `ra_tbr_42_bn1_t34_plat@tr01` (4), `ra_tbr_42_bn1_t34_plat@tr06` (12) |
+| `ra_tbr_42_bn1_t34_coy` | T-34 tank coy (Tank battalion) | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_utz_m42 | 0 | database |
 
 ### `p_ra_tbn2_0642` (1942-07 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tbr_42_bn2_hq` | battalion HQ | 1x rkka_ltank_com, 1x rkka_squad_phone, 1x rkka_gazmm | 10 | 1x t70m, 1x gazmm_42 | 5 | database |
-| `ra_tbr_42_bn2_t34_cc` | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
-| `ra_tbr_42_bn2_t34_plat` | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_stz_m41 | 4 | database |
-| `ra_tbr_42_bn2_t34_coy` | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_stz_m41 | 0 | database |
-| `ra_tbr_42_bn2_sm_cc` | company HQ | 1x rkka_ltank_ccom | 2 | 1x t70m | 3 | database |
-| `ra_tbr_42_bn2_sm_plat` | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t70m | 4 | mission |
-| `ra_tbr_42_bn2_sm_coy` | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 20 | 10x t70m | 0 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tbr_42_bn2_hq` | Command (2nd tank battalion) | battalion HQ | 1x rkka_ltank_com, 1x rkka_squad_phone, 1x rkka_gazmm | 10 | 1x t70m, 1x gazmm_42 | 5 | database |
+| `ra_tbr_42_bn2_t34_cc` | Command (T-34 tank coy) | company HQ | 1x rkka_mtank_ccom | 4 | 1x t34_stz_m41 | 3 | database |
+| `ra_tbr_42_bn2_t34_plat` | Tank platoon (T-34 tank coy) | armour | 1x rkka_mtank_com, 2x rkka_mtank | 12 | 3x t34_stz_m41 | 4 | database |
+| `ra_tbr_42_bn2_t34_coy` | T-34 tank coy (Tank battalion) | armour | 1x rkka_mtank_ccom, 3x rkka_mtank_com, 6x rkka_mtank | 40 | 10x t34_stz_m41 | 0 | database |
+| `ra_tbr_42_bn2_sm_cc` | Command (Light tank coy) | company HQ | 1x rkka_ltank_ccom | 2 | 1x t70m | 3 | database |
+| `ra_tbr_42_bn2_sm_plat` | Tank platoon (Light tank coy) | armour | 1x rkka_ltank_com, 2x rkka_ltank | 6 | 3x t70m | 4 | mission |
+| `ra_tbr_42_bn2_sm_coy` | Light tank coy (Tank battalion) | armour | 1x rkka_ltank_ccom, 3x rkka_ltank_com, 6x rkka_ltank | 20 | 10x t70m | 0 | database |
 
 ### `p_ra_tsap_08_218` (1943-03 to 1943-05)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tsap_43e_reg_hq` | battalion HQ | 1x rkka_com_art_div, 1x rkka_com_art_bat, 3x rkka_squad_phone, 3x rkka_gazmm, 1x rkka_squad_scout_43m | 45 | 3x gazmm_42 | 10 | database |
-| `ra_tsap_43e_bat_cmd` | company HQ | 1x rkka_com_art_bat, 1x rkka_gazmm | 4 | 1x gazmm_42 | 3 | database |
-| `ra_tsap_43e_plat` | mobile support | 1x rkka_su152_com, 1x rkka_su152 | 10 | 2x su152 | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tsap_43e_reg_hq` | Command (Hvy SPG reg) | battalion HQ | 1x rkka_com_art_div, 1x rkka_com_art_bat, 3x rkka_squad_phone, 3x rkka_gazmm, 1x rkka_squad_scout_43m | 45 | 3x gazmm_42 | 10 | database |
+| `ra_tsap_43e_bat_cmd` | Command (SU-152 battery) | company HQ | 1x rkka_com_art_bat, 1x rkka_gazmm | 4 | 1x gazmm_42 | 3 | database |
+| `ra_tsap_43e_plat` | SPG platoon (SU-152 battery) | mobile support | 1x rkka_su152_com, 1x rkka_su152 | 10 | 2x su152 | 3 | database |
 
 ### `p_ra_tsap_10_454` (1943-04 to 1943-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tsap_43_reg_hq` | battalion HQ | 1x rkka_htank_ccom, 1x rkka_com_art_bat, 3x rkka_squad_phone, 3x rkka_gazmm, 1x rkka_squad_scout_43m, 1x rkka_ba64 | 46 | 1x kv1s, 3x gazmm_42, 1x ba64 | 11 | database |
-| `ra_tsap_43_bat_cmd` | company HQ | 1x rkka_com_art_bat, 1x rkka_gazmm | 4 | 1x gazmm_42 | 3 | database |
-| `ra_tsap_43_plat` | mobile support | 1x rkka_su152_com, 1x rkka_su152 | 10 | 2x su152 | 3 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tsap_43_reg_hq` | Command (Hvy SPG reg) | battalion HQ | 1x rkka_htank_ccom, 1x rkka_com_art_bat, 3x rkka_squad_phone, 3x rkka_gazmm, 1x rkka_squad_scout_43m, 1x rkka_ba64 | 46 | 1x kv1s, 3x gazmm_42, 1x ba64 | 11 | database |
+| `ra_tsap_43_bat_cmd` | Command (SU-152 battery) | company HQ | 1x rkka_com_art_bat, 1x rkka_gazmm | 4 | 1x gazmm_42 | 3 | database |
+| `ra_tsap_43_plat` | SPG platoon (SU-152 battery) | mobile support | 1x rkka_su152_com, 1x rkka_su152 | 10 | 2x su152 | 3 | database |
 
 ### `p_ra_tsap_10_482` (1943-10 to 1944-12)
 
-| `unit` | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
-|---|---|---|---|---|---|---|
-| `ra_tsap_43l_reg_hq` | battalion HQ | 1x rkka_htank_ccom, 1x rkka_com_art_bat, 3x rkka_squad_phone, 3x rkka_gazmm, 1x rkka_squad_scout_43m, 1x rkka_ba64 | 46 | 1x kv1s, 3x gazmm_42, 1x ba64 | 11 | database |
-| `ra_tsap_43l_bat_cmd` | company HQ | 1x rkka_com_art_bat, 1x rkka_gazmm | 4 | 1x gazmm_42 | 3 | database |
-| `ra_tsap_43l_plat` | mobile support | 1x rkka_su152_com, 2x rkka_su152 | 15 | 3x su152_late | 4 | database |
+| `unit` | Name | Role | Squads | Men | Vehicles / heavy weapons | max | Source |
+|---|---|---|---|---|---|---|---|
+| `ra_tsap_43l_reg_hq` | Command (Hvy SPG reg) | battalion HQ | 1x rkka_htank_ccom, 1x rkka_com_art_bat, 3x rkka_squad_phone, 3x rkka_gazmm, 1x rkka_squad_scout_43m, 1x rkka_ba64 | 46 | 1x kv1s, 3x gazmm_42, 1x ba64 | 11 | database |
+| `ra_tsap_43l_bat_cmd` | Command (SU-152 battery) | company HQ | 1x rkka_com_art_bat, 1x rkka_gazmm | 4 | 1x gazmm_42 | 3 | database |
+| `ra_tsap_43l_plat` | SPG platoon (SU-152 battery) | mobile support | 1x rkka_su152_com, 2x rkka_su152 | 15 | 3x su152_late | 4 | database |
 
 ## Vehicle and heavy-weapon index
 
 Which platoons contain a given model.
 
-| Model | `unit` |
-|---|---|
-| 52k | `ra_lap_bty_85` |
-| 53k | `ra_cr_0143_atbat`, `ra_rbn_1242_gun_plat`, `ra_rr1242_atbat45_fplat`, `ra_sepatdiv_42_fplat` |
-| ba20 | `ra_sct_coy_lacar_plat2` |
-| ba64 | `ra_ogvtpp_42_reg_hq`, `ra_ogvtpp_42_reg_hq1`, `ra_sct_coy_hq`, `ra_sct_coy_lacar_plat`, `ra_tsap_43_reg_hq`, `ra_tsap_43l_reg_hq` |
-| church2 | `ra_ogvtpp_42_reg_hq1`, `ra_ogvtpp_42_coy_cmd1`, `ra_ogvtpp_42_plat1`, `ra_ogvtpp_42_coy1` |
-| flak36 | `wer_minf1141_aa_bat` |
-| gazmm_42 | `ra_ogvtpp_42_reg_hq`, `ra_ogvtpp_42_reg_hq1`, `ra_sepatdiv_42_hq`, `ra_tbrkv_42_bn_hq`, `ra_tbrt34_42_bn_hq`, `ra_tbr_42_bn1_hq`, `ra_tbr_42_bn2_hq`, `ra_tsap_43e_reg_hq`, `ra_tsap_43e_bat_cmd`, `ra_tsap_43_reg_hq`, `ra_tsap_43_bat_cmd`, `ra_tsap_43l_reg_hq`, `ra_tsap_43l_bat_cmd` |
-| grw34 | `ss_mibn42_plat4`, `ss_mibn42_mt_plat1`, `wer_mibn_1141_mt_plat` |
-| kv1_42_uztm | `ra_otbr_42_bn_kv_cc`, `ra_otbr_42_bn_kv_plat`, `ra_otbr_42_bn_kv_coy`, `ra_tbrkv_42_bn_hq`, `ra_tbrkv_42_bn_kv_cc`, `ra_tbrkv_42_bn_kv_plat`, `ra_tbrkv_42_bn_kv_coy` |
-| kv1s | `ra_ogvtpp_42_reg_hq`, `ra_ogvtpp_42_coy_cmd`, `ra_ogvtpp_42_plat`, `ra_ogvtpp_42_coy`, `ra_tsap_43_reg_hq`, `ra_tsap_43l_reg_hq` |
-| kv1se | `ra_ogvtpp_42_plat`, `ra_ogvtpp_42_coy` |
-| kv8_42_uztm | `ra_ootb_42_hcoy_cmd`, `ra_ootb_42_hplat` |
-| kv8s | `ra_ootb_43_508_hcoy_cmd`, `ra_ootb_43_508_hplat` |
-| lefh18m | `wer_minf1141_arty_bat` |
-| leig18 | `ss_mibn42_ig_plat1`, `ss_mibn42_ig_plat2`, `wer_minf1141_igcoy_lpl`, `wer_minf1141_igcoy_lfpl` |
-| lepak41 | `wer_atbn_lid42_plat2` |
-| m27 | `ra_cr_0143_artybat`, `ra_rr1242_bat76_fplat` |
-| m30m38 | `ra_areg_rd_42_howit` |
-| m3a1_scout | `ra_sct_coy_apc_plat` |
-| m3a1_stuart | `ra_tbn_usat_ltank_plat`, `ra_tbn_usat_ltank_coy` |
-| m4a2_sherman | `ra_tbn_usat_mtank_plat`, `ra_tbn_usat_mtank_coy` |
-| marder2_131 | `wer_mar_coy_43_com`, `wer_mar_43_plat` |
-| marder2_132 | `wer_mar_42_plat` |
-| marder3_139 | `wer_mar_42_plat`, `wer_mar_43_plat` |
-| mg_pznest | `wer_cr_pznest` |
-| mg34 | `wer_mibn_1141_mg_plat1a`, `wer_mibn_1141_mg_plat2a` |
-| mg42 | `ss_mibn42_plat4`, `ss_mibn42_plat5`, `ss_mibn42_mg_plat1`, `ss_pz_coy42_eplat3`, `wer_mibn_1141_mg_plat1`, `wer_mibn_1141_mg_plat2`, `wer_sct_coy_42_hplat` |
-| mk2_4 | `ra_otbn_eng_coy_hq`, `ra_otbn_eng_mtank_plat1`, `ra_otbn_eng_mtank_coy` |
-| mk2_4cs | `ra_otbn_eng_mtank_plat2`, `ra_otbn_eng_mtank_coy` |
-| mk3_2 | `ra_otbn_eng_coy_hq1`, `ra_otbn_eng_ltank_plat1`, `ra_otbn_eng_ltank_coy` |
-| mt82 | `ra_cr_0143_mt82_fplat`, `ra_rbn_1242_mt82_plat` |
-| nbw41 | `wer_cr_mrls_bat1`, `wer_cr_mrls_bat2` |
-| nbw42 | `wer_cr_mrls_bat3` |
-| opel_blitz_36 | `ss_mibn42_coy1`, `ss_mibn42_hcoy2`, `ss_minf42_stcoy_hq`, `ss_spg_bat_hq1`, `wer_ft_pz_coy_com`, `wer_ispg_bat_42_hq`, `wer_mar_coy_42_com`, `wer_mar_coy_43_com`, `wer_mibn_1141_combat`, `wer_mibn_1141_comcoy`, `wer_mibn_1141_mg_com`, `wer_minf1141_stcoy_hq`, `wer_minf1141_stcoy_eng`, `wer_minf1141_igcoy_hq`, `wer_pzj_coy_com`, `wer_recbn_1141_combat`, `wer_recbn_1141_comcoy`, `wer_spg_bn_42_spam`, `wer_spg_bn_42_bat_hqe`, `wer_spg_bn_42_bat_hq`, `wer_spg_bn_43_spam`, `wer_spg_bn_43_bat_hq` |
-| ot34_stz_m41 | `ra_ootb_42_plat`, `ra_ootb_43_plat`, `ra_ootb_43_508_plat` |
-| pak35 | `wer_atbn_lid42_plat1`, `wer_cr_mrls_bat1`, `wer_mibn_1141_at_plat0` |
-| pak36r | `wer_mibn_1141_at_plat2`, `wer_minf1141_stcoy_at2` |
-| pak38 | `ss_mibn42_at_plat2`, `wer_cr_mrls_bat2`, `wer_cr_mrls_bat3`, `wer_mibn_1141_at_plat`, `wer_minf1141_stcoy_at` |
-| pak40 | `ss_mibn42_at_plat1`, `ss_minf42_stcoy_at`, `wer_mibn_1141_at_plat1`, `wer_minf1141_stcoy_at1` |
-| pak97_38 | `wer_mibn_1141_at_plat3`, `wer_minf1141_stcoy_at3` |
-| pz1f | `wer_pz_ltank_as` |
-| pz2c | `wer_ft_pz_coy_com`, `wer_ft_pz_plat`, `wer_lpz_coy41_com` |
-| pz2d_fl | `wer_ft_pz_ft_plat` |
-| pz2f | `ss_pz_bn42_com`, `wer_lpz_coy41_com`, `wer_pz_coy41_com` |
-| pz3fl | `wer_pzd1190_tfl_coy_hq`, `wer_pzd1190_tfl_plat`, `wer_pzd1190_tfl_coy` |
-| pz3jbef | `ss_pz_bn42_com`, `wer_lpz_coy41_com` |
-| pz3jbefs | `ss_pz_bn42_com` |
-| pz3jkz | `wer_lpz_coy41_com`, `wer_lpz_coy41_plat1` |
-| pz3jlg | `wer_lpz_coy41_plat2`, `wer_pz_coy_lplat1`, `wer_pz_coy_plat1` |
-| pz3l | `ss_pz_coy42_plat2`, `wer_pz_coy_lplat1`, `wer_pz_coy_com1`, `wer_pz_shw1_com` |
-| pz3m | `ss_pz_coy42_plat2`, `wer_pz_coy_plat1` |
-| pz3n | `ss_pz_scoy42_com1`, `ss_pz_scoy42_plat1`, `wer_pz_shw1_plat` |
-| pz4f1 | `wer_pz_coy41_com`, `wer_pz_coy41_plat1` |
-| pz4f2 | `wer_pz_coy_plat2`, `wer_pz_coy41_plat2` |
-| pz4g | `ss_pz_coy42_com`, `ss_pz_coy42_plat1`, `wer_pz_coy_com2`, `wer_pz_coy_plat3`, `wer_pz_coy_plat4` |
-| pz4ga | `wer_pz_coy_com3` |
-| pz4ge | `ss_pz_coy42_com`, `ss_pz_coy42_plat1`, `wer_pz_coy_com2`, `wer_pz_coy_plat2`, `wer_pz_coy_com3`, `wer_pz_coy_plat3`, `wer_pz_coy41_plat3` |
-| pz4gl | `wer_pz_coy_com4`, `wer_pz_coy_plat4` |
-| pz4gle | `wer_pz_coy_com4`, `wer_pz_coy_plat4` |
-| pz5dbefe | `wer_pant_bn_43_hq`, `wer_pant_bn_43_hq1` |
-| pz5dbefl | `wer_pant_bn_43_hq`, `wer_pant_bn_43_hq1` |
-| pz5dl | `wer_pant_bn_43_hq`, `wer_pant_bn_43_recon`, `wer_pant_coy_43_cmd`, `wer_pant_coy_43_plat` |
-| pz6e | `ss_pz_scoy43_com1` |
-| pz6h1 | `ss_pz_scoy42_com1`, `ss_pz_scoy42_plat1`, `ss_pz_scoy43_com1`, `ss_pz_scoy43_plat1`, `wer_pz_shw2_com`, `wer_pz_shw2_plat`, `wer_pz_shw1_com`, `wer_pz_shw1_plat` |
-| pzb41 | `ss_mibn42_plat4`, `wer_atbn_lid42_plat0`, `wer_mibn_1141_comcoy` |
-| pzj1 | `wer_pzj_plat` |
-| sdkfz232_8 | `wer_recbn_1141_plat1`, `wer_recbn_1141_plat2` |
-| sdkfz250a1 | `ss_minf42_stcoy_at`, `wer_mar_coy_42_com`, `wer_mar_42_plat`, `wer_minf1141_stcoy_at`, `wer_minf1141_stcoy_at1`, `wer_minf1141_stcoy_at2`, `wer_minf1141_stcoy_at3`, `wer_pzj_coy_com`, `wer_pzj_plat`, `wer_sct_coy_42_com`, `wer_sct_coy_42_plat`, `wer_sct_coy_42_hplat`, `wer_spg_bn_42_bat_ple`, `wer_spg_bn_42_bat_pl` |
-| sdkfz250a10 | `wer_sct_coy_42_plat` |
-| sdkfz250a11 | `ss_mibn42_atr_plat2` |
-| sdkfz251c1 | `ss_mibn42_hq`, `ss_mibn42_plat3`, `ss_mibn42_plat5`, `ss_mibn42_hcoy2`, `ss_mibn42_eng_plat2`, `ss_mibn42_ig_plat2`, `ss_mibn42_gun_plat2`, `ss_mibn42_at_plat2`, `ss_pz_coy42_eplat2`, `wer_minf1141_igcoy_hq`, `wer_pzd1190_hq`, `wer_pzd1190_pz_coy_hq`, `wer_pzd1190_pz_plat`, `wer_spg_bn_42_hq`, `wer_spg_bn_43_hq` |
-| sdkfz251c10 | `ss_mibn42_coy2`, `ss_mibn42_plat3`, `ss_mibn42_plat5`, `ss_mibn42_hcoy2`, `ss_mibn42_eng_plat2`, `ss_mibn42_atr_plat2`, `ss_pz_coy42_eplat2`, `wer_pzd1190_hq`, `wer_pzd1190_pz_coy_hq`, `wer_pzd1190_pz_plat` |
-| sdkfz251c2 | `ss_mibn42_plat5`, `wer_sct_coy_42_hplat` |
-| sdkfz251c9 | `ss_mibn42_gun_plat2` |
-| sfh414f | `wer_minf1141_arty_bat2` |
-| stug3cd | `wer_spg_bn_42_bat_ple` |
-| stug3e | `wer_spg_bn_42_bat_hqe` |
-| stug3f8 | `ss_spg_bat_hq1`, `ss_spg_bat_plat1`, `wer_spg_bn_42_bat_hq`, `wer_spg_bn_42_bat_pl`, `wer_spg_bn_43_hq`, `wer_spg_bn_43_bat_hq`, `wer_spg_bn_43_bat_pl` |
-| stuig33b | `wer_ispg_bat_42_hq`, `wer_ispg_bat_42_pl` |
-| su152 | `ra_tsap_43e_plat`, `ra_tsap_43_plat` |
-| su152_late | `ra_tsap_43l_plat` |
-| t20 | `ra_sepatdiv_42_fplat` |
-| t26_m35 | `ra_ltbr_bat_coy_hq`, `ra_ltbr_bat_ltank1`, `ra_ltbr_bat_ltank2` |
-| t26_m35_rad | `ra_ltbr_bat_ltank1` |
-| t26_m36_rad | `ra_ltbr_bat_coy_hq`, `ra_ltbr_bat_ltank2` |
-| t26_m39 | `ra_ltbr_bat_ltank3` |
-| t26_m39_aa | `ra_ltbr_bat_ltank3` |
-| t26_m40 | `ra_ltbr_bat_ltank3` |
-| t26_m40_rad | `ra_ltbr_bat_ltank3` |
-| t34_stz_m41 | `ra_ootb_42_bn_hq`, `ra_ootb_42_coy_cmd`, `ra_ootb_43_508_bn_hq`, `ra_ootb_43_508_coy_cmd`, `ra_otbr_42_bn_t34_cc`, `ra_otbr_42_bn_t34_plat`, `ra_otbr_42_bn_t34_coy`, `ra_tbr_42_bn2_t34_cc`, `ra_tbr_42_bn2_t34_plat`, `ra_tbr_42_bn2_t34_coy` |
-| t34_utz_m42 | `ra_ootb_43_bn_hq`, `ra_ootb_43_coy_cmd`, `ra_tbrt34_42_bn_hq`, `ra_tbrt34_42_bn_t34_cc`, `ra_tbrt34_42_bn_t34_plat`, `ra_tbrt34_42_bn_t34_coy`, `ra_tbr_42_bn1_hq`, `ra_tbr_42_bn1_t34_coy` |
-| t34_utz_m42_late | `ra_tbr_42_bn1_t34_cc`, `ra_tbr_42_bn1_t34_plat` |
-| t60 | `ra_otbr_42_bn_sm_cc`, `ra_otbr_42_bn_sm_plat`, `ra_otbr_42_bn_sm_coy`, `ra_otbn_eng_ltank_plat2`, `ra_tbrkv_42_bn_hq`, `ra_tbrkv_42_bn_sm_plat`, `ra_tbrkv_42_bn_sm_coy`, `ra_tbrt34_42_bn_hq`, `ra_tbrt34_42_bn_sm_plat`, `ra_tbrt34_42_bn_sm_coy` |
-| t70m | `ra_otbn_eng_ltank_plat3`, `ra_tbrkv_42_bn_sm_cc`, `ra_tbrkv_42_bn_sm_coy`, `ra_tbrt34_42_bn_sm_cc`, `ra_tbrt34_42_bn_sm_coy`, `ra_tbr_42_bn2_hq`, `ra_tbr_42_bn2_sm_cc`, `ra_tbr_42_bn2_sm_plat`, `ra_tbr_42_bn2_sm_coy` |
-| uc_mk1 | `ra_tbr_42_cmd_coy_sct` |
-| uc_mk1_lin | `ra_tbr_42_cmd_coy_sct` |
-| zis3 | `ra_areg_rd_42_guns`, `ra_lap_bty_76` |
+| Model | Name | `unit` |
+|---|---|---|
+| 52k | 85 mm AA gun 52-K mod 1939 | `ra_lap_bty_85` |
+| 53k | 45 mm 53-K mod 1937 | `ra_cr_0143_atbat`, `ra_rbn_1242_gun_plat`, `ra_rr1242_atbat45_fplat`, `ra_sepatdiv_42_fplat` |
+| ba20 | BA-20 (rad) | `ra_sct_coy_lacar_plat2` |
+| ba64 | BA-64 | `ra_ogvtpp_42_reg_hq`, `ra_ogvtpp_42_reg_hq1`, `ra_sct_coy_hq`, `ra_sct_coy_lacar_plat`, `ra_tsap_43_reg_hq`, `ra_tsap_43l_reg_hq` |
+| church2 | Mk IV "Churchill" II | `ra_ogvtpp_42_reg_hq1`, `ra_ogvtpp_42_coy_cmd1`, `ra_ogvtpp_42_plat1`, `ra_ogvtpp_42_coy1` |
+| flak36 | 8.8 cm Flak 36 | `wer_minf1141_aa_bat` |
+| gazmm_42 | GAZ-MM | `ra_ogvtpp_42_reg_hq`, `ra_ogvtpp_42_reg_hq1`, `ra_sepatdiv_42_hq`, `ra_tbrkv_42_bn_hq`, `ra_tbrt34_42_bn_hq`, `ra_tbr_42_bn1_hq`, `ra_tbr_42_bn2_hq`, `ra_tsap_43e_reg_hq`, `ra_tsap_43e_bat_cmd`, `ra_tsap_43_reg_hq`, `ra_tsap_43_bat_cmd`, `ra_tsap_43l_reg_hq`, `ra_tsap_43l_bat_cmd` |
+| grw34 | 8 cm GrW-34 | `ss_mibn42_plat4`, `ss_mibn42_mt_plat1`, `wer_mibn_1141_mt_plat` |
+| kv1_42_uztm | KV-1 mod 1941 | `ra_otbr_42_bn_kv_cc`, `ra_otbr_42_bn_kv_plat`, `ra_otbr_42_bn_kv_coy`, `ra_tbrkv_42_bn_hq`, `ra_tbrkv_42_bn_kv_cc`, `ra_tbrkv_42_bn_kv_plat`, `ra_tbrkv_42_bn_kv_coy` |
+| kv1s | KV-1S mod 1942 | `ra_ogvtpp_42_reg_hq`, `ra_ogvtpp_42_coy_cmd`, `ra_ogvtpp_42_plat`, `ra_ogvtpp_42_coy`, `ra_tsap_43_reg_hq`, `ra_tsap_43l_reg_hq` |
+| kv1se | KV-1S mod 1942 (early) | `ra_ogvtpp_42_plat`, `ra_ogvtpp_42_coy` |
+| kv8_42_uztm | KV-8 mod 1941 | `ra_ootb_42_hcoy_cmd`, `ra_ootb_42_hplat` |
+| kv8s | KV-8S mod 1942 | `ra_ootb_43_508_hcoy_cmd`, `ra_ootb_43_508_hplat` |
+| lefh18m | 10.5 cm leFH-18 | `wer_minf1141_arty_bat` |
+| leig18 | 7,5 cm leIG-18 | `ss_mibn42_ig_plat1`, `ss_mibn42_ig_plat2`, `wer_minf1141_igcoy_lpl`, `wer_minf1141_igcoy_lfpl` |
+| lepak41 | 4.2 cm le.Pak-41 | `wer_atbn_lid42_plat2` |
+| m27 | 76.2 mm Rgt gun mod 1927 | `ra_cr_0143_artybat`, `ra_rr1242_bat76_fplat` |
+| m30m38 | 122 mm M-30 mod 1938 | `ra_areg_rd_42_howit` |
+| m3a1_scout | M3A1 "Scout" | `ra_sct_coy_apc_plat` |
+| m3a1_stuart | M3A1 "Stuart" | `ra_tbn_usat_ltank_plat`, `ra_tbn_usat_ltank_coy` |
+| m4a2_sherman | M4A2 Sherman | `ra_tbn_usat_mtank_plat`, `ra_tbn_usat_mtank_coy` |
+| marder2_131 | Marder II SdKfz 131 | `wer_mar_coy_43_com`, `wer_mar_43_plat` |
+| marder2_132 | Marder II SdKfz 132 | `wer_mar_42_plat` |
+| marder3_139 | Marder III Sdkfz 139 | `wer_mar_42_plat`, `wer_mar_43_plat` |
+| mg_pznest | MG Panzernest | `wer_cr_pznest` |
+| mg34 | 7.92 MG-34 | `wer_mibn_1141_mg_plat1a`, `wer_mibn_1141_mg_plat2a` |
+| mg42 | 7.92 MG-42 | `ss_mibn42_plat4`, `ss_mibn42_plat5`, `ss_mibn42_mg_plat1`, `ss_pz_coy42_eplat3`, `wer_mibn_1141_mg_plat1`, `wer_mibn_1141_mg_plat2`, `wer_sct_coy_42_hplat` |
+| mk2_4 | Mk II "Matilda" IV | `ra_otbn_eng_coy_hq`, `ra_otbn_eng_mtank_plat1`, `ra_otbn_eng_mtank_coy` |
+| mk2_4cs | Mk II "Matilda" IV CS | `ra_otbn_eng_mtank_plat2`, `ra_otbn_eng_mtank_coy` |
+| mk3_2 | Mk III "Valentine" II | `ra_otbn_eng_coy_hq1`, `ra_otbn_eng_ltank_plat1`, `ra_otbn_eng_ltank_coy` |
+| mt82 | 82 mm Mortar mod 1937 | `ra_cr_0143_mt82_fplat`, `ra_rbn_1242_mt82_plat` |
+| nbw41 | 15 cm NbW-41 | `wer_cr_mrls_bat1`, `wer_cr_mrls_bat2` |
+| nbw42 | 21 cm NbW-42 | `wer_cr_mrls_bat3` |
+| opel_blitz_36 | Opel Blitz 36 | `ss_mibn42_coy1`, `ss_mibn42_hcoy2`, `ss_minf42_stcoy_hq`, `ss_spg_bat_hq1`, `wer_ft_pz_coy_com`, `wer_ispg_bat_42_hq`, `wer_mar_coy_42_com`, `wer_mar_coy_43_com`, `wer_mibn_1141_combat`, `wer_mibn_1141_comcoy`, `wer_mibn_1141_mg_com`, `wer_minf1141_stcoy_hq`, `wer_minf1141_stcoy_eng`, `wer_minf1141_igcoy_hq`, `wer_pzj_coy_com`, `wer_recbn_1141_combat`, `wer_recbn_1141_comcoy`, `wer_spg_bn_42_spam`, `wer_spg_bn_42_bat_hqe`, `wer_spg_bn_42_bat_hq`, `wer_spg_bn_43_spam`, `wer_spg_bn_43_bat_hq` |
+| ot34_stz_m41 | OT-34 mod 1941 | `ra_ootb_42_plat`, `ra_ootb_43_plat`, `ra_ootb_43_508_plat` |
+| pak35 | 3.7 cm Pak | `wer_atbn_lid42_plat1`, `wer_cr_mrls_bat1`, `wer_mibn_1141_at_plat0` |
+| pak36r | 7.62 cm Pak-36(r) | `wer_mibn_1141_at_plat2`, `wer_minf1141_stcoy_at2` |
+| pak38 | 5 cm Pak-38 | `ss_mibn42_at_plat2`, `wer_cr_mrls_bat2`, `wer_cr_mrls_bat3`, `wer_mibn_1141_at_plat`, `wer_minf1141_stcoy_at` |
+| pak40 | 7.5 cm Pak-40 | `ss_mibn42_at_plat1`, `ss_minf42_stcoy_at`, `wer_mibn_1141_at_plat1`, `wer_minf1141_stcoy_at1` |
+| pak97_38 | 7.5 cm Pak-97/38 | `wer_mibn_1141_at_plat3`, `wer_minf1141_stcoy_at3` |
+| pz1f | Pz I ausf.F | `wer_pz_ltank_as` |
+| pz2c | Pz II ausf.C | `wer_ft_pz_coy_com`, `wer_ft_pz_plat`, `wer_lpz_coy41_com` |
+| pz2d_fl | PzII (Fl) "Flamingo" | `wer_ft_pz_ft_plat` |
+| pz2f | Pz II ausf.F | `ss_pz_bn42_com`, `wer_lpz_coy41_com`, `wer_pz_coy41_com` |
+| pz3fl | Pz III ausf.M (fl) | `wer_pzd1190_tfl_coy_hq`, `wer_pzd1190_tfl_plat`, `wer_pzd1190_tfl_coy` |
+| pz3jbef | Pz III ausf.J (bef) | `ss_pz_bn42_com`, `wer_lpz_coy41_com` |
+| pz3jbefs | Pz III ausf.J (bef scr) | `ss_pz_bn42_com` |
+| pz3jkz | Pz III ausf.J (kz) | `wer_lpz_coy41_com`, `wer_lpz_coy41_plat1` |
+| pz3jlg | Pz III ausf.J (lg) | `wer_lpz_coy41_plat2`, `wer_pz_coy_lplat1`, `wer_pz_coy_plat1` |
+| pz3l | Pz III ausf.L | `ss_pz_coy42_plat2`, `wer_pz_coy_lplat1`, `wer_pz_coy_com1`, `wer_pz_shw1_com` |
+| pz3m | Pz III ausf.M | `ss_pz_coy42_plat2`, `wer_pz_coy_plat1` |
+| pz3n | Pz III ausf.N | `ss_pz_scoy42_com1`, `ss_pz_scoy42_plat1`, `wer_pz_shw1_plat` |
+| pz4f1 | Pz IV ausf.F | `wer_pz_coy41_com`, `wer_pz_coy41_plat1` |
+| pz4f2 | Pz IV ausf.F/2 | `wer_pz_coy_plat2`, `wer_pz_coy41_plat2` |
+| pz4g | Pz IV ausf.G | `ss_pz_coy42_com`, `ss_pz_coy42_plat1`, `wer_pz_coy_com2`, `wer_pz_coy_plat3`, `wer_pz_coy_plat4` |
+| pz4ga | Pz IV ausf.G (arm) | `wer_pz_coy_com3` |
+| pz4ge | Pz IV ausf.G (early) | `ss_pz_coy42_com`, `ss_pz_coy42_plat1`, `wer_pz_coy_com2`, `wer_pz_coy_plat2`, `wer_pz_coy_com3`, `wer_pz_coy_plat3`, `wer_pz_coy41_plat3` |
+| pz4gl | Pz IV ausf.G (scr) | `wer_pz_coy_com4`, `wer_pz_coy_plat4` |
+| pz4gle | Pz IV ausf.G (early scr) | `wer_pz_coy_com4`, `wer_pz_coy_plat4` |
+| pz5dbefe | Pz.Bef.W V ausf.D (early) | `wer_pant_bn_43_hq`, `wer_pant_bn_43_hq1` |
+| pz5dbefl | Pz.Bef.W V ausf.D | `wer_pant_bn_43_hq`, `wer_pant_bn_43_hq1` |
+| pz5dl | Pz V ausf.D | `wer_pant_bn_43_hq`, `wer_pant_bn_43_recon`, `wer_pant_coy_43_cmd`, `wer_pant_coy_43_plat` |
+| pz6e | Pz VI ausf.E (early) | `ss_pz_scoy43_com1` |
+| pz6h1 | Pz VI ausf.H | `ss_pz_scoy42_com1`, `ss_pz_scoy42_plat1`, `ss_pz_scoy43_com1`, `ss_pz_scoy43_plat1`, `wer_pz_shw2_com`, `wer_pz_shw2_plat`, `wer_pz_shw1_com`, `wer_pz_shw1_plat` |
+| pzb41 | 2.8 cm s.PzB.41 | `ss_mibn42_plat4`, `wer_atbn_lid42_plat0`, `wer_mibn_1141_comcoy` |
+| pzj1 | PanzerJager I | `wer_pzj_plat` |
+| sdkfz232_8 | SdKfz 232 (8-rad) | `wer_recbn_1141_plat1`, `wer_recbn_1141_plat2` |
+| sdkfz250a1 | SdKfz 250/1 (alt) | `ss_minf42_stcoy_at`, `wer_mar_coy_42_com`, `wer_mar_42_plat`, `wer_minf1141_stcoy_at`, `wer_minf1141_stcoy_at1`, `wer_minf1141_stcoy_at2`, `wer_minf1141_stcoy_at3`, `wer_pzj_coy_com`, `wer_pzj_plat`, `wer_sct_coy_42_com`, `wer_sct_coy_42_plat`, `wer_sct_coy_42_hplat`, `wer_spg_bn_42_bat_ple`, `wer_spg_bn_42_bat_pl` |
+| sdkfz250a10 | SdKfz 250/10 (alt) | `wer_sct_coy_42_plat` |
+| sdkfz250a11 | SdKfz 250/11 (alt) | `ss_mibn42_atr_plat2` |
+| sdkfz251c1 | SdKfz 251/1 ausf.C | `ss_mibn42_hq`, `ss_mibn42_plat3`, `ss_mibn42_plat5`, `ss_mibn42_hcoy2`, `ss_mibn42_eng_plat2`, `ss_mibn42_ig_plat2`, `ss_mibn42_gun_plat2`, `ss_mibn42_at_plat2`, `ss_pz_coy42_eplat2`, `wer_minf1141_igcoy_hq`, `wer_pzd1190_hq`, `wer_pzd1190_pz_coy_hq`, `wer_pzd1190_pz_plat`, `wer_spg_bn_42_hq`, `wer_spg_bn_43_hq` |
+| sdkfz251c10 | SdKfz 251/10 ausf.C | `ss_mibn42_coy2`, `ss_mibn42_plat3`, `ss_mibn42_plat5`, `ss_mibn42_hcoy2`, `ss_mibn42_eng_plat2`, `ss_mibn42_atr_plat2`, `ss_pz_coy42_eplat2`, `wer_pzd1190_hq`, `wer_pzd1190_pz_coy_hq`, `wer_pzd1190_pz_plat` |
+| sdkfz251c2 | SdKfz 251/2 ausf.C | `ss_mibn42_plat5`, `wer_sct_coy_42_hplat` |
+| sdkfz251c9 | SdKfz 251/9 ausf.C | `ss_mibn42_gun_plat2` |
+| sfh414f | 15.5 cm sFH 414(f) | `wer_minf1141_arty_bat2` |
+| stug3cd | StuG III ausf.C/D | `wer_spg_bn_42_bat_ple` |
+| stug3e | StuG III ausf.E | `wer_spg_bn_42_bat_hqe` |
+| stug3f8 | StuG III ausf.F/8 | `ss_spg_bat_hq1`, `ss_spg_bat_plat1`, `wer_spg_bn_42_bat_hq`, `wer_spg_bn_42_bat_pl`, `wer_spg_bn_43_hq`, `wer_spg_bn_43_bat_hq`, `wer_spg_bn_43_bat_pl` |
+| stuig33b | Stu.IG 33 | `wer_ispg_bat_42_hq`, `wer_ispg_bat_42_pl` |
+| su152 | SU-152 mod 1943 (early) | `ra_tsap_43e_plat`, `ra_tsap_43_plat` |
+| su152_late | SU-152 mod 1943 | `ra_tsap_43l_plat` |
+| t20 | T-20 Komsomolets 2 pr.s. | `ra_sepatdiv_42_fplat` |
+| t26_m35 | T-26 mod 1935 | `ra_ltbr_bat_coy_hq`, `ra_ltbr_bat_ltank1`, `ra_ltbr_bat_ltank2` |
+| t26_m35_rad | T-26 RT mod 1935 | `ra_ltbr_bat_ltank1` |
+| t26_m36_rad | T-26 RT mod 1936 | `ra_ltbr_bat_coy_hq`, `ra_ltbr_bat_ltank2` |
+| t26_m39 | T-26 mod 1939 | `ra_ltbr_bat_ltank3` |
+| t26_m39_aa | T-26 mod 1939 (AA) | `ra_ltbr_bat_ltank3` |
+| t26_m40 | T-26 mod 1940 | `ra_ltbr_bat_ltank3` |
+| t26_m40_rad | T-26 RT mod 1940 | `ra_ltbr_bat_ltank3` |
+| t34_stz_m41 | T-34 mod 1941 | `ra_ootb_42_bn_hq`, `ra_ootb_42_coy_cmd`, `ra_ootb_43_508_bn_hq`, `ra_ootb_43_508_coy_cmd`, `ra_otbr_42_bn_t34_cc`, `ra_otbr_42_bn_t34_plat`, `ra_otbr_42_bn_t34_coy`, `ra_tbr_42_bn2_t34_cc`, `ra_tbr_42_bn2_t34_plat`, `ra_tbr_42_bn2_t34_coy` |
+| t34_utz_m42 | T-34 mod 1942 | `ra_ootb_43_bn_hq`, `ra_ootb_43_coy_cmd`, `ra_tbrt34_42_bn_hq`, `ra_tbrt34_42_bn_t34_cc`, `ra_tbrt34_42_bn_t34_plat`, `ra_tbrt34_42_bn_t34_coy`, `ra_tbr_42_bn1_hq`, `ra_tbr_42_bn1_t34_coy` |
+| t34_utz_m42_late | T-34 mod 1942 (late) | `ra_tbr_42_bn1_t34_cc`, `ra_tbr_42_bn1_t34_plat` |
+| t60 | T-60 mod 1942 | `ra_otbr_42_bn_sm_cc`, `ra_otbr_42_bn_sm_plat`, `ra_otbr_42_bn_sm_coy`, `ra_otbn_eng_ltank_plat2`, `ra_tbrkv_42_bn_hq`, `ra_tbrkv_42_bn_sm_plat`, `ra_tbrkv_42_bn_sm_coy`, `ra_tbrt34_42_bn_hq`, `ra_tbrt34_42_bn_sm_plat`, `ra_tbrt34_42_bn_sm_coy` |
+| t70m | T-70M mod 1942 | `ra_otbn_eng_ltank_plat3`, `ra_tbrkv_42_bn_sm_cc`, `ra_tbrkv_42_bn_sm_coy`, `ra_tbrt34_42_bn_sm_cc`, `ra_tbrt34_42_bn_sm_coy`, `ra_tbr_42_bn2_hq`, `ra_tbr_42_bn2_sm_cc`, `ra_tbr_42_bn2_sm_plat`, `ra_tbr_42_bn2_sm_coy` |
+| uc_mk1 | Mk I "Universal" | `ra_tbr_42_cmd_coy_sct` |
+| uc_mk1_lin | Mk I "Universal" | `ra_tbr_42_cmd_coy_sct` |
+| zis3 | 76.2 mm ZIS-3 mod 1942 | `ra_areg_rd_42_guns`, `ra_lap_bty_76` |

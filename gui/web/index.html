@@ -58,7 +58,9 @@ button.icon { padding: 1px 7px; color: var(--muted); }
 .pt input { padding: 2px 4px; width: 100%; min-width: 0; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
 .units { max-height: 300px; overflow-y: auto; border: 1px solid var(--line); border-radius: 4px; margin-top: 5px; }
-.unit { padding: 4px 7px; border-bottom: 1px solid #3a3e35; cursor: pointer; }
+.unit { display: flex; gap: 8px; align-items: center; padding: 4px 7px; border-bottom: 1px solid #3a3e35; cursor: pointer; }
+.sym { flex: none; display: block; }
+.ellip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .unit:hover { background: var(--panel2); }
 .unit b { font-weight: 600; }
 .tag { display: inline-block; padding: 0 4px; border-radius: 3px; font-size: 11px; background: #0003; color: var(--muted); margin-left: 4px; }
@@ -75,6 +77,7 @@ dialog::backdrop { background: #0008; }
 <body>
 <header>
   <h1>Mius Mission Maker</h1>
+  <span id="version" class="small muted" style="margin:0 10px 0 -6px"></span>
   <button id="new">New</button>
   <select id="open" title="Open a scenario"></select>
   <span class="grow"></span>
@@ -112,9 +115,11 @@ dialog::backdrop { background: #0008; }
 'use strict';
 const API = '/api/' + location.hash.slice(1);
 const IN_SERVICE_DATE = 0x19430701; // all bases are set on this date
-let cat, s, tab = 'player', unitSearch = '', unitRole = '', selected = null, hover = null, drag = null;
+let cat, s, tab = 'player', unitSearch = '', unitKind = '', selected = null, hover = null, drag = null;
 // platoon picked on the map, and the platoon waiting for a click on the map
 let picked = null, placing = null;
+// platoon cards showing their details
+const opened = new Set();
 
 // ---------------------------------------------------------------- helpers
 function h(tag, props = {}, ...kids) {
@@ -394,49 +399,226 @@ function placementForm(sideKey, p) {
     mode === 'map' ? h('div', { style: 'margin-top:4px' }, h('div', { class: 'small muted mono', style: 'margin-bottom:4px' }, `x ${p.position[0]}  z ${p.position[1]}, drag it on the map`), deployForm(p.deploy ??= {}, false)) : null,
   ];
 }
+// ---------------------------------------------------------------- unit symbols
+// German tactical symbols after H.Dv. 272 "Muster für taktische Zeichen des Heeres" (1941) with
+// the weapon symbols as changed in 1943 (mortar, infantry gun, anti-tank gun, anti-aircraft gun,
+// howitzer). Soviet units have their own symbols, see sovietGlyph. Drawn in a 32 x 32 box; parts are [path, 'stroke' | 'fill'] or ['text', text, x, y, size].
+const circ = (x, y, r) => `M${x + r} ${y}A${r} ${r} 0 1 1 ${x - r} ${y}A${r} ${r} 0 1 1 ${x + r} ${y}Z`;
+const S = d => [d, 'stroke'], F = d => [d, 'fill'], T = (t, x, y, size) => ['text', t, x, y, size];
+const BOX = { parts: [S('M6 9H26V21H6Z')], cx: 16, foot: 21, half: 9, thick: F('M6 9H9V21H6Z') };
+const LOZENGE = { parts: [S('M4 9H20L27 21H11Z')], cx: 19, foot: 21, half: 7, thick: F('M4 9H7.5L14.5 21H11Z'), tank: true };
+const plus = (base, ...parts) => ({ ...base, parts: [...base.parts, ...parts] });
+// weapon symbols stand on a stem; `line` draws the ground line the wheels hang from
+const stem = (...parts) => ({ parts, cx: 16, foot: 25, half: 6, line: true });
+const FLAGS = { company: [S('M10 4H19')], battalion: [F('M10 3L23 8.5L10 14Z')], regiment: [F('M10 3H21V13H10Z')] };
+function glyph(u) {
+  switch (u?.kind) {
+    case 'hq': return { parts: [S('M10 3V27'), ...FLAGS[u.echelon ?? 'company']], cx: 10, foot: 27, half: 5, staff: true };
+    case 'mech_infantry': return BOX;
+    case 'cavalry': return plus(BOX, S('M6 21L26 9'));
+    case 'recon': return u.mobility === 'wheeled'
+      ? { parts: [S('M5 21H27M7 21C7 14 11 11.5 14.5 13.5C16.5 10 21.5 10 23.5 14C25.5 14.5 26 17.5 26 21')], cx: 16, foot: 21, half: 9 }
+      : plus(BOX, F('M26 9V21H6Z'));
+    case 'observer': return stem(S('M16 4V25M12.5 10V18M19.5 10V18'), T('Bb.', 24, 25, 6.5));
+    case 'air': return plus(BOX, T('Flivo', 16, 17.4, 6.5));
+    case 'armour': return LOZENGE;
+    case 'assault_gun': return plus(LOZENGE, S('M10 9V2.5M7.6 4.9L10 2.5L12.4 4.9'));
+    case 'tank_destroyer': return plus(LOZENGE, S('M10 9V3M6.5 3H13.5'));
+    case 'antitank': return stem(S('M16 6V25M10 6H22'));
+    case 'at_rifle': return stem(S('M16 4V25M10.5 25C10.5 17.5 21.5 17.5 21.5 25'));
+    case 'infantry_gun': return { ...stem(S('M16 5V24M10 24H22')), foot: 24, line: false };
+    case 'field_gun': return stem(S('M16 4V25M12.5 10V18M19.5 10V18'));
+    case 'howitzer': return stem(S('M16 4V25M12 9V17M20 9V17M12 13H20'));
+    case 'rockets': return { parts: [S('M11 9H21L25 21H7Z')], cx: 16, foot: 21, half: 9 };
+    case 'mortar': return { parts: [S('M9 22L18.5 9M9 22H24')], cx: 16.5, foot: 22, half: 7.5 };
+    case 'mg': return stem(S('M16 5V25'), F(circ(12.3, 13, 1.5)), F(circ(19.7, 13, 1.5)));
+    case 'aa': return { ...stem(S('M16 3.5V22M13 6.5L16 3.5L19 6.5'), S(circ(16, 23.8, 1.8))), foot: 25.6 };
+    case 'engineers': return plus(BOX, S('M16 9V2.5M13.3 5.2L16 2.5L18.7 5.2M13.3 7.4L16 4.7L18.7 7.4'));
+    case 'flamethrower': return stem(S('M8 26L18.5 12'), F('M18.5 12L20 7L25.5 3L23.5 9.5Z'));
+    case 'repair': return plus(BOX, S(circ(16, 15, 2.4)),
+      S('M16 10.5V11.8M16 18.2V19.5M11.5 15H12.8M19.2 15H20.5M12.8 11.8L13.7 12.7M18.3 17.3L19.2 18.2M19.2 11.8L18.3 12.7M13.7 17.3L12.8 18.2'));
+    default: return BOX;
+  }
+}
+// Soviet tactical symbols after the US handbook TM 30-430, chapter XII (1946), pages XII-7 to
+// XII-12. The staff with one crossbar marks a platoon, with two a company; the triangular pennant
+// a battalion, the rectangular flag a regiment. Tank diamonds: empty light, line medium, dot heavy.
+const bars = (echelon, top) => echelon === 'company' ? `M13 ${top}H19M13 ${top + 3.5}H19` : `M13 ${top}H19`;
+const sstem = (...parts) => ({ parts, cx: 16, foot: 27, half: 6, line: true });
+function sovietGlyph(u) {
+  const e = u?.echelon;
+  switch (u?.kind) {
+    case 'hq': return e === 'battalion' ? { parts: [S('M10 3V28'), S('M10 3L24 9L10 15Z')], cx: 10, foot: 28, half: 5 }
+      : e === 'regiment' ? { parts: [S('M10 3V28'), S('M10 3H23V13H10Z')], cx: 10, foot: 28, half: 5 }
+      : { parts: [S('M16 3V19'), S('M13 6H19M13 9.5H19'), S(circ(16, 23, 4))], cx: 16, foot: 27, half: 5 };
+    case 'infantry': case 'mech_infantry': return { parts: [S('M10 15H22V27H10Z'), S('M16 15V3'), S(bars(e, 6))], cx: 16, foot: 27, half: 6 };
+    case 'cavalry': return { parts: [S('M10 15H22V27H10Z'), F('M22 15V27H10Z'), S('M16 15V3'), S(bars(e, 6))], cx: 16, foot: 27, half: 6 };
+    case 'recon': return u.mobility === 'wheeled'
+      ? { parts: [S('M11 11H25V21H11A5 5 0 0 1 11 11Z')], cx: 18, foot: 21, half: 7 }
+      : u.mobility === 'tracked'
+        ? { parts: [S('M3 16L10 11L17 16L10 21Z'), S('M18 16H28M25 13L28 16L25 19')], cx: 12, foot: 21, half: 7 }
+        : { parts: [S(circ(11, 16, 4.5)), S('M15.5 16H27M24 13L27 16L24 19')], cx: 14, foot: 21, half: 7 };
+    case 'observer': return { parts: [S('M16 6L26 24H6Z'), F(circ(16, 18, 1.6))], cx: 16, foot: 24, half: 8 };
+    case 'air': return { parts: [S(circ(16, 16, 9)), F('M12 21H20V19C20 16 18.5 14 16 14C13.5 14 12 16 12 19Z'), F(circ(16, 12, 1.8))], cx: 16, foot: 25, half: 7 };
+    case 'armour': {
+      // two diamonds either side of the staff: a platoon or company in combat formation
+      const mark = x => u.weight === 'heavy' ? F(circ(x, 16, 1.4)) : u.weight === 'medium' ? S(`M${x} 11V21`) : null;
+      return { parts: [S('M2 16L7 10.5L12 16L7 21.5Z'), S('M20 16L25 10.5L30 16L25 21.5Z'), S('M12 16H20M16 16V3'), S(bars(e, 6)), mark(7), mark(25)].filter(Boolean),
+        cx: 16, foot: 21.5, half: 8, tank: true };
+    }
+    case 'assault_gun': case 'tank_destroyer':
+      return { parts: [S('M16 3L23.5 16L16 29L8.5 16Z'), S('M16 8V24M13.2 11V21M18.8 11V21')], cx: 16, foot: 29, half: 6, tank: true };
+    case 'antitank': return sstem(S('M16 4V21M13 8V17M19 8V17M16 21L11.5 27M16 21L20.5 27'));
+    case 'at_rifle': return sstem(S('M16 4V26M10 26H22'), S(bars(e, 8)));
+    case 'infantry_gun': return sstem(S('M16 4V27'), F(circ(12, 15.5, 1.6)), F(circ(20, 15.5, 1.6)));
+    case 'field_gun': return sstem(S('M16 4V27M13 10V21M19 10V21'));
+    case 'howitzer': return { ...sstem(S('M16 4V23M13 9V19M19 9V19'), F(circ(16, 25, 2))), foot: 27.5 };
+    case 'rockets': return { parts: [S('M5 23H27M5 20.5V25.5M27 20.5V25.5M16 23V8M16 23L7 14M16 23L25 14')], cx: 16, foot: 25.5, half: 8 };
+    case 'mortar': return { parts: [S('M9 8L14 22M23 8L18 22M10 25H22'), F('M13 21.5H19A3 3 0 0 1 13 21.5Z'), S('M16 20V4'), S(bars(e, 7))], cx: 16, foot: 25, half: 6 };
+    case 'mg': return sstem(S('M7 20A9 9 0 0 1 25 20'), S('M16 4V27'), S(bars(e, 7.5)));
+    case 'aa': return { parts: [S(circ(16, 16, 10)), S('M16 23V9M13 12L16 9L19 12M13 15V22M19 15V22')], cx: 16, foot: 26, half: 7 };
+    case 'engineers': return { parts: [S(circ(16, 16, 10)), T('сап', 16, 19, 8)], cx: 16, foot: 26, half: 7 };
+    case 'flamethrower': return { parts: [S(circ(16, 16, 9)), S('M11 11L21 21M21 11L11 21')], cx: 16, foot: 25, half: 7 };
+    default: return { parts: [S('M6 9H26V21H6Z'), T(cat.enums.kinds[u?.kind]?.slice(0, 3) ?? '?', 16, 17.5, 7)], cx: 16, foot: 21, half: 9 };
+  }
+}
+// two wheels: motorised; an oval: self-propelled; wheel and oval: on half-tracks. Tanks and
+// tank staffs carry no mark, and the data cannot tell a towing half-track from a self-propelled
+// mount, so other tracked units show the half-track mark.
+function mobilityMarks(u, g) {
+  const mob = u?.kind === 'mech_infantry' ? 'halftrack'
+    : u?.mobility === 'tracked' ? (g.tank || g.staff ? null : u.kind === 'recon' ? 'tracked' : 'halftrack') : u?.mobility;
+  const { cx, foot, half } = g, y = foot + 2.1;
+  const line = g.line ? [S(`M${cx - half} ${foot}H${cx + half}`)] : [];
+  if (mob === 'wheeled') return [...line, S(circ(cx - half * 0.55, y, 1.7)), S(circ(cx + half * 0.55, y, 1.7))];
+  if (mob === 'tracked') return [...line, S(`M${cx - half + 2.5} ${foot + 0.6}H${cx + half - 2.5}A1.6 1.6 0 0 1 ${cx + half - 2.5} ${foot + 3.8}H${cx - half + 2.5}A1.6 1.6 0 0 1 ${cx - half + 2.5} ${foot + 0.6}Z`)];
+  if (mob === 'halftrack') {
+    const x0 = cx - half + 4.6, x1 = cx + half - 1.6;
+    return [...line, S(circ(cx - half + 1.9, y, 1.6)), S(`M${x0} ${foot + 0.6}H${x1}A1.6 1.6 0 0 1 ${x1} ${foot + 3.8}H${x0}A1.6 1.6 0 0 1 ${x0} ${foot + 0.6}Z`)];
+  }
+  return [];
+}
+function symbolParts(u) {
+  // Soviet symbols show motorisation as wheels too, but have no marks for tracks
+  if (u?.nation === 'USSR') {
+    const g = sovietGlyph(u);
+    return [...g.parts, ...(u.mobility === 'wheeled' && !g.tank ? mobilityMarks(u, g) : [])];
+  }
+  const g = glyph(u);
+  return [...g.parts, ...(u?.echelon === 'company' && g.thick ? [g.thick] : []), ...mobilityMarks(u, g)];
+}
+const HALO = '#151613';
+function symbol(u, color, width = 30) {
+  const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 32 32');
+  svg.setAttribute('width', width); svg.setAttribute('height', width);
+  svg.setAttribute('class', 'sym');
+  const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); svg.append(e); return e; };
+  const parts = symbolParts(u);
+  // a dark halo first keeps the coloured lines readable on any background
+  for (const halo of [true, false]) {
+    for (const [d, how, x, y, size] of parts) {
+      if (d === 'text') {
+        const t = el('text', { x, y, 'font-size': size, 'font-family': 'Segoe UI, sans-serif', 'font-weight': 600, 'text-anchor': 'middle', fill: color,
+          ...(halo ? { stroke: HALO, 'stroke-width': 2, 'stroke-linejoin': 'round' } : {}) });
+        t.textContent = how;
+      } else if (how === 'fill') el('path', { d, fill: color, stroke: halo ? HALO : color, 'stroke-width': halo ? 2 : 0.4, 'stroke-linejoin': 'round' });
+      else el('path', { d, fill: 'none', stroke: halo ? HALO : color, 'stroke-width': halo ? 3.6 : 1.7, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+    }
+  }
+  if (u) el('title', {}).textContent = cat.enums.kinds[u.kind] ?? '';
+  return svg;
+}
+// draws the symbol centred on (x, y), `scale` screen pixels per symbol unit
+function drawSymbol(u, x, y, color, scale, halo = HALO) {
+  ctx.save();
+  ctx.translate(x - 16 * scale, y - 16 * scale); ctx.scale(scale, scale);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  // lines stay at least 1.7 screen pixels wide when the symbol is drawn small
+  const lw = Math.max(1.7, 1.7 / scale), hw = lw + 2 / scale;
+  const parts = symbolParts(u);
+  for (const pass of [halo, color]) {
+    for (const [d, how, tx, ty, size] of parts) {
+      if (d === 'text') {
+        ctx.font = `600 ${size}px Segoe UI, sans-serif`; ctx.textAlign = 'center';
+        if (pass === halo) { ctx.strokeStyle = halo; ctx.lineWidth = 2; ctx.strokeText(how, tx, ty); }
+        else { ctx.fillStyle = color; ctx.fillText(how, tx, ty); }
+        continue;
+      }
+      const p = new Path2D(d);
+      if (how === 'fill') {
+        if (pass === halo) { ctx.strokeStyle = halo; ctx.lineWidth = 2; ctx.stroke(p); } else { ctx.fillStyle = color; ctx.fill(p); }
+      } else { ctx.strokeStyle = pass; ctx.lineWidth = pass === halo ? hw : lw; ctx.stroke(p); }
+    }
+  }
+  ctx.restore();
+}
+const summary = list => Object.entries(list.reduce((a, v) => ({ ...a, [v]: (a[v] ?? 0) + 1 }), {})).map(([k, n]) => `${n}× ${k}`).join(', ');
+const unitTitle = u => u ? (u.parent ? `${u.name} · ${u.parent}` : u.name) : 'unknown unit';
+const unitDetails = u => u ? [`${u.men} men`, summary(u.vehicles.map(v => cat.vehicleNames[v] ?? v))].filter(Boolean).join(' · ') : '';
+const sideColor = sideKey => css(sideKey === 'player' ? '--player' : '--enemy');
+
 function nextCallsign(sideKey) {
   const side = s.sides[sideKey];
   const used = new Set(['player', 'enemy'].flatMap(k => s.sides[k].platoons.map(p => p.callsign)));
   const name = side.platoons[0]?.callsign.replace(/_\d+$/, '') ?? (sideKey === 'player' ? 'panther' : 'pine');
   for (let i = 1; ; i++) { const c = `${name}_${String(i).padStart(2, '0')}`; if (!used.has(c)) return c; }
 }
+// short description of where a platoon sets up
+function setupText(sideKey, p) {
+  const side = s.sides[sideKey], d = p.deploy ?? {};
+  const where = p.position ? 'on the map' : d.at !== undefined ? `at ${d.at || '(choose a point)'}` : side.groups?.[p.group]?.deploy ? `with ${p.group}` : 'with its side';
+  const style = [d.type === 'trench' ? 'dug in' : d.type === 'place' ? 'in the open' : null, d.formation].filter(Boolean).join(', ');
+  return style ? `${where} (${style})` : where;
+}
 function platoonCard(sideKey, p, i, nation) {
   const side = s.sides[sideKey], u = unitOf(p.unit), wrong = u?.nation !== nation;
-  const variants = u?.variants ?? [], groups = Object.keys(side.groups ?? {});
+  const variants = u?.variants ?? [], groups = Object.keys(side.groups ?? {}), isOpen = opened.has(p);
+  const toggle = () => { if (isOpen) opened.delete(p); else opened.add(p); refreshKeep(); };
   return h('div', { class: 'card' + (wrong ? ' wrong' : ''), id: 'platoon-' + p.callsign, style: picked === p ? 'border-color:var(--accent)' : '' },
     h('div', { class: 'row' },
-      input(p.callsign, v => { p.callsign = v; showChecks(); draw(); }, { class: 'mono', style: 'width:105px', list: 'callsigns', title: 'Callsign' }),
-      h('div', { class: 'grow small mono', title: p.unit, style: 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap' }, p.unit),
+      symbol(u, sideColor(sideKey), 30),
+      input(p.callsign, v => { p.callsign = v; showChecks(); draw(); }, { class: 'mono', style: 'width:104px', list: 'callsigns', title: 'Callsign (name in the game and in scripts)' }),
+      h('div', { class: 'grow ellip', title: `${unitTitle(u)}\n${p.unit}`, style: 'cursor:pointer', onclick: toggle },
+        h('b', {}, u?.name ?? p.unit), u?.parent ? h('span', { class: 'muted' }, ' · ' + u.parent) : null),
+      h('button', { class: 'icon', title: isOpen ? 'Hide details' : 'Show details', onclick: toggle }, isOpen ? '▾' : '▸'),
       h('button', { class: 'icon', title: 'Remove', onclick: () => { side.platoons.splice(i, 1); refreshKeep(); } }, '×')),
-    h('div', { class: 'small muted', style: 'margin:3px 0' }, u ? `${u.role}, ${u.men} men${u.vehicles.length ? ', ' + summary(u.vehicles) : ''}` : 'unknown unit'),
-    h('div', { class: 'row small' },
-      variants.length ? select([[u.key, `strongest (${u.men})`], ...variants.map(v => [v.key, `${v.key.split('@')[1]} (${v.men})`])], p.unit, v => { p.unit = v; refreshKeep(); }, { title: 'Variant' }) : null,
-      u?.source === 'database' ? h('label', { title: 'Number of squads' }, 'Size ', number(p.size, v => { p.size = v; }, { style: 'width:52px', min: 1, max: u.maxSquads || 15 })) : null,
-      select([['', 'plan: default'], ...cat.enums.plans], p.plan, v => { p.plan = v; }),
-      groups.length ? select([['', 'no group'], ...groups.map(g => [g, 'group: ' + g])], p.group, v => { if (v) p.group = v; else delete p.group; refreshKeep(); }, { title: 'Group' }) : null),
-    placementForm(sideKey, p));
+    h('div', { class: 'small muted ellip', style: 'margin:3px 0 0 36px', title: unitDetails(u) },
+      [unitDetails(u), setupText(sideKey, p), p.group ? 'group ' + p.group : null].filter(Boolean).join(' · ')),
+    isOpen ? h('div', { style: 'margin-top:6px' },
+      h('div', { class: 'small muted mono', style: 'margin-bottom:4px' }, p.unit + (u?.org ? ` · ${u.org}` : '')),
+      h('div', { class: 'row small' },
+        variants.length ? select([[u.key, `strongest (${u.men})`], ...variants.map(v => [v.key, `${v.key.split('@')[1]} (${v.men})`])], p.unit, v => { p.unit = v; refreshKeep(); }, { title: 'Variant' }) : null,
+        u?.source === 'database' ? h('label', { title: 'Number of squads' }, 'Size ', number(p.size, v => { p.size = v; }, { style: 'width:52px', min: 1, max: u.maxSquads || 15 })) : null,
+        select([['', 'plan: default'], ...cat.enums.plans], p.plan, v => { p.plan = v; }),
+        groups.length ? select([['', 'no group'], ...groups.map(g => [g, 'group: ' + g])], p.group, v => { if (v) p.group = v; else delete p.group; refreshKeep(); }, { title: 'Group' }) : null),
+      placementForm(sideKey, p)) : null);
 }
-const summary = list => Object.entries(list.reduce((a, v) => ({ ...a, [v]: (a[v] ?? 0) + 1 }), {})).map(([k, n]) => `${n}x ${k}`).join(', ');
 function unitList(sideKey, nation) {
   const q = unitSearch.toLowerCase();
-  const items = cat.units.filter(u => u.nation === nation && (!unitRole || u.role === unitRole) &&
-    (!q || [u.key, u.role, u.pool, ...u.vehicles, ...u.squads].some(t => t.toLowerCase().includes(q))));
+  const items = cat.units.filter(u => u.nation === nation && (!unitKind || u.kind === unitKind) &&
+    (!q || [u.key, u.name, u.parent ?? '', cat.enums.kinds[u.kind], u.pool, ...u.vehicles, ...u.vehicles.map(v => cat.vehicleNames[v] ?? ''), ...u.squads]
+      .some(t => t.toLowerCase().includes(q))));
   const box = h('div', { class: 'units' }, items.slice(0, 120).map(u => {
     const old = IN_SERVICE_DATE < u.period.from || IN_SERVICE_DATE > u.period.to;
-    return h('div', { class: 'unit', title: u.squads.join(', '), onclick: () => {
-      s.sides[sideKey].platoons.push({ callsign: nextCallsign(sideKey), unit: u.key });
+    return h('div', { class: 'unit', title: `${u.key}${u.org ? '\n' + u.org : ''}\nSquads: ${u.squads.join(', ')}`, onclick: () => {
+      const p = { callsign: nextCallsign(sideKey), unit: u.key };
+      s.sides[sideKey].platoons.push(p);
+      opened.add(p);
       refreshKeep();
     } },
-    h('b', { class: 'mono' }, u.key),
-    u.source === 'mission' ? h('span', { class: 'tag good' }, 'tested') : null,
-    old ? h('span', { class: 'tag warn', title: 'Service period ' + u.period.text }, 'not in 07/1943') : null,
-    h('div', { class: 'small muted' }, `${u.role}, ${u.men} men${u.vehicles.length ? ', ' + summary(u.vehicles) : ''}`));
+    symbol(u, sideColor(sideKey), 30),
+    h('div', { class: 'grow', style: 'min-width:0' },
+      h('div', { class: 'ellip' }, h('b', {}, u.name), u.parent ? h('span', { class: 'muted' }, ' · ' + u.parent) : null,
+        u.source === 'mission' ? h('span', { class: 'tag good', title: 'Taken from an original mission' }, 'tested') : null,
+        old ? h('span', { class: 'tag warn', title: 'Service period ' + u.period.text }, 'not in 07/1943') : null),
+      h('div', { class: 'small muted ellip' }, unitDetails(u))));
   }));
   return { box, count: items.length };
 }
 function sidePanel(sideKey) {
   const side = s.sides[sideKey], b = base(), nation = sideKey === 'player' ? b.player : b.enemy;
-  const roles = [...new Set(cat.units.filter(u => u.nation === nation).map(u => u.role))].sort();
+  const kinds = Object.keys(cat.enums.kinds).filter(k => cat.units.some(u => u.nation === nation && u.kind === k));
   const list = h('div');
   const fill = () => { const { box, count } = unitList(sideKey, nation); list.replaceChildren(h('div', { class: 'small muted', style: 'margin-top:4px' }, `${count} platoon types`), box); };
   fill();
@@ -448,8 +630,8 @@ function sidePanel(sideKey) {
     side.platoons.map((p, i) => platoonCard(sideKey, p, i, nation)),
     h('h2', {}, 'Add platoon'),
     h('div', { class: 'row' },
-      input(unitSearch, v => { unitSearch = v; fill(); }, { class: 'grow', placeholder: 'Search: stug, t34, rifle, mortar ...' }),
-      select([['', 'all roles'], ...roles], unitRole, v => { unitRole = v; fill(); })),
+      input(unitSearch, v => { unitSearch = v; fill(); }, { class: 'grow', placeholder: 'Search: StuG, T-34, rifle, mortar ...' }),
+      select([['', 'all types'], ...kinds.map(k => [k, cat.enums.kinds[k]])], unitKind, v => { unitKind = v; fill(); })),
     list,
     h('h2', {}, 'Groups'),
     h('div', { class: 'small muted', style: 'margin-bottom:6px' }, 'Platoons of a group set up and move together, e.g. a first and a second attack wave. A group with its own orders ignores the orders of the side. Once the enemy has any orders, its platoons without orders hold their positions.'),
@@ -608,16 +790,16 @@ function draw() {
       });
     }
   }
-  for (const [k, c] of [['player', css('--player')], ['enemy', css('--enemy')]]) {
-    for (const p of s.sides[k].platoons) {
-      if (!p.position) continue;
-      const [px, py] = toScreen(...p.position), r = picked === p || placing === p ? 7 : 5;
-      ctx.fillStyle = c; ctx.strokeStyle = picked === p ? '#fff' : '#000'; ctx.lineWidth = 1.5;
-      ctx.fillRect(px - r, py - r, r * 2, r * 2); ctx.strokeRect(px - r, py - r, r * 2, r * 2);
-      // the number keeps crowded deployments readable; the full callsign on hover
-      const full = hover?.platoon === p || picked === p;
-      label(full ? p.callsign : p.callsign.replace(/^.*_/, ''), px + r + 3, py + 4, full ? '#fff' : '#ccc');
-    }
+  // platoons on the map; the hovered and the picked one on top, numbers only where they do not collide
+  const placed = ['player', 'enemy'].flatMap(k => s.sides[k].platoons.filter(p => p.position).map(p => ({ p, k, at: toScreen(...p.position) })));
+  const front = q => (q.p === picked || q.p === placing) * 2 + (q.p === hover?.platoon);
+  placed.sort((a, b) => front(a) - front(b));
+  for (const q of placed) {
+    const [px, py] = q.at, big = front(q) > 0;
+    drawSymbol(unitOf(q.p.unit), px, py, sideColor(q.k), big ? 1 : 0.8, q.p === picked ? '#fff' : HALO);
+    const crowded = placed.some(o => o !== q && Math.abs(o.at[0] - px) < 34 && Math.abs(o.at[1] - py) < 14);
+    if (big) label(q.p.callsign, px + 15, py + 4, '#fff');
+    else if (!crowded) label(q.p.callsign.replace(/^.*_/, ''), px + 11, py + 4, '#ccc');
   }
   for (const [n, [x, z]] of Object.entries(pts)) {
     const [px, py] = toScreen(x, z), color = used[n] ? css(used[n]) : css('--accent');
@@ -633,13 +815,15 @@ function draw() {
   label('1 km', bx, by - 5, '#ddd');
 }
 function pick(px, py) {
+  let near = null, best = Infinity;
   for (const k of ['player', 'enemy']) {
     for (const p of s.sides[k].platoons) {
       if (!p.position) continue;
-      const [sx, sy] = toScreen(...p.position);
-      if (Math.abs(sx - px) < 8 && Math.abs(sy - py) < 8) return { platoon: p, side: k };
+      const [sx, sy] = toScreen(...p.position), d = Math.hypot(sx - px, sy - py);
+      if (Math.abs(sx - px) < 9 && Math.abs(sy - py) < 7 && d < best) { near = { platoon: p, side: k }; best = d; }
     }
   }
+  if (near) return near;
   for (const [n, [x, z]] of Object.entries(s.points)) { const [sx, sy] = toScreen(x, z); if (Math.hypot(sx - px, sy - py) < 10) return { point: n }; }
   for (const p of base().points) { const [sx, sy] = toScreen(p.x, p.z); if (Math.hypot(sx - px, sy - py) < 7) return { known: p }; }
   for (const p of base().settlements) {
@@ -651,6 +835,7 @@ function pick(px, py) {
 // shows the card of a platoon picked on the map
 function showPlatoon(sideKey, p) {
   picked = p;
+  opened.add(p);
   if (tab !== sideKey) { tab = sideKey; renderTabs(); }
   refreshKeep();
   document.getElementById('platoon-' + p.callsign)?.scrollIntoView({ block: 'nearest' });
@@ -685,7 +870,7 @@ canvas.addEventListener('mousemove', e => {
   if (!placing) canvas.style.cursor = hover ? 'pointer' : 'crosshair';
   const u = hover?.platoon && unitOf(hover.platoon.unit);
   canvas.title = hover?.settlement ? `${hover.settlement.houses} houses, ${hover.settlement.width} x ${hover.settlement.depth} m`
-    : hover?.platoon ? `${hover.platoon.callsign}: ${hover.platoon.unit}${u ? ` (${u.role}, ${u.men} men${u.vehicles.length ? ', ' + summary(u.vehicles) : ''})` : ''}` : '';
+    : hover?.platoon ? `${hover.platoon.callsign}: ${unitTitle(u)}\n${unitDetails(u)}` : '';
   draw();
 });
 window.addEventListener('mouseup', () => {
@@ -708,11 +893,11 @@ async function fillOpen(current) {
 document.getElementById('open').addEventListener('change', async e => {
   if (!e.target.value) return;
   s = normalise(await api('/scenario?path=' + encodeURIComponent(e.target.value)));
-  selected = null; picked = null; placing = null;
+  selected = null; picked = null; placing = null; opened.clear();
   refresh();
   log('Opened ' + e.target.value);
 });
-document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; picked = null; placing = null; refresh(); });
+document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; picked = null; placing = null; opened.clear(); refresh(); });
 document.getElementById('save').addEventListener('click', async () => {
   try { const r = await api('/save', clean()); log('Saved ' + r.file, 'good'); await fillOpen(`scenarios/${s.id}.json`); } catch (e) { log(e.message, 'err'); }
 });
@@ -757,6 +942,7 @@ document.getElementById('mods').addEventListener('click', async () => {
 
 (async () => {
   document.body.append(h('datalist', { id: 'callsigns' }));
+  api('/version').then(v => { document.getElementById('version').textContent = v.version; }).catch(() => {});
   try {
     cat = await api('/catalog');
     document.getElementById('callsigns').append(...cat.enums.callsigns.map(c => h('option', { value: c + '_01' })));

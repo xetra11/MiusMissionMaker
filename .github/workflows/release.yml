@@ -21,7 +21,7 @@ jobs:
 
       - name: Build
         working-directory: gui
-        run: go build -ldflags=-H=windowsgui -o ../MiusMissionMaker.exe .
+        run: go build -ldflags="-H=windowsgui -X main.version=${{ github.ref_name }}" -o ../MiusMissionMaker.exe .
 
       # the program runs the tools next to it, so it ships together with them
       - name: Package
