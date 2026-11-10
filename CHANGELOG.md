@@ -4,6 +4,14 @@ All notable changes to MiusMissionMaker. The release workflow publishes the sect
 
 ## Unreleased
 
+### Changed
+
+- README: new screenshots and a step-by-step guide to the map.
+
+### Fixed
+
+- An empty box no longer shows below the map switches before the mouse has been over the map.
+
 ## 0.4.0 – 2026-11-10
 
 ### Added

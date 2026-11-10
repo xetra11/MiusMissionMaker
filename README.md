@@ -34,29 +34,37 @@ If the game is not in the default Steam folder, set its location under **Setting
 
 **1. Choose a map.** Press **New**, enter a title and pick a **Map**. The map also decides your side: German on `tr03`, `tr04`, `tr06`, Soviet on the others. Use **Open** to load a saved scenario or one of the examples.
 
-**2. Set points on the map.** Blue and red squares are the start areas of the two sides, brown rectangles are villages (the number is the house count), and grey dots are positions from the original mission. Press **Add point** under **Points**, then click on the map; clicking a village or grey dot uses its position. Drag a point to move it. East is to the right, and the bar shows 1 km.
+**2. Read the map.** The map is the game's own map texture: fields, forest, roads, water and faint contour lines. Blue and red squares are the start areas of the two sides, brown outlines are villages (the number is the house count), and grey dots are positions from the original mission. North is up, and the bar shows 1 km. The mouse wheel zooms, the right mouse button pans, **Fit** shows the whole map. **Terrain** at the bottom right turns the map texture off.
 
-![Map with points and enemy orders](docs/img/editor-map.png)
+**3. Set points.** Points are the targets of orders and objectives. Press **Add point** under **Points**, then click on the map; clicking a village or grey dot uses its position. Drag a point to move it.
 
-**3. Pick your forces.** In **Player** and **Enemy**, add platoons; each new one appears on the map in its side's start area. Platoons carry their names from the game and the German tactical symbol of their type after H.Dv. 272 (1941, weapon symbols as changed in 1943): a box for infantry, a lozenge for tanks, a T for anti-tank guns, an angle for mortars, pennants for staffs, a thick left side for companies; wheels below mean motorised, an oval self-propelled, wheel and oval half-tracks. Soviet platoons use the Soviet symbols after the US handbook TM 30-430 (1946): diamonds for tanks (empty light, line medium, dot heavy), a V for mortars, an umbrella for machine guns, a staff with one crossbar for a platoon and two for a company. Sources: [Panzerworld](https://panzerworld.com/german-tactical-symbols), [Niehorster](http://www.niehorster.org/011_germany/symbols/_symbols_41.html), [Bundesarchiv](https://www.bundesarchiv.de/im-archiv-recherchieren/archivgut-recherchieren/nach-themen/lagekarten-verstehen/), [TM 30-430, chapter XII](https://digitalcommons.unl.edu/dodmilintel/29). The search covers names, types and vehicles, for example `StuG`, `T-34` or `mortar`, and the list can be filtered by type. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. Click a platoon to show its details, such as **Size** for the number of squads or vehicles.
-
-To move a platoon, drag its symbol, or click its card and then the map. Clicking a symbol shows its platoon. The map shows the game's own map texture (fields, forest, roads, water, faint contour lines); **Terrain** at the bottom right of the map turns it off. Each platoon is a counter with its tactical symbol. With **Facing & formation** at the bottom right of the map, a wedge on the counter's edge shows where it faces and a tag below names its formation (brown: dug in). **Set-up defaults** at the top of a side set type, formation and facing for all its platoons; a platoon's details can override them. The mouse wheel zooms, the right mouse button pans, **Fit** shows the whole map. Scenarios from older versions may set platoons up at a point; **Put them on the map** places them there in a line.
-
-To arrange several platoons, drag a box around them on open ground (Shift+click adds or removes one). Drag one of them to move them all, or choose **Line**, **Column** or **Carré** in the bar below the map: the platoons line up around their middle, facing the other side's start area, at the chosen distance.
+**4. Pick your forces.** In **Player** and **Enemy**, search for platoons and add them; each new one appears on the map in its side's start area. The search covers names, types and vehicles, for example `StuG`, `T-34` or `mortar`, and the list can be filtered by type. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. **▸** on a platoon's card shows its details, such as **Size** for the number of squads or vehicles.
 
 ![Searching platoons](docs/img/editor-units.png)
 
-**4. Give the enemy orders.** At the bottom of the **Enemy** tab, add the points the enemy should move to, in order. **wait min** delays an order, for example a second wave that starts 5 minutes after the battle begins. Leave orders empty and tick **Block AI** for a defender that holds its positions.
+**5. Place your platoons.** Each platoon is a counter on the map with its tactical symbol.
+
+- **Move one:** drag its counter, or click its card and then the map.
+- **Move several:** drag a box around them on open ground (Shift+click adds or removes one), then drag one of them.
+- **Arrange several:** with a box selection, the bar below the map offers **Line**, **Column** and **Carré**. The platoons line up around their middle, facing the other side's start area, at the chosen distance.
+- **Facing and formation:** **Facing & formation** at the bottom right shows a wedge on each counter's edge where it faces and a tag below with its formation (brown: dug in). **Set-up defaults** at the top of a side set type, formation and facing for all its platoons; a platoon's details can override them.
+- **Older scenarios** may set platoons up at a point; **Put them on the map** places them there in a line.
+
+![Map with terrain, selected platoons and the formation bar](docs/img/editor-map.png)
+
+The symbols follow the German tactical symbols after H.Dv. 272 (1941, weapon symbols as changed in 1943): a box for infantry, a lozenge for tanks, a T for anti-tank guns, an angle for mortars, pennants for staffs, a thick left side for companies; wheels below mean motorised, an oval self-propelled, wheel and oval half-tracks. Soviet platoons use the Soviet symbols after the US handbook TM 30-430 (1946): diamonds for tanks (empty light, line medium, dot heavy), a V for mortars, an umbrella for machine guns, a staff with one crossbar for a platoon and two for a company. Sources: [Panzerworld](https://panzerworld.com/german-tactical-symbols), [Niehorster](http://www.niehorster.org/011_germany/symbols/_symbols_41.html), [Bundesarchiv](https://www.bundesarchiv.de/im-archiv-recherchieren/archivgut-recherchieren/nach-themen/lagekarten-verstehen/), [TM 30-430, chapter XII](https://digitalcommons.unl.edu/dodmilintel/29).
+
+**6. Give the enemy orders.** At the bottom of the **Enemy** tab, add the points the enemy should move to, in order. **wait min** delays an order, for example a second wave that starts 5 minutes after the battle begins. Leave orders empty and tick **Block AI** for a defender that holds its positions.
 
 For several attack groups, add **Groups** (for example `first_wave` and `second_wave`), choose the group on each platoon and give each group its own orders. Platoons without orders, such as mortars or anti-tank guns, hold their positions. The map shows the route of every group. [examples/panzer_vorhut.json](examples/panzer_vorhut.json) attacks on two axes, the second one 5 minutes later.
 
 ![Orders of the enemy](docs/img/editor-orders.png)
 
-**5. Set the objective.** In **Battle**, set how you win and lose, the time limit and the start camera. The **Texts** tab holds the hints shown during the mission.
+**7. Set the objective.** In **Battle**, set how you win and lose, the time limit and the start camera. The **Texts** tab holds the hints shown during the mission.
 
 ![Victory and defeat settings](docs/img/editor-battle.png)
 
-**6. Play.** Close the game if it is running and press **Start battle**.
+**8. Play.** Close the game if it is running and press **Start battle**.
 
 ## Buttons
 
@@ -76,7 +84,7 @@ For several attack groups, add **Groups** (for example `first_wave` and `second_
 - **Starting outside the start areas:** the deployment phase is only proven for forces starting in the blue area. If your forces start elsewhere, turn off **Deployment phase** in the **Battle** tab.
 - **Red messages** next to the buttons list what is still missing. The report below the map shows what the generator found.
 - **Text** must use plain characters; German umlauts are converted automatically.
-- The map does not show terrain yet. Stay near villages and grey dots to be safe.
+- The map shows terrain but no heights in metres; the faint contour lines of the map texture give the shape of the ground.
 
 ---
 
@@ -664,6 +672,7 @@ MiusMissionMaker/
 ├── .github/workflows/release.yml  publishes the ZIP for every pushed tag v*
 ├── docs/UNITS.md                every platoon type of the game (generated)
 ├── docs/catalog.json            the same data for tools, used by the Mission Editor (generated)
+├── docs/maps/                    map texture of every base, shown by the Mission Editor (generated)
 ├── docs/img/                     screenshots for this README
 ├── gui/                         Mission Editor (Go); -serve <host:port> runs it without a window, open http://<host:port>/#dev
 ├── scenarios/                   scenarios saved by the Mission Editor
@@ -673,11 +682,12 @@ MiusMissionMaker/
 └── tools/
     ├── scenario.js              generator: build / reference
     ├── unitdb.js                the game's unit database and platoon templates
-    ├── mapdata.js               buildings and settlements from the map tiles
+    ├── mapdata.js               settlements and map textures from the map tiles
+    ├── loctext.js               English names of platoons and vehicles from the game's texts
     ├── install_mission.js       install / list / remove missions
     ├── validate_mission.js      consistency check of a .mispack
     ├── azp3.js, azcf.js         reading/writing the game formats
     └── templates/desc.addpack   template for the mod manifest
 ```
 
-After a game update, regenerate section 6, `docs/UNITS.md`, `docs/catalog.json` and the schema with `node tools/scenario.js reference`.
+After a game update, regenerate section 6, `docs/UNITS.md`, `docs/catalog.json`, `docs/maps` and the schema with `node tools/scenario.js reference`.
