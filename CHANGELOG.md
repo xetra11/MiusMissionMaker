@@ -6,6 +6,8 @@ All notable changes to MiusMissionMaker. The release workflow publishes the sect
 
 ### Changed
 
+- Platoons keep to the start areas: player platoons set up only in the blue start area, enemy platoons anywhere except there. Dragging stops at the edge, and platoons dropped or arranged outside go to the nearest allowed place. The start areas have an outline and a label, and the checks name platoons that stand where they may not.
+- The generator warns about platoon positions outside these areas.
 - README: new screenshots and a step-by-step guide to the map.
 
 ### Fixed

@@ -34,7 +34,7 @@ If the game is not in the default Steam folder, set its location under **Setting
 
 **1. Choose a map.** Press **New**, enter a title and pick a **Map**. The map also decides your side: German on `tr03`, `tr04`, `tr06`, Soviet on the others. Use **Open** to load a saved scenario or one of the examples.
 
-**2. Read the map.** The map is the game's own map texture: fields, forest, roads, water and faint contour lines. Blue and red squares are the start areas of the two sides, brown outlines are villages (the number is the house count), and grey dots are positions from the original mission. North is up, and the bar shows 1 km. The mouse wheel zooms, the right mouse button pans, **Fit** shows the whole map. **Terrain** at the bottom right turns the map texture off.
+**2. Read the map.** The map is the game's own map texture: fields, forest, roads, water and faint contour lines. The blue and red areas are the start areas of the two sides, taken from the original mission of the map; brown outlines are villages (the number is the house count), and grey dots are positions from the original mission. North is up, and the bar shows 1 km. The mouse wheel zooms, the right mouse button pans, **Fit** shows the whole map. **Terrain** at the bottom right turns the map texture off.
 
 **3. Set points.** Points are the targets of orders and objectives. Press **Add point** under **Points**, then click on the map; clicking a village or grey dot uses its position. Drag a point to move it.
 
@@ -44,6 +44,7 @@ If the game is not in the default Steam folder, set its location under **Setting
 
 **5. Place your platoons.** Each platoon is a counter on the map with its tactical symbol.
 
+- **Where:** your platoons set up only in the blue start area, enemy platoons anywhere except there, for example in a village in no-man's land. A platoon dragged against the edge slides along it; one dropped or arranged outside goes to the nearest place it may stand.
 - **Move one:** drag its counter, or click its card and then the map.
 - **Move several:** drag a box around them on open ground (Shift+click adds or removes one), then drag one of them.
 - **Arrange several:** with a box selection, the bar below the map offers **Line**, **Column** and **Carré**. The platoons line up around their middle, facing the other side's start area, at the chosen distance.
@@ -81,7 +82,7 @@ For several attack groups, add **Groups** (for example `first_wave` and `second_
 
 - **Close the game first.** Install and Start battle refuse to run while the game is open.
 - **Start battle** overwrites the game's current battle data, so finish a running battle first.
-- **Starting outside the start areas:** the deployment phase is only proven for forces starting in the blue area. If your forces start elsewhere, turn off **Deployment phase** in the **Battle** tab.
+- **Starting outside the start areas:** the deployment phase is only proven for forces starting in the blue area. Older scenarios can still set your forces up at a point elsewhere; then turn off **Deployment phase** in the **Battle** tab, or use **Put them on the map**.
 - **Red messages** next to the buttons list what is still missing. The report below the map shows what the generator found.
 - **Text** must use plain characters; German umlauts are converted automatically.
 - The map shows terrain but no heights in metres; the faint contour lines of the map texture give the shape of the ground.
@@ -221,7 +222,7 @@ JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.
 
 - **Name:** lowercase letters, digits, `_`, starting with a letter, max. 31 characters, not a reserved name (6.3).
 - **Value:** `[x, z]` in metres in the coordinate system of the base. **x grows to the east** (derived from the original scripts, where the enemy "from the east" stands at larger x). Points must lie inside the base's map extent (6.1), otherwise the build fails.
-- Each base lists its **player start area**, **enemy start area** and **known points** (6.1). The generator warns if a side deploys outside its own start area.
+- Each base lists its **player start area**, **enemy start area** and **known points** (6.1). The generator warns if a side deploys outside its own start area, if a player platoon's `position` lies outside the player start area, or if an enemy platoon's `position` lies inside it.
 
 ### 4.4 `sides` – player and enemy
 

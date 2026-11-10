@@ -375,7 +375,10 @@ function checkSpec(spec, base, catalog) {
       if (e.nation !== nation) fail(`${where}: "${p.unit}" is ${e.nation}, but this side is ${nation} (base ${baseId(base)})`);
       if (p.position) {
         if (!(Array.isArray(p.position) && p.position.length === 2 && p.position.every(Number.isFinite))) fail(`${where}: "position" must be [x, z]`);
-        if (areaOf(base, p.position) === 'outside') fail(`${where}: "position" is outside the map of base ${baseId(base)}`);
+        const area = areaOf(base, p.position);
+        if (area === 'outside') fail(`${where}: "position" is outside the map of base ${baseId(base)}`);
+        if (sideKey === 'player' && area !== 'player') console.warn(`note: ${where} stands in the ${area} area, outside the player start area`);
+        if (sideKey === 'enemy' && area === 'player') console.warn(`note: ${where} stands in the player start area`);
       }
       if (p.plan && !PLANS[p.plan]) fail(`${where}: "plan" must be ${Object.keys(PLANS).join(', ')}`);
       if (p.size && !(Number.isInteger(p.size) && p.size >= 1 && p.size <= 15)) fail(`${where}: "size" must be a whole number from 1 to 15`);
