@@ -20,7 +20,12 @@ aside.right { border-left: 1px solid var(--line); display: flex; flex-direction:
 #mapwrap { position: relative; min-width: 0; min-height: 0; }
 canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; }
 #hint { position: absolute; left: 10px; bottom: 8px; padding: 3px 7px; background: #000a; border-radius: 4px; color: var(--muted); pointer-events: none; }
-#coord { position: absolute; right: 10px; bottom: 8px; padding: 3px 7px; background: #000a; border-radius: 4px; font-variant-numeric: tabular-nums; pointer-events: none; }
+#zoombar { position: absolute; right: 10px; top: 10px; display: flex; gap: 4px; }
+#zoombar button { min-width: 30px; background: var(--panel); }
+#formbar { position: absolute; left: 50%; bottom: 44px; white-space: nowrap; transform: translateX(-50%); display: none; gap: 6px; align-items: center; padding: 6px 8px; background: var(--panel); border: 1px solid var(--accent); border-radius: 5px; box-shadow: 0 2px 10px #0008; }
+#mapopts { position: absolute; right: 10px; bottom: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+#mapopts label { padding: 3px 7px; background: #000a; border-radius: 4px; cursor: pointer; }
+#coord { padding: 3px 7px; background: #000a; border-radius: 4px; font-variant-numeric: tabular-nums; pointer-events: none; }
 footer { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 7px 10px; background: var(--panel); border-top: 1px solid var(--line); align-items: start; }
 #log { height: 92px; overflow-y: auto; white-space: pre-wrap; font: 12px/1.35 Consolas, monospace; background: #151613; border: 1px solid var(--line); border-radius: 4px; padding: 5px 7px; color: var(--muted); }
 #log .err { color: var(--bad); } #log .good { color: var(--ok); }
@@ -90,8 +95,14 @@ dialog::backdrop { background: #0008; }
     <div id="banner"></div>
     <div id="mapwrap" style="height:100%">
       <canvas id="map"></canvas>
-      <div id="hint">Click to add a point, drag to move. Click a village or grey point to use it.</div>
-      <div id="coord"></div>
+      <div id="hint"></div>
+      <div id="mapopts"><label title="The game's map: fields, forest, roads, water and contour lines"><input type="checkbox" id="showterrain"> Terrain</label><label title="Show where each platoon faces and its formation"><input type="checkbox" id="showsetup"> Facing &amp; formation</label><span id="coord"></span></div>
+      <div id="formbar"></div>
+      <div id="zoombar">
+        <button id="zoomin" title="Zoom in (mouse wheel)">+</button>
+        <button id="zoomout" title="Zoom out (mouse wheel)">−</button>
+        <button id="zoomfit" title="Show the whole map">Fit</button>
+      </div>
     </div>
   </div>
   <aside class="right">
@@ -120,6 +131,12 @@ let cat, s, tab = 'player', unitSearch = '', unitKind = '', selected = null, hov
 let picked = null, placing = null;
 // platoon cards showing their details
 const opened = new Set();
+// waiting for a click that adds a point; platoons chosen on the map, the selection box being drawn
+let addingPoint = false, box = null, formSpacing = 100;
+// facing and formation on the map counters, chosen at the bottom right of the map
+let showSetup = localStorage.getItem('mmm.showSetup') === '1';
+let showTerrain = localStorage.getItem('mmm.showTerrain') !== '0';
+const chosen = new Set();
 
 // ---------------------------------------------------------------- helpers
 function h(tag, props = {}, ...kids) {
@@ -169,13 +186,13 @@ function blank() {
   return {
     $schema: '../scenario.schema.json', id: 'my_mission', title: 'New Mission', description: '', menu: 'missions', base: 'tr04',
     max_minutes: 60, points: {},
-    sides: { player: { deploy: { type: 'trench', at: '' }, platoons: [] }, enemy: { deploy: { type: 'place', at: '' }, platoons: [] } },
+    sides: { player: { deploy: { type: 'trench' }, platoons: [] }, enemy: { deploy: { type: 'place' }, platoons: [] } },
     victory: { balance: 2 }, defeat: {}, texts: {},
   };
 }
 function normalise(o) {
   o.points ??= {}; o.sides ??= {}; o.victory ??= {}; o.defeat ??= {}; o.texts ??= {};
-  for (const k of ['player', 'enemy']) { o.sides[k] ??= {}; o.sides[k].platoons ??= []; o.sides[k].deploy ??= { at: '' }; }
+  for (const k of ['player', 'enemy']) { o.sides[k] ??= {}; o.sides[k].platoons ??= []; o.sides[k].deploy ??= {}; }
   return o;
 }
 // the file holds only what is set
@@ -185,10 +202,12 @@ function clean() {
   prune(o);
   for (const k of ['player', 'enemy']) {
     const side = o.sides[k];
-    if (!side.deploy?.at) delete side.deploy; else prune(side.deploy);
+    // a deploy without a point keeps only the set-up defaults of the side or group
+    const keep = (o, k) => { if (o[k]) prune(o[k]); if (o[k] && !Object.keys(o[k]).length) delete o[k]; };
+    keep(side, 'deploy');
     if (!side.orders?.length) delete side.orders;
     for (const d of Object.values(side.groups ?? {})) {
-      if (!d.deploy?.at) delete d.deploy; else prune(d.deploy);
+      keep(d, 'deploy');
       if (!d.orders?.length) delete d.orders;
     }
     if (side.groups && !Object.keys(side.groups).length) delete side.groups;
@@ -265,6 +284,45 @@ function startPosition(sideKey, p) {
   if (!cells.length) return [0, 0];
   return [Math.round(cells.reduce((a, c) => a + c.x, 0) / cells.length), Math.round(cells.reduce((a, c) => a + c.z, 0) / cells.length)];
 }
+// a spot near the start of the side where no other platoon stands, for a newly added platoon
+function freeSpot(sideKey) {
+  const [x0, z0] = startPosition(sideKey, {}), all = ['player', 'enemy'].flatMap(k => s.sides[k].platoons).filter(p => p.position);
+  for (let ring = 0; ring < 12; ring++) {
+    for (let i = -ring; i <= ring; i++) {
+      for (const [dx, dz] of [[i, -ring], [i, ring], [-ring, i], [ring, i]]) {
+        const x = x0 + dx * 100, z = z0 + dz * 100;
+        if (areaOf(x, z) !== 'outside' && !all.some(p => Math.hypot(p.position[0] - x, p.position[1] - z) < 70)) return [x, z];
+      }
+    }
+  }
+  return [x0, z0];
+}
+// set-up of a platoon as the generator writes it: its own style over that of its group, else of its side
+const TYPE_NAMES = { trench: 'dug in', place: 'in the open' };
+const facingTo = (from, to) => { const dx = to[0] - from[0], dz = to[1] - from[1]; return Math.abs(dx) >= Math.abs(dz) ? (dx >= 0 ? 'E' : 'W') : (dz >= 0 ? 'N' : 'S'); };
+function anchorOf(sideKey) {
+  const side = s.sides[sideKey], p = side.platoons[0];
+  return s.points[side.deploy?.at] ?? p?.position ?? s.points[p?.deploy?.at] ?? s.points[side.groups?.[p?.group]?.deploy?.at] ?? [0, 0];
+}
+function styleOf(sideKey, p) {
+  const side = s.sides[sideKey], d = { ...(side.groups?.[p.group]?.deploy ?? side.deploy), ...p.deploy };
+  const type = d.type || 'place';
+  const from = p.position ?? s.points[d.at] ?? [0, 0];
+  return { type, formation: d.formation || (type === 'trench' ? 'line2' : 'columnlr'), facing: d.facing || facingTo(from, anchorOf(sideKey === 'player' ? 'enemy' : 'player')) };
+}
+// platoons of older scenarios that set up at a point: put them on the map in a line around that point
+function placeOnMap(sideKey) {
+  const side = s.sides[sideKey], at = new Map();
+  for (const p of side.platoons.filter(p => !p.position)) {
+    const name = p.deploy?.at || side.groups?.[p.group]?.deploy?.at || side.deploy?.at;
+    const pt = s.points[name] ?? startPosition(sideKey, p);
+    putOnMap(p, ...pt);
+    (at.get(name) ?? at.set(name, []).get(name)).push(p);
+  }
+  for (const list of at.values()) arrangeList(list, 'line', false);
+  for (const d of [side.deploy, ...Object.values(side.groups ?? {}).map(g => g.deploy)]) if (d) delete d.at;
+  refreshKeep();
+}
 function areaOf(x, z) {
   const b = base(), e = b.extent, r = b.cellSize / 2;
   if (x < e.x0 || x > e.x1 || z < e.z0 || z > e.z1) return 'outside';
@@ -279,7 +337,8 @@ function checks() {
   for (const [k, nation] of [['player', b.player], ['enemy', b.enemy]]) {
     const side = s.sides[k], groups = side.groups ?? {};
     if (!side.platoons.length) out.push(`${k}: no platoons`);
-    if (!side.deploy?.at && side.platoons.some(p => !p.deploy?.at && !p.position && !groups[p.group]?.deploy?.at)) out.push(`${k}: choose a deployment point`);
+    const off = side.platoons.filter(p => !p.position && !p.deploy?.at && !groups[p.group]?.deploy?.at && !side.deploy?.at);
+    if (off.length) out.push(`${k}: ${off.map(p => p.callsign).join(', ')} not on the map`);
     for (const p of side.platoons) {
       if (seen.has(p.callsign)) out.push(`Callsign ${p.callsign} used twice`);
       seen.add(p.callsign);
@@ -309,11 +368,14 @@ function renderLeft() {
     field('Mission id (file name)', input(s.id, v => { s.id = v; showChecks(); }, { class: 'mono' })),
     field('Description', h('textarea', { value: s.description ?? '', oninput: e => { s.description = e.target.value; showChecks(); } })),
     h('div', { class: 'two' },
-      field('Map (base)', select(cat.bases.map(x => [x.id, `${x.id} - ${x.title}`]), s.base, v => { s.base = v; refresh(); })),
+      field('Map (base)', select(cat.bases.map(x => [x.id, `${x.id} - ${x.title}`]), s.base, v => { s.base = v; resetZoom(); refresh(); })),
       field('Menu section', select(cat.enums.menu, s.menu ?? 'missions', v => { s.menu = v; }))),
     h('div', { class: 'small muted' }, `Player: ${nationName(b.player)}, enemy: ${nationName(b.enemy)}. ${b.description}`),
-    h('h2', {}, 'Points'),
-    pointNames().length ? null : h('div', { class: 'small muted' }, 'No points yet. Click on the map.'),
+    h('div', { class: 'row', style: 'margin:14px 0 6px' },
+      h('h2', { class: 'grow', style: 'margin:0' }, 'Points'),
+      h('button', { class: addingPoint ? 'primary' : '', title: 'Then click on the map; a village or grey dot gives its position',
+        onclick: () => { addingPoint = !addingPoint; placing = null; renderLeft(); refreshKeep(); } }, addingPoint ? 'Click the map…' : 'Add point')),
+    pointNames().length ? null : h('div', { class: 'small muted' }, 'No points yet. Press Add point, then click on the map.'),
     pointNames().map(n => {
       const area = areaOf(...s.points[n]);
       const color = area === 'player' ? 'var(--player)' : area === 'enemy' ? 'var(--enemy)' : area === 'outside' ? 'var(--bad)' : 'var(--accent)';
@@ -335,22 +397,17 @@ function renderTabs() {
   document.getElementById('tabs').replaceChildren(...names.map(([k, t]) =>
     h('button', { class: tab === k ? 'on' : '', onclick: () => { tab = k; renderPanel(); renderTabs(); } }, t)));
 }
-function deployForm(d, withPoint = true) {
-  if (!withPoint) {
-    return h('div', { class: 'three' },
-      field('Type', select([['', 'as group/side'], ...Object.keys(cat.enums.deployTypes)], d.type, v => { d.type = v; })),
-      field('Formation', select([['', 'default'], ...Object.keys(cat.enums.formations)], d.formation, v => { d.formation = v; })),
-      field('Facing', select([['', 'to other side'], ...cat.enums.facings], d.facing, v => { d.facing = v; })));
-  }
-  return [
-    h('div', { class: 'two' },
-      field('Point', select(pointOptions(), d.at, v => { d.at = v; refreshKeep(); })),
-      field('Type', select(Object.keys(cat.enums.deployTypes), d.type ?? 'place', v => { d.type = v; }))),
-    h('div', { class: 'two' },
-      field('Formation', select([['', 'default'], ...Object.keys(cat.enums.formations)], d.formation, v => { d.formation = v; })),
-      field('Facing', select([['', 'towards other side'], ...cat.enums.facings], d.facing, v => { d.facing = v; }))),
-  ];
+// type, formation and facing; the empty choice takes them from `inherit` (labels of the defaults)
+function styleForm(d, inherit) {
+  const set = k => v => { if (v) d[k] = v; else delete d[k]; refreshKeep(); };
+  return h('div', { class: 'three' },
+    field('Type', select([['', inherit.type], ...Object.entries(TYPE_NAMES)], d.type, set('type'))),
+    field('Formation', select([['', inherit.formation], ...Object.keys(cat.enums.formations)], d.formation, set('formation'))),
+    field('Facing', select([['', inherit.facing], ...cat.enums.facings], d.facing, set('facing'))));
 }
+// a set-up point of an older scenario
+const legacyPoint = (where, name, sideKey) => h('div', { class: 'small', style: 'margin:4px 0;color:var(--accent)' },
+  `${where} at point ${name}. `, h('button', { onclick: () => placeOnMap(sideKey), title: 'Put every platoon of this side that is not on the map yet in a line around its point' }, 'Put them on the map'));
 // orders of a side or group; the file keeps seconds, the editor shows minutes
 function ordersForm(owner) {
   return [
@@ -373,30 +430,22 @@ function groupCard(sideKey, g) {
       h('span', { class: 'small muted' }, `${members.length} platoon${members.length === 1 ? '' : 's'}`),
       h('button', { class: 'icon', title: 'Remove group', onclick: () => removeGroup(sideKey, g) }, '×')),
     h('div', { class: 'small muted', style: 'margin:3px 0' }, members.length ? members.map(p => p.callsign).join(', ') : 'Choose this group on a platoon below.'),
-    h('label', { class: 'small' }, h('input', { type: 'checkbox', checked: !!d.deploy, onchange: e => { if (e.target.checked) d.deploy = { at: '', type: 'place' }; else delete d.deploy; refreshKeep(); } }), ' own set-up point'),
-    d.deploy ? h('div', { style: 'margin-top:6px' }, deployForm(d.deploy)) : null,
+    d.deploy?.at && members.some(p => !p.position) ? legacyPoint('Its platoons set up', d.deploy.at, sideKey) : null,
     h('div', { class: 'small muted', style: 'margin:6px 0 3px' }, d.orders?.length ? 'Orders of this group' : 'No orders: follows the orders of the side'),
     ordersForm(d));
 }
+// where the platoon stands and how it sets up there; the defaults come from its group or side
 function placementForm(sideKey, p) {
-  const side = s.sides[sideKey];
-  const mode = p.position ? 'map' : p.deploy?.at !== undefined ? 'point' : 'side';
-  const withWhom = side.groups?.[p.group]?.deploy ? 'with its group' : 'with its side';
-  const change = v => {
-    const style = { ...p.deploy };
-    delete style.at;
-    delete p.position; delete p.deploy;
-    if (v === 'point') p.deploy = { at: '', type: 'trench', ...style };
-    if (v === 'map') { p.position = startPosition(sideKey, p); p.deploy = style; placing = p; }
-    refreshKeep();
-  };
+  const side = s.sides[sideKey], g = side.groups?.[p.group]?.deploy, d = p.deploy ?? {};
+  const own = { ...p.deploy }, inherited = styleOf(sideKey, { ...p, deploy: {} });
+  delete own.at;
   return [
-    h('div', { class: 'row small', style: 'margin-top:5px' },
-      h('span', { class: 'muted' }, 'Set up'),
-      select([['side', withWhom], ['point', 'at a point'], ['map', 'on the map']], mode, change, { class: 'grow' }),
-      mode === 'map' ? h('button', { title: 'Click on the map to put the platoon there', onclick: () => { placing = p; refreshKeep(); } }, placing === p ? 'click the map…' : 'Place on map') : null),
-    mode === 'point' ? h('div', { style: 'margin-top:6px' }, deployForm(p.deploy)) : null,
-    mode === 'map' ? h('div', { style: 'margin-top:4px' }, h('div', { class: 'small muted mono', style: 'margin-bottom:4px' }, `x ${p.position[0]}  z ${p.position[1]}, drag it on the map`), deployForm(p.deploy ??= {}, false)) : null,
+    h('div', { class: 'small muted mono', style: 'margin:6px 0 4px' }, p.position ? `x ${p.position[0]}  z ${p.position[1]}, drag it on the map`
+      : d.at ? `sets up at point ${d.at}; click the card, then the map, to place it yourself` : 'not on the map yet: click the card, then the map'),
+    styleForm(p.deploy ??= {}, {
+      type: `as ${g ? 'group' : 'side'} (${TYPE_NAMES[inherited.type]})`, formation: `as ${g ? 'group' : 'side'} (${inherited.formation})`,
+      facing: side.deploy?.facing || g?.facing ? `as ${g ? 'group' : 'side'} (${inherited.facing})` : `to the enemy (${inherited.facing})`,
+    }),
   ];
 }
 // ---------------------------------------------------------------- unit symbols
@@ -566,25 +615,34 @@ function nextCallsign(sideKey) {
 }
 // short description of where a platoon sets up
 function setupText(sideKey, p) {
-  const side = s.sides[sideKey], d = p.deploy ?? {};
-  const where = p.position ? 'on the map' : d.at !== undefined ? `at ${d.at || '(choose a point)'}` : side.groups?.[p.group]?.deploy ? `with ${p.group}` : 'with its side';
-  const style = [d.type === 'trench' ? 'dug in' : d.type === 'place' ? 'in the open' : null, d.formation].filter(Boolean).join(', ');
-  return style ? `${where} (${style})` : where;
+  const side = s.sides[sideKey], at = p.deploy?.at || side.groups?.[p.group]?.deploy?.at || side.deploy?.at;
+  if (!p.position && !at) return 'not on the map';
+  const st = styleOf(sideKey, p);
+  return `${p.position ? '' : `at ${at}, `}${TYPE_NAMES[st.type]}, ${st.formation}, facing ${st.facing}`;
 }
 function platoonCard(sideKey, p, i, nation) {
   const side = s.sides[sideKey], u = unitOf(p.unit), wrong = u?.nation !== nation;
   const variants = u?.variants ?? [], groups = Object.keys(side.groups ?? {}), isOpen = opened.has(p);
   const toggle = () => { if (isOpen) opened.delete(p); else opened.add(p); refreshKeep(); };
-  return h('div', { class: 'card' + (wrong ? ' wrong' : ''), id: 'platoon-' + p.callsign, style: picked === p ? 'border-color:var(--accent)' : '' },
+  // a click on the card (not on its controls) gets the platoon ready to be put on the map
+  const arm = e => {
+    if (e.target.closest('input, select, button, textarea, label')) return;
+    placing = placing === p ? null : p; picked = p; addingPoint = false;
+    renderLeft(); refreshKeep();
+  };
+  const style = placing === p ? 'border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)' : picked === p || chosen.has(p) ? 'border-color:var(--accent)' : '';
+  return h('div', { class: 'card' + (wrong ? ' wrong' : ''), id: 'platoon-' + p.callsign, style: style + ';cursor:pointer', onclick: arm,
+    title: 'Click, then click on the map to put the platoon there' },
     h('div', { class: 'row' },
       symbol(u, sideColor(sideKey), 30),
       input(p.callsign, v => { p.callsign = v; showChecks(); draw(); }, { class: 'mono', style: 'width:104px', list: 'callsigns', title: 'Callsign (name in the game and in scripts)' }),
-      h('div', { class: 'grow ellip', title: `${unitTitle(u)}\n${p.unit}`, style: 'cursor:pointer', onclick: toggle },
+      h('div', { class: 'grow ellip', title: `${unitTitle(u)}\n${p.unit}` },
         h('b', {}, u?.name ?? p.unit), u?.parent ? h('span', { class: 'muted' }, ' · ' + u.parent) : null),
       h('button', { class: 'icon', title: isOpen ? 'Hide details' : 'Show details', onclick: toggle }, isOpen ? '▾' : '▸'),
       h('button', { class: 'icon', title: 'Remove', onclick: () => { side.platoons.splice(i, 1); refreshKeep(); } }, '×')),
-    h('div', { class: 'small muted ellip', style: 'margin:3px 0 0 36px', title: unitDetails(u) },
-      [unitDetails(u), setupText(sideKey, p), p.group ? 'group ' + p.group : null].filter(Boolean).join(' · ')),
+    h('div', { class: 'small ellip' + (placing === p ? '' : ' muted'), style: 'margin:3px 0 0 36px' + (placing === p ? ';color:var(--accent)' : ''), title: unitDetails(u) },
+      placing === p ? 'Click on the map to put it there. Esc cancels.'
+        : [unitDetails(u), setupText(sideKey, p), p.group ? 'group ' + p.group : null].filter(Boolean).join(' · ')),
     isOpen ? h('div', { style: 'margin-top:6px' },
       h('div', { class: 'small muted mono', style: 'margin-bottom:4px' }, p.unit + (u?.org ? ` · ${u.org}` : '')),
       h('div', { class: 'row small' },
@@ -602,7 +660,7 @@ function unitList(sideKey, nation) {
   const box = h('div', { class: 'units' }, items.slice(0, 120).map(u => {
     const old = IN_SERVICE_DATE < u.period.from || IN_SERVICE_DATE > u.period.to;
     return h('div', { class: 'unit', title: `${u.key}${u.org ? '\n' + u.org : ''}\nSquads: ${u.squads.join(', ')}`, onclick: () => {
-      const p = { callsign: nextCallsign(sideKey), unit: u.key };
+      const p = { callsign: nextCallsign(sideKey), unit: u.key, position: freeSpot(sideKey) };
       s.sides[sideKey].platoons.push(p);
       opened.add(p);
       refreshKeep();
@@ -623,8 +681,11 @@ function sidePanel(sideKey) {
   const fill = () => { const { box, count } = unitList(sideKey, nation); list.replaceChildren(h('div', { class: 'small muted', style: 'margin-top:4px' }, `${count} platoon types`), box); };
   fill();
   return [
-    h('h2', {}, 'Deployment'),
-    deployForm(side.deploy),
+    h('h2', {}, 'Set-up defaults'),
+    h('div', { class: 'small muted', style: 'margin-bottom:4px' }, 'How platoons set up where they stand, unless their card says otherwise.'),
+    styleForm(side.deploy, { type: 'in the open', formation: 'by type', facing: 'to the enemy' }),
+    side.deploy?.at && side.platoons.some(p => !p.position && !p.deploy?.at && !side.groups?.[p.group]?.deploy?.at)
+      ? legacyPoint('Platoons not on the map set up', side.deploy.at, sideKey) : null,
     h('label', { class: 'small' }, h('input', { type: 'checkbox', checked: side.ai === false, onchange: e => { if (e.target.checked) side.ai = false; else delete side.ai; } }), ' Block AI (only script orders)'),
     h('h2', {}, `Platoons (${side.platoons.length}, ${side.platoons.reduce((a, p) => a + (unitOf(p.unit)?.men ?? 0), 0)} men)`),
     side.platoons.map((p, i) => platoonCard(sideKey, p, i, nation)),
@@ -692,6 +753,9 @@ function refresh() {
 // ---------------------------------------------------------------- map
 const canvas = document.getElementById('map'), ctx = canvas.getContext('2d');
 let view = { k: 1, ox: 0, oy: 0 };
+// zoom factor over the whole map and the map position in the middle of the view (null: the map's middle)
+let zoom = { f: 1, cx: null, cz: null }, pan = null;
+const resetZoom = () => { zoom = { f: 1, cx: null, cz: null }; };
 const toScreen = (x, z) => [view.ox + (x - base().extent.x0) * view.k, view.oy + (base().extent.z1 - z) * view.k];
 const toMap = (px, py) => [(px - view.ox) / view.k + base().extent.x0, base().extent.z1 - (py - view.oy) / view.k];
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n);
@@ -731,10 +795,74 @@ function orderRoutes(sideKey) {
   return routes;
 }
 function setHint() {
-  document.getElementById('hint').textContent = placing
-    ? `Click on the map to place ${placing.callsign}. Esc cancels.`
-    : 'Click to add a point, drag points and platoons to move them. Click a village or grey point to use it.';
-  canvas.style.cursor = placing ? 'copy' : 'crosshair';
+  document.getElementById('hint').textContent = placing ? `Click on the map to place ${placing.callsign}. Esc cancels.`
+    : addingPoint ? 'Click on the map to add a point; a village or grey dot gives its position. Esc cancels.'
+    : 'Drag to move or to select platoons. Wheel zooms, right button pans.';
+  canvas.style.cursor = placing || addingPoint ? 'copy' : 'default';
+  renderFormBar();
+}
+// puts a platoon at a map position; a platoon set up at a point keeps its style
+function putOnMap(p, x, z) {
+  p.position = [Math.round(x), Math.round(z)];
+  if (p.deploy?.at !== undefined) { const style = { ...p.deploy }; delete style.at; p.deploy = style; }
+}
+
+// ---------------------------------------------------------------- formations
+const FORMATIONS_ON_MAP = { line: 'Line', column: 'Column', square: 'Carré' };
+// moves the chosen platoons into a formation around their middle, facing the start area of the other side
+const arrange = kind => arrangeList([...chosen], kind);
+function arrangeList(platoons, kind, redraw = true) {
+  const list = platoons.filter(p => p.position), n = list.length;
+  if (n < 2) return;
+  const avg = pts => [pts.reduce((a, q) => a + q[0], 0) / pts.length, pts.reduce((a, q) => a + q[1], 0) / pts.length];
+  const mid = avg(list.map(p => p.position));
+  const sideKey = ['player', 'enemy'].find(k => s.sides[k].platoons.includes(list[0]));
+  const other = base().cells.filter(c => c.side !== sideKey).map(c => [c.x, c.z]);
+  let f = other.length ? avg(other) : [mid[0] + 1, mid[1]];
+  f = [f[0] - mid[0], f[1] - mid[1]];
+  const len = Math.hypot(...f) || 1;
+  f = [f[0] / len, f[1] / len];
+  const r = [f[1], -f[0]];
+  // slots as [to the right, to the front], ordered so that platoons do not cross each other
+  const along = (p, v) => (p.position[0] - mid[0]) * v[0] + (p.position[1] - mid[1]) * v[1];
+  const sp = formSpacing, c = (n - 1) / 2;
+  let slots, order;
+  if (kind === 'line') {
+    order = [...list].sort((a, b) => along(a, r) - along(b, r));
+    slots = order.map((_, i) => [(i - c) * sp, 0]);
+  } else if (kind === 'column') {
+    order = [...list].sort((a, b) => along(b, f) - along(a, f));
+    slots = order.map((_, i) => [0, (c - i) * sp]);
+  } else {
+    // evenly round the edge of a square, starting at the front left corner
+    const k = Math.max(1, Math.ceil(n / 4)), half = k * sp / 2, step = 8 * half / n;
+    const corners = [[-half, half], [half, half], [half, -half], [-half, -half]];
+    slots = [...Array(n)].map((_, i) => {
+      const t = i * step, e = Math.floor(t / (2 * half)), u = (t - e * 2 * half) / (2 * half);
+      const [a, b] = [corners[e % 4], corners[(e + 1) % 4]];
+      return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u];
+    });
+    const angle = ([x, y]) => Math.atan2(y, x);
+    slots.sort((a, b) => angle(a) - angle(b));
+    order = [...list].sort((a, b) => angle([along(a, r), along(a, f)]) - angle([along(b, r), along(b, f)]));
+  }
+  const e = base().extent, clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  order.forEach((p, i) => {
+    const [a, b] = slots[i];
+    putOnMap(p, clamp(mid[0] + a * r[0] + b * f[0], e.x0, e.x1), clamp(mid[1] + a * r[1] + b * f[1], e.z0, e.z1));
+  });
+  if (redraw) refreshKeep();
+}
+function renderFormBar() {
+  const bar = document.getElementById('formbar');
+  const n = [...chosen].filter(p => p.position).length;
+  bar.style.display = n >= 2 ? 'flex' : 'none';
+  if (n < 2) return;
+  fill(bar,
+    h('span', { class: 'small' }, `${n} platoons`),
+    Object.entries(FORMATIONS_ON_MAP).map(([k, t]) => h('button', { title: `${t}, facing the start area of the other side`, onclick: () => arrange(k) }, t)),
+    select([50, 100, 150, 200, 300].map(v => [v, `${v} m apart`]), formSpacing, v => { formSpacing = +v; }, { title: 'Distance between the platoons' }),
+    h('button', { class: 'icon', title: 'Clear the selection (Esc)', onclick: () => { chosen.clear(); setHint(); draw(); } }, '×'));
 }
 function arrow(a, b, color) {
   const [x1, y1] = toScreen(...a), [x2, y2] = toScreen(...b), an = Math.atan2(y2 - y1, x2 - x1);
@@ -745,28 +873,45 @@ function arrow(a, b, color) {
   ctx.lineTo(x2 - 11 * Math.cos(an + .4), y2 - 11 * Math.sin(an + .4));
   ctx.fill();
 }
+// map textures of the bases from docs/maps, loaded when first shown
+const terrains = new Map();
+function terrainOf(id) {
+  if (!terrains.has(id)) {
+    const img = new Image();
+    img.onload = () => { img.ready = true; draw(); };
+    img.src = API + '/map/' + encodeURIComponent(id);
+    terrains.set(id, img);
+  }
+  const img = terrains.get(id);
+  return img.ready ? img : null;
+}
 function draw() {
   if (!s || !cat) return;
   const b = base(), e = b.extent, d = devicePixelRatio || 1, w = canvas.width / d, h2 = canvas.height / d;
   ctx.setTransform(d, 0, 0, d, 0, 0);
   ctx.fillStyle = '#23261f'; ctx.fillRect(0, 0, w, h2);
   const pad = 24, mw = e.x1 - e.x0, mh = e.z1 - e.z0;
-  view.k = Math.min((w - pad * 2) / mw, (h2 - pad * 2) / mh);
-  view.ox = (w - mw * view.k) / 2; view.oy = (h2 - mh * view.k) / 2;
+  view.k = Math.min((w - pad * 2) / mw, (h2 - pad * 2) / mh) * zoom.f;
+  const cx = zoom.cx ?? (e.x0 + e.x1) / 2, cz = zoom.cz ?? (e.z0 + e.z1) / 2;
+  view.ox = w / 2 - (cx - e.x0) * view.k; view.oy = h2 / 2 - (e.z1 - cz) * view.k;
   const [x0, y0] = toScreen(e.x0, e.z1), [x1, y1] = toScreen(e.x1, e.z0);
   ctx.fillStyle = '#343a2c'; ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+  const terrain = showTerrain && terrainOf(b.id);
+  if (terrain) ctx.drawImage(terrain, x0, y0, x1 - x0, y1 - y0);
   for (const c of b.cells) {
     const [cx, cy] = toScreen(c.x - b.cellSize / 2, c.z + b.cellSize / 2), sz = b.cellSize * view.k;
-    ctx.fillStyle = c.side === 'player' ? '#5b9bd533' : '#d9604f33';
+    ctx.fillStyle = c.side === 'player' ? '#3f7fc02a' : '#c8402f2a';
     ctx.fillRect(cx, cy, sz, sz);
   }
-  ctx.strokeStyle = '#ffffff1f'; ctx.lineWidth = 1; ctx.beginPath();
+  ctx.strokeStyle = terrain ? '#0000002e' : '#ffffff1f'; ctx.lineWidth = 1; ctx.beginPath();
   for (let x = e.x0; x <= e.x1; x += b.cellSize) { const [px] = toScreen(x, 0); ctx.moveTo(px, y0); ctx.lineTo(px, y1); }
   for (let z = e.z0; z <= e.z1; z += b.cellSize) { const [, py] = toScreen(0, z); ctx.moveTo(x0, py); ctx.lineTo(x1, py); }
   ctx.stroke();
   for (const p of b.settlements) {
     const [px, py] = toScreen(p.x, p.z), rw = Math.max(p.width * view.k, 7), rh = Math.max(p.depth * view.k, 7);
-    ctx.fillStyle = hover?.settlement === p ? '#d9b36c' : '#a8824a'; ctx.fillRect(px - rw / 2, py - rh / 2, rw, rh);
+    // on the terrain the houses are visible, so the village only gets an outline
+    if (terrain) { ctx.strokeStyle = hover?.settlement === p ? '#8a5a12' : '#8a5a1260'; ctx.lineWidth = 1.5; ctx.strokeRect(px - rw / 2, py - rh / 2, rw, rh); }
+    else { ctx.fillStyle = hover?.settlement === p ? '#d9b36c' : '#a8824a'; ctx.fillRect(px - rw / 2, py - rh / 2, rw, rh); }
     label(`${p.houses}`, px + rw / 2 + 3, py + 4, '#d9c9a0');
   }
   for (const p of b.points) {
@@ -794,12 +939,36 @@ function draw() {
   const placed = ['player', 'enemy'].flatMap(k => s.sides[k].platoons.filter(p => p.position).map(p => ({ p, k, at: toScreen(...p.position) })));
   const front = q => (q.p === picked || q.p === placing) * 2 + (q.p === hover?.platoon);
   placed.sort((a, b) => front(a) - front(b));
+  // symbols grow a little when zoomed in; there the formation of the squads shows too
+  const grow = Math.min(1.5, 1 + (zoom.f - 1) * 0.12), detailed = zoom.f >= 2;
   for (const q of placed) {
-    const [px, py] = q.at, big = front(q) > 0;
-    drawSymbol(unitOf(q.p.unit), px, py, sideColor(q.k), big ? 1 : 0.8, q.p === picked ? '#fff' : HALO);
-    const crowded = placed.some(o => o !== q && Math.abs(o.at[0] - px) < 34 && Math.abs(o.at[1] - py) < 14);
-    if (big) label(q.p.callsign, px + 15, py + 4, '#fff');
-    else if (!crowded) label(q.p.callsign.replace(/^.*_/, ''), px + 11, py + 4, '#ccc');
+    const [px, py] = q.at, big = front(q) > 0, u = unitOf(q.p.unit);
+    q.sc = (big ? 1.05 : 0.85) * grow; q.st = styleOf(q.k, q.p);
+    drawCounter(u, q.st, px, py, q.sc, sideColor(q.k), q.p === picked || chosen.has(q.p));
+  }
+  // labels where they fit: the hovered and picked platoon first, then the details, else only the number
+  ctx.font = '12px "Segoe UI"';
+  const taken = placed.map(q => [q.at[0] - PLATE[0] * q.sc, q.at[1] - PLATE[1] * q.sc, q.at[0] + PLATE[0] * q.sc, q.at[1] + PLATE[1] * q.sc]);
+  const fits = r => !taken.some(t => r[0] < t[2] && r[2] > t[0] && r[1] < t[3] && r[3] > t[1]);
+  if (showSetup) {
+    for (const q of [...placed].reverse()) {
+      const big = front(q) > 0;
+      const r = counterTag(q.st, ...q.at, q.sc, sideColor(q.k), r => big || fits(r));
+      if (big || fits(r)) taken.push(r);
+    }
+  }
+  for (const q of [...placed].reverse()) {
+    const [px, py] = q.at, big = front(q) > 0, lx = px + (PLATE[0] + (showSetup ? 9 : 0)) * q.sc + 3, u = unitOf(q.p.unit);
+    const lines = big || detailed ? [[q.p.callsign, big ? '#fff' : '#ddd'], [u?.name ?? q.p.unit, '#bbb']] : [];
+    const tries = [lines, [[q.p.callsign, '#ddd']], [[q.p.callsign.replace(/^.*_/, ''), '#ccc']]].filter(l => l.length);
+    for (const l of tries) {
+      const w = Math.max(...l.map(([t]) => ctx.measureText(t).width)), y0 = py + (l.length > 1 ? -9 : -5);
+      const r = [lx, y0, lx + w, y0 + l.length * 13];
+      if (!big && !fits(r)) continue;
+      taken.push(r);
+      l.forEach(([t, c], i) => label(t, lx, y0 + 10 + i * 13, c));
+      break;
+    }
   }
   for (const [n, [x, z]] of Object.entries(pts)) {
     const [px, py] = toScreen(x, z), color = used[n] ? css(used[n]) : css('--accent');
@@ -813,14 +982,60 @@ function draw() {
   const len = 1000 * view.k, [bx, by] = [x1 - len - 12, y1 - 12];
   ctx.strokeStyle = '#ddd'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + len, by); ctx.stroke();
   label('1 km', bx, by - 5, '#ddd');
+  if (box) {
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]); ctx.fillStyle = '#ffffff14';
+    ctx.fillRect(box.x0, box.y0, box.x1 - box.x0, box.y1 - box.y0);
+    ctx.strokeRect(box.x0, box.y0, box.x1 - box.x0, box.y1 - box.y0); ctx.setLineDash([]);
+  }
+}
+// a platoon on the map as a counter: a dark plate with the side's colour as border and the
+// tactical symbol on it. With the set-up shown, a wedge on the plate's edge points where the
+// platoon faces, and a tag under the plate names its formation and whether it is dug in.
+const FACING_DIR = { N: [0, -1], NE: [0.71, -0.71], E: [1, 0], SE: [0.71, 0.71], S: [0, 1], SW: [-0.71, 0.71], W: [-1, 0], NW: [-0.71, -0.71] };
+const PLATE = [17, 12]; // half width and height at scale 1
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function drawCounter(u, st, x, y, sc, color, marked) {
+  const [hw, hh] = [PLATE[0] * sc, PLATE[1] * sc];
+  ctx.save();
+  if (showSetup) {
+    // facing: a wedge where the direction leaves the plate
+    const [dx, dy] = FACING_DIR[st.facing] ?? [1, 0], t = Math.min(hw / Math.abs(dx || 1e-9), hh / Math.abs(dy || 1e-9));
+    const [ex, ey] = [x + dx * t, y + dy * t], [rx, ry] = [-dy, dx], w = 5 * sc, l = 8 * sc;
+    ctx.beginPath(); ctx.moveTo(ex - dx * 2 + rx * w, ey - dy * 2 + ry * w); ctx.lineTo(ex + dx * l, ey + dy * l); ctx.lineTo(ex - dx * 2 - rx * w, ey - dy * 2 - ry * w);
+    ctx.closePath(); ctx.fillStyle = color; ctx.strokeStyle = HALO; ctx.lineWidth = 1.5; ctx.fill(); ctx.stroke();
+  }
+  roundRect(x - hw, y - hh, hw * 2, hh * 2, 3 * sc);
+  ctx.fillStyle = '#171913e6'; ctx.fill();
+  ctx.strokeStyle = marked ? '#fff' : color; ctx.lineWidth = marked ? 2.5 : 1.6; ctx.stroke();
+  ctx.restore();
+  drawSymbol(u, x, y, color, 0.7 * sc, '#171913');
+}
+// the tag under a counter; returns its rectangle, drawn only if `fits` accepts it
+function counterTag(st, x, y, sc, color, fits) {
+  const text = `${st.type === 'trench' ? 'dug in · ' : ''}${st.formation}`;
+  ctx.save();
+  ctx.font = '10px "Segoe UI"'; ctx.textAlign = 'center';
+  const tw = ctx.measureText(text).width + 8, ty = y + PLATE[1] * sc + 3, r = [x - tw / 2, ty, x + tw / 2, ty + 13];
+  if (fits(r)) {
+    roundRect(x - tw / 2, ty, tw, 13, 3);
+    ctx.fillStyle = st.type === 'trench' ? '#4a3d22f0' : '#171913e6'; ctx.fill();
+    ctx.strokeStyle = color; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = '#e8e2cc'; ctx.fillText(text, x, ty + 10);
+  }
+  ctx.restore();
+  return r;
 }
 function pick(px, py) {
   let near = null, best = Infinity;
   for (const k of ['player', 'enemy']) {
     for (const p of s.sides[k].platoons) {
       if (!p.position) continue;
-      const [sx, sy] = toScreen(...p.position), d = Math.hypot(sx - px, sy - py);
-      if (Math.abs(sx - px) < 9 && Math.abs(sy - py) < 7 && d < best) { near = { platoon: p, side: k }; best = d; }
+      const [sx, sy] = toScreen(...p.position), d = Math.hypot(sx - px, sy - py), g = 0.85 * Math.min(1.5, 1 + (zoom.f - 1) * 0.12);
+      if (Math.abs(sx - px) < PLATE[0] * g && Math.abs(sy - py) < PLATE[1] * g && d < best) { near = { platoon: p, side: k }; best = d; }
     }
   }
   if (near) return near;
@@ -840,47 +1055,122 @@ function showPlatoon(sideKey, p) {
   refreshKeep();
   document.getElementById('platoon-' + p.callsign)?.scrollIntoView({ block: 'nearest' });
 }
+// the wheel zooms around the mouse; the right or middle button pans
+function zoomAt(px, py, f) {
+  const [mx, mz] = toMap(px, py), e = base().extent;
+  zoom.f = Math.min(24, Math.max(1, f));
+  draw();
+  // keep the map position under the mouse where it was
+  const [nx, nz] = toMap(px, py), cx = (zoom.cx ?? (e.x0 + e.x1) / 2) + mx - nx, cz = (zoom.cz ?? (e.z0 + e.z1) / 2) + mz - nz;
+  zoom.cx = Math.min(e.x1, Math.max(e.x0, cx)); zoom.cz = Math.min(e.z1, Math.max(e.z0, cz));
+  if (zoom.f === 1) resetZoom();
+  draw();
+}
+canvas.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.offsetX, e.offsetY, zoom.f * Math.pow(1.0015, -e.deltaY)); }, { passive: false });
+canvas.addEventListener('contextmenu', e => e.preventDefault());
 canvas.addEventListener('mousedown', e => {
   const [mx, mz] = toMap(e.offsetX, e.offsetY);
-  if (placing) {
-    if (areaOf(mx, mz) !== 'outside') placing.position = [Math.round(mx), Math.round(mz)];
-    placing = null; setHint(); refreshKeep();
+  if (e.button !== 0) {
+    const ext = base().extent;
+    pan = { px: e.offsetX, py: e.offsetY, cx: zoom.cx ?? (ext.x0 + ext.x1) / 2, cz: zoom.cz ?? (ext.z0 + ext.z1) / 2 };
+    canvas.style.cursor = 'grabbing';
     return;
   }
   const hit = pick(e.offsetX, e.offsetY);
-  if (hit?.platoon) { drag = { platoon: hit.platoon }; showPlatoon(hit.side, hit.platoon); return; }
+  if (placing) {
+    if (areaOf(mx, mz) !== 'outside') putOnMap(placing, mx, mz);
+    placing = null; refreshKeep();
+    return;
+  }
+  if (addingPoint) {
+    addingPoint = false;
+    if (hit?.known) addPoint(hit.known.name, hit.known.x, hit.known.z);
+    else if (hit?.settlement) addPoint('village', hit.settlement.x, hit.settlement.z);
+    else if (areaOf(mx, mz) !== 'outside') addPoint('point', mx, mz);
+    else refresh();
+    return;
+  }
+  if (hit?.platoon) {
+    const p = hit.platoon;
+    if (e.shiftKey) { if (chosen.has(p)) chosen.delete(p); else chosen.add(p); setHint(); draw(); return; }
+    // dragging one of several chosen platoons moves them all
+    if (!chosen.has(p)) { chosen.clear(); chosen.add(p); }
+    drag = { start: [mx, mz], moving: [...chosen].filter(q => q.position).map(q => [q, [...q.position]]) };
+    showPlatoon(hit.side, p);
+    return;
+  }
   if (hit?.point) { drag = { point: hit.point }; selected = hit.point; draw(); return; }
-  if (hit?.known) { addPoint(hit.known.name, hit.known.x, hit.known.z); return; }
-  if (hit?.settlement) { addPoint('village', hit.settlement.x, hit.settlement.z); return; }
-  const [x, z] = toMap(e.offsetX, e.offsetY);
-  const ext = base().extent;
-  if (x >= ext.x0 && x <= ext.x1 && z >= ext.z0 && z <= ext.z1) addPoint('point', x, z);
+  box = { x0: e.offsetX, y0: e.offsetY, x1: e.offsetX, y1: e.offsetY, add: e.shiftKey };
 });
 canvas.addEventListener('mousemove', e => {
   const [x, z] = toMap(e.offsetX, e.offsetY);
   document.getElementById('coord').textContent = `x ${Math.round(x)}  z ${Math.round(z)}  ${areaOf(x, z)}`;
+  if (pan) {
+    const e2 = base().extent;
+    zoom.cx = Math.min(e2.x1, Math.max(e2.x0, pan.cx - (e.offsetX - pan.px) / view.k));
+    zoom.cz = Math.min(e2.z1, Math.max(e2.z0, pan.cz + (e.offsetY - pan.py) / view.k));
+    draw();
+    return;
+  }
+  if (box) { box.x1 = e.offsetX; box.y1 = e.offsetY; draw(); return; }
   if (drag) {
-    const at = [Math.round(x), Math.round(z)];
-    if (drag.point) s.points[drag.point] = at;
-    else if (areaOf(x, z) !== 'outside') drag.platoon.position = at;
+    if (drag.point) s.points[drag.point] = [Math.round(x), Math.round(z)];
+    else {
+      const [dx, dz] = [x - drag.start[0], z - drag.start[1]];
+      if (drag.moving.every(([, [px, pz]]) => areaOf(px + dx, pz + dz) !== 'outside')) {
+        for (const [q, [px, pz]] of drag.moving) q.position = [Math.round(px + dx), Math.round(pz + dz)];
+      }
+    }
     draw();
     return;
   }
   hover = pick(e.offsetX, e.offsetY);
-  if (!placing) canvas.style.cursor = hover ? 'pointer' : 'crosshair';
+  if (!placing && !addingPoint) canvas.style.cursor = hover?.platoon || hover?.point ? 'pointer' : 'default';
   const u = hover?.platoon && unitOf(hover.platoon.unit);
   canvas.title = hover?.settlement ? `${hover.settlement.houses} houses, ${hover.settlement.width} x ${hover.settlement.depth} m`
-    : hover?.platoon ? `${hover.platoon.callsign}: ${unitTitle(u)}\n${unitDetails(u)}` : '';
+    : hover?.platoon ? `${hover.platoon.callsign}: ${unitTitle(u)}\n${unitDetails(u)}\n${setupText(hover.side, hover.platoon)}` : '';
   draw();
 });
 window.addEventListener('mouseup', () => {
+  if (pan) { pan = null; setHint(); return; }
+  if (box) {
+    const [xa, xb] = [Math.min(box.x0, box.x1), Math.max(box.x0, box.x1)], [ya, yb] = [Math.min(box.y0, box.y1), Math.max(box.y0, box.y1)];
+    if (!box.add) chosen.clear();
+    // a plain click on open ground only clears the selection
+    if (xb - xa > 3 || yb - ya > 3) {
+      for (const k of ['player', 'enemy']) {
+        for (const p of s.sides[k].platoons) {
+          if (!p.position) continue;
+          const [px, py] = toScreen(...p.position);
+          if (px >= xa && px <= xb && py >= ya && py <= yb) chosen.add(p);
+        }
+      }
+    } else picked = null;
+    box = null;
+    refreshKeep();
+    return;
+  }
   if (!drag) return;
-  const wasPlatoon = drag.platoon;
+  const wasPlatoon = !drag.point;
   drag = null;
   if (wasPlatoon) refreshKeep(); else { renderLeft(); showChecks(); }
 });
-window.addEventListener('keydown', e => { if (e.key === 'Escape' && placing) { placing = null; setHint(); refreshKeep(); } });
+window.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || e.target.closest?.('input, textarea, select')) return;
+  placing = null; addingPoint = false; chosen.clear(); box = null;
+  renderLeft(); refreshKeep();
+});
 new ResizeObserver(resize).observe(canvas.parentElement);
+const setupBox = document.getElementById('showsetup');
+setupBox.checked = showSetup;
+setupBox.addEventListener('change', () => { showSetup = setupBox.checked; localStorage.setItem('mmm.showSetup', showSetup ? '1' : '0'); draw(); });
+const terrainBox = document.getElementById('showterrain');
+terrainBox.checked = showTerrain;
+terrainBox.addEventListener('change', () => { showTerrain = terrainBox.checked; localStorage.setItem('mmm.showTerrain', showTerrain ? '1' : '0'); draw(); });
+const zoomCentre = f => zoomAt(canvas.clientWidth / 2, canvas.clientHeight / 2, zoom.f * f);
+document.getElementById('zoomin').addEventListener('click', () => zoomCentre(1.5));
+document.getElementById('zoomout').addEventListener('click', () => zoomCentre(1 / 1.5));
+document.getElementById('zoomfit').addEventListener('click', () => { resetZoom(); draw(); });
 
 // ---------------------------------------------------------------- toolbar
 async function fillOpen(current) {
@@ -893,11 +1183,11 @@ async function fillOpen(current) {
 document.getElementById('open').addEventListener('change', async e => {
   if (!e.target.value) return;
   s = normalise(await api('/scenario?path=' + encodeURIComponent(e.target.value)));
-  selected = null; picked = null; placing = null; opened.clear();
+  selected = null; picked = null; placing = null; opened.clear(); chosen.clear(); addingPoint = false; resetZoom();
   refresh();
   log('Opened ' + e.target.value);
 });
-document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; picked = null; placing = null; opened.clear(); refresh(); });
+document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; picked = null; placing = null; opened.clear(); chosen.clear(); addingPoint = false; resetZoom(); refresh(); });
 document.getElementById('save').addEventListener('click', async () => {
   try { const r = await api('/save', clean()); log('Saved ' + r.file, 'good'); await fillOpen(`scenarios/${s.id}.json`); } catch (e) { log(e.message, 'err'); }
 });

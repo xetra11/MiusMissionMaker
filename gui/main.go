@@ -191,6 +191,9 @@ func (a *app) routes(prefix string) http.Handler {
 	mux.HandleFunc(prefix+"/catalog", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filepath.Join(a.root, "docs", "catalog.json"))
 	})
+	mux.HandleFunc(prefix+"/map/{base}", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filepath.Join(a.root, "docs", "maps", filepath.Base(r.PathValue("base"))+".png"))
+	})
 	mux.HandleFunc(prefix+"/settings", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			var s settings

@@ -829,8 +829,8 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [],
                           "additionalProperties": false,
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position",
                           "properties": {
                             "at": {
                               "type": "string",
@@ -872,8 +872,7 @@
                                 "NW"
                               ]
                             }
-                          },
-                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
+                          }
                         },
                         "plan": {
                           "enum": [
@@ -897,10 +896,8 @@
                   },
                   "deploy": {
                     "type": "object",
-                    "required": [
-                      "at"
-                    ],
                     "additionalProperties": false,
+                    "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                     "properties": {
                       "at": {
                         "type": "string",
@@ -1009,10 +1006,8 @@
                       "properties": {
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
                           "additionalProperties": false,
+                          "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                           "properties": {
                             "at": {
                               "type": "string",
@@ -1703,8 +1698,8 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [],
                           "additionalProperties": false,
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position",
                           "properties": {
                             "at": {
                               "type": "string",
@@ -1746,8 +1741,7 @@
                                 "NW"
                               ]
                             }
-                          },
-                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
+                          }
                         },
                         "plan": {
                           "enum": [
@@ -1771,10 +1765,8 @@
                   },
                   "deploy": {
                     "type": "object",
-                    "required": [
-                      "at"
-                    ],
                     "additionalProperties": false,
+                    "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                     "properties": {
                       "at": {
                         "type": "string",
@@ -1883,10 +1875,8 @@
                       "properties": {
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
                           "additionalProperties": false,
+                          "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                           "properties": {
                             "at": {
                               "type": "string",
@@ -2602,8 +2592,8 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [],
                           "additionalProperties": false,
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position",
                           "properties": {
                             "at": {
                               "type": "string",
@@ -2645,8 +2635,7 @@
                                 "NW"
                               ]
                             }
-                          },
-                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
+                          }
                         },
                         "plan": {
                           "enum": [
@@ -2670,10 +2659,8 @@
                   },
                   "deploy": {
                     "type": "object",
-                    "required": [
-                      "at"
-                    ],
                     "additionalProperties": false,
+                    "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                     "properties": {
                       "at": {
                         "type": "string",
@@ -2782,10 +2769,8 @@
                       "properties": {
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
                           "additionalProperties": false,
+                          "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                           "properties": {
                             "at": {
                               "type": "string",
@@ -3476,8 +3461,8 @@
                         },
                         "deploy": {
                           "type": "object",
-                          "required": [],
                           "additionalProperties": false,
+                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position",
                           "properties": {
                             "at": {
                               "type": "string",
@@ -3519,8 +3504,7 @@
                                 "NW"
                               ]
                             }
-                          },
-                          "description": "\"at\" may be left out with \"position\": the platoon then sets up at its position"
+                          }
                         },
                         "plan": {
                           "enum": [
@@ -3544,10 +3528,8 @@
                   },
                   "deploy": {
                     "type": "object",
-                    "required": [
-                      "at"
-                    ],
                     "additionalProperties": false,
+                    "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                     "properties": {
                       "at": {
                         "type": "string",
@@ -3656,10 +3638,8 @@
                       "properties": {
                         "deploy": {
                           "type": "object",
-                          "required": [
-                            "at"
-                          ],
                           "additionalProperties": false,
+                          "description": "without \"at\" only type, formation and facing, for platoons with \"position\"",
                           "properties": {
                             "at": {
                               "type": "string",

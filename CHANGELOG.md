@@ -4,6 +4,28 @@ All notable changes to MiusMissionMaker. The release workflow publishes the sect
 
 ## Unreleased
 
+## 0.4.0 – 2026-11-10
+
+### Added
+
+- Click a platoon card, then click on the map to put the platoon there.
+- Drag a box on the map to select several platoons (Shift+click adds or removes one) and move them together, or arrange them as line, column or carré facing the other side, at a chosen distance.
+- The map zooms with the mouse wheel and the **+**, **−** and **Fit** buttons, and pans with the right mouse button.
+- Platoons on the map are counters: a dark plate with the side's colour and the tactical symbol, readable over zones and order lines. Zoomed in, they show their callsign and name where there is room.
+- **Facing & formation** at the bottom right of the map shows a wedge for the facing and a tag with the formation (brown: dug in) on every counter.
+- The map shows the game's map texture with fields, forest, roads, water and contour lines; **Terrain** at the bottom right of the map turns it off. `node tools/scenario.js reference` writes it to `docs/maps`.
+- **Put them on the map** places the platoons of older scenarios that set up at a point.
+
+### Changed
+
+- A click on the map no longer adds a point; use **Add point** in the left panel, then click on the map or on a village or grey dot.
+- Platoons are always placed on the map: a new platoon appears in its side's start area, and the "Set up" choice is gone. The side's **Set-up defaults** set type, formation and facing; a platoon's details can override them.
+- `deploy` of a side or group may leave out `at`; it then only sets type, formation and facing for platoons with a `position`.
+
+### Fixed
+
+- Villages outside a base's centre map tile were mirrored north–south; they are now where the game has them.
+
 ## 0.3.0 – 2026-11-06
 
 ### Added

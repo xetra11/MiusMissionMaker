@@ -340,7 +340,8 @@ function checkSpec(spec, base, catalog) {
     }
   }
   const needPoint = (n, where) => { if (!(n in points)) fail(`${where}: point "${n}" is not defined in "points"`); };
-  // a platoon with "position" may leave out "at": it then sets up at its position
+  // without "at" a deploy only sets type, formation and facing: of a platoon with "position",
+  // or as defaults of a side or group for its platoons with "position"
   const checkDeploy = (d, where, sideKey, position) => {
     if (d.type && !DEPLOY_TYPES[d.type]) fail(`${where}: "type" must be ${Object.keys(DEPLOY_TYPES).join(' or ')}`);
     if (d.formation && !FORMATIONS[d.formation]) fail(`${where}: "formation" must be one of ${Object.keys(FORMATIONS).join(', ')}`);
@@ -384,12 +385,12 @@ function checkSpec(spec, base, catalog) {
       if (p.deploy) checkDeploy(p.deploy, where + '.deploy', sideKey, p.position);
       if (p.group !== undefined && !(p.group in groups)) fail(`${where}: group "${p.group}" is not defined in "sides.${sideKey}.groups"`);
     }
-    if (side.deploy) checkDeploy(side.deploy, `sides.${sideKey}.deploy`, sideKey);
+    if (side.deploy) checkDeploy(side.deploy, `sides.${sideKey}.deploy`, sideKey, true);
     checkOrders(side.orders, `sides.${sideKey}.orders`);
     for (const [g, d] of Object.entries(groups)) {
       const where = `sides.${sideKey}.groups.${g}`;
       if (!d || typeof d !== 'object') fail(`${where} must be an object`);
-      if (d.deploy) checkDeploy(d.deploy, where + '.deploy', sideKey);
+      if (d.deploy) checkDeploy(d.deploy, where + '.deploy', sideKey, true);
       checkOrders(d.orders, where + '.orders');
       if (!side.platoons.some(p => p.group === g)) console.warn(`note: ${where} has no platoons and is ignored`);
     }
@@ -397,8 +398,8 @@ function checkSpec(spec, base, catalog) {
     if (side.orders?.length && ordered.size && side.platoons.every(p => ordered.has(p.group))) {
       console.warn(`note: sides.${sideKey}.orders are ignored: every platoon follows the orders of its group`);
     }
-    if (!side.deploy && side.platoons.some(p => !p.deploy?.at && !p.position && !groups[p.group]?.deploy)) {
-      fail(`sides.${sideKey}: without "deploy" every platoon needs "position", "deploy" or a group with "deploy"`);
+    if (!side.deploy?.at && side.platoons.some(p => !p.deploy?.at && !p.position && !groups[p.group]?.deploy?.at)) {
+      fail(`sides.${sideKey}: without "deploy.at" every platoon needs "position", "deploy.at" or a group with "deploy.at"`);
     }
   }
   if (seen.size > 60) fail('at most 60 platoons per scenario');
@@ -448,7 +449,7 @@ function makeScript(spec) {
   const groupsOf = s => Object.entries(s.groups ?? {}).map(([g, d]) => [g, d, s.platoons.filter(p => p.group === g)]).filter(([, , ps]) => ps.length);
   const ordered = s => groupsOf(s).filter(([, d]) => d.orders?.length);
   // platoons set up by the side's deploy, and those following the side's orders
-  const atSide = s => s.platoons.filter(p => !ownSetup(p) && !s.groups?.[p.group]?.deploy);
+  const atSide = s => s.platoons.filter(p => !ownSetup(p) && !s.groups?.[p.group]?.deploy?.at);
   const restOf = s => { const gs = new Set(ordered(s).map(([g]) => g)); return s.platoons.filter(p => !gs.has(p.group)); };
   const names = ps => ps.map(p => p.callsign).join(' ');
 
@@ -464,7 +465,7 @@ function makeScript(spec) {
   for (const [, s] of sides) {
     for (const [g, d, ps] of groupsOf(s)) {
       const rest = ps.filter(p => !ownSetup(p));
-      if (d.deploy && rest.length && rest.length !== ps.length) L.push(`\tgroup ${g}_main ${names(rest)};`);
+      if (d.deploy?.at && rest.length && rest.length !== ps.length) L.push(`\tgroup ${g}_main ${names(rest)};`);
     }
   }
   for (const [g, s] of sides) if (s.orders?.length && ordered(s).length && restOf(s).length) L.push(`\tgroup ${g}_rest ${names(restOf(s))};`);
@@ -482,10 +483,10 @@ function makeScript(spec) {
   for (const [g, s, o] of sides) {
     const there = anchor(o);
     const rest = atSide(s);
-    if (s.deploy && rest.length) L.push(deployLine(rest.length === s.platoons.length ? g : g + '_main', s.deploy, pts[s.deploy.at], there));
+    if (s.deploy?.at && rest.length) L.push(deployLine(rest.length === s.platoons.length ? g : g + '_main', s.deploy, pts[s.deploy.at], there));
     for (const [gn, d, ps] of groupsOf(s)) {
       const r = ps.filter(p => !ownSetup(p));
-      if (d.deploy && r.length) L.push(deployLine(r.length === ps.length ? gn : gn + '_main', d.deploy, pts[d.deploy.at], there));
+      if (d.deploy?.at && r.length) L.push(deployLine(r.length === ps.length ? gn : gn + '_main', d.deploy, pts[d.deploy.at], there));
     }
     // a platoon at its position takes the set-up style of its own deploy, its group or its side
     for (const p of s.platoons.filter(ownSetup)) {
@@ -495,11 +496,11 @@ function makeScript(spec) {
   }
   L.push('');
   const firstAt = s => s.deploy?.at ?? s.platoons.find(p => p.deploy?.at)?.deploy.at ??
-    groupsOf(s).find(([, d]) => d.deploy)?.[1].deploy.at ?? posPoint.get(s.platoons.find(p => posPoint.has(p)));
+    groupsOf(s).find(([, d]) => d.deploy?.at)?.[1].deploy.at ?? posPoint.get(s.platoons.find(p => posPoint.has(p)));
   const cam = spec.camera ?? {};
   const camAt = cam.at ?? firstAt(own);
   if (camAt) L.push(`\tcamera ${camAt} ${cam.direction ?? 'NE'} ${cam.zoom ?? 0.3};`);
-  if (own.deploy) L.push(`\ttrack own ${own.deploy.at};`);
+  if (own.deploy?.at) L.push(`\ttrack own ${own.deploy.at};`);
   L.push('');
   const deployPhase = spec.deploy_phase !== false;
   L.push(deployPhase ? '\tskip endgame;' : '\tskip deploy endgame;', '', '\trun deploy;', '}', '');
@@ -998,7 +999,8 @@ function schema(missions, catalog, variants, db, names) {
   const xz = { type: 'array', items: { type: 'number' }, minItems: 2, maxItems: 2, description: '[x, z] in metres; x grows to the east' };
   const text = { type: 'string', pattern: '^[\\x20-\\x7e]*$', description: 'plain ASCII only' };
   const deploy = {
-    type: 'object', required: ['at'], additionalProperties: false,
+    type: 'object', additionalProperties: false,
+    description: 'without "at" only type, formation and facing, for platoons with "position"',
     properties: {
       at: { type: 'string', description: 'name of a point in "points"' },
       type: { enum: Object.keys(DEPLOY_TYPES), default: 'place' },
@@ -1012,7 +1014,7 @@ function schema(missions, catalog, variants, db, names) {
       callsign: { ...name, description: `unique; recommended: <name>_<nn> with name from ${CALLSIGN_NAMES.join(', ')}` },
       unit: { anyOf: unitDoc(nation) },
       position: xz,
-      deploy: { ...deploy, required: [], description: '"at" may be left out with "position": the platoon then sets up at its position' },
+      deploy: { ...deploy, description: '"at" may be left out with "position": the platoon then sets up at its position' },
       plan: { enum: Object.keys(PLANS) },
       size: { type: 'integer', minimum: 1, maximum: 15, description: 'number of squads; repeats the last squad type' },
       group: { type: 'string', description: 'name of a group in "groups" of this side' },
@@ -1099,6 +1101,8 @@ function reference(opts) {
   const tiles = mapdata.loadTiles(opts.game);
   const places = mapdata.settlements(tiles);
   for (const m of missions) m.settlements = mapdata.missionSettlements(tiles, places, m.polygon, m.extent);
+  fs.mkdirSync(path.join(ROOT, 'docs', 'maps'), { recursive: true });
+  for (const m of missions) fs.writeFileSync(path.join(ROOT, 'docs', 'maps', baseId(m) + '.png'), mapdata.terrainPng(tiles, m.polygon, m.extent));
   const readme = path.join(ROOT, 'README.md');
   const md = fs.readFileSync(readme, 'utf8');
   const a = md.indexOf(BEGIN), b = md.indexOf(END);
@@ -1107,7 +1111,7 @@ function reference(opts) {
   fs.writeFileSync(path.join(ROOT, 'docs', 'UNITS.md'), unitsDoc(missions, catalog, variants, db, names));
   fs.writeFileSync(path.join(ROOT, 'docs', 'catalog.json'), JSON.stringify(catalogJson(missions, catalog, variants, db, names)) + '\n');
   fs.writeFileSync(path.join(ROOT, 'scenario.schema.json'), JSON.stringify(schema(missions, catalog, variants, db, names), null, 2) + '\n');
-  console.log(`README.md, docs/UNITS.md, scenario.schema.json: ${missions.length} bases, ${db.platoons.length} platoon types`);
+  console.log(`README.md, docs/UNITS.md, docs/maps, scenario.schema.json: ${missions.length} bases, ${db.platoons.length} platoon types`);
 }
 
 if (require.main === module) {

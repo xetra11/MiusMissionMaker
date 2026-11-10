@@ -34,13 +34,15 @@ If the game is not in the default Steam folder, set its location under **Setting
 
 **1. Choose a map.** Press **New**, enter a title and pick a **Map**. The map also decides your side: German on `tr03`, `tr04`, `tr06`, Soviet on the others. Use **Open** to load a saved scenario or one of the examples.
 
-**2. Set points on the map.** Blue and red squares are the start areas of the two sides, brown rectangles are villages (the number is the house count), and grey dots are positions from the original mission. Click anywhere to add a point, drag to move it, or click a village or grey dot to use its position. East is to the right, and the bar shows 1 km.
+**2. Set points on the map.** Blue and red squares are the start areas of the two sides, brown rectangles are villages (the number is the house count), and grey dots are positions from the original mission. Press **Add point** under **Points**, then click on the map; clicking a village or grey dot uses its position. Drag a point to move it. East is to the right, and the bar shows 1 km.
 
 ![Map with points and enemy orders](docs/img/editor-map.png)
 
-**3. Pick your forces.** In **Player** and **Enemy**, choose where each side sets up and add platoons. Platoons carry their names from the game and the German tactical symbol of their type after H.Dv. 272 (1941, weapon symbols as changed in 1943): a box for infantry, a lozenge for tanks, a T for anti-tank guns, an angle for mortars, pennants for staffs, a thick left side for companies; wheels below mean motorised, an oval self-propelled, wheel and oval half-tracks. Soviet platoons use the Soviet symbols after the US handbook TM 30-430 (1946): diamonds for tanks (empty light, line medium, dot heavy), a V for mortars, an umbrella for machine guns, a staff with one crossbar for a platoon and two for a company. Sources: [Panzerworld](https://panzerworld.com/german-tactical-symbols), [Niehorster](http://www.niehorster.org/011_germany/symbols/_symbols_41.html), [Bundesarchiv](https://www.bundesarchiv.de/im-archiv-recherchieren/archivgut-recherchieren/nach-themen/lagekarten-verstehen/), [TM 30-430, chapter XII](https://digitalcommons.unl.edu/dodmilintel/29). The search covers names, types and vehicles, for example `StuG`, `T-34` or `mortar`, and the list can be filtered by type. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. Click a platoon to show its details, such as **Size** for the number of squads or vehicles.
+**3. Pick your forces.** In **Player** and **Enemy**, add platoons; each new one appears on the map in its side's start area. Platoons carry their names from the game and the German tactical symbol of their type after H.Dv. 272 (1941, weapon symbols as changed in 1943): a box for infantry, a lozenge for tanks, a T for anti-tank guns, an angle for mortars, pennants for staffs, a thick left side for companies; wheels below mean motorised, an oval self-propelled, wheel and oval half-tracks. Soviet platoons use the Soviet symbols after the US handbook TM 30-430 (1946): diamonds for tanks (empty light, line medium, dot heavy), a V for mortars, an umbrella for machine guns, a staff with one crossbar for a platoon and two for a company. Sources: [Panzerworld](https://panzerworld.com/german-tactical-symbols), [Niehorster](http://www.niehorster.org/011_germany/symbols/_symbols_41.html), [Bundesarchiv](https://www.bundesarchiv.de/im-archiv-recherchieren/archivgut-recherchieren/nach-themen/lagekarten-verstehen/), [TM 30-430, chapter XII](https://digitalcommons.unl.edu/dodmilintel/29). The search covers names, types and vehicles, for example `StuG`, `T-34` or `mortar`, and the list can be filtered by type. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. Click a platoon to show its details, such as **Size** for the number of squads or vehicles.
 
-Under **Set up** each platoon either stands with its side (or group), at a point of its own, or **on the map**: choose that, click where it should stand and drag its symbol later. Clicking a symbol on the map shows its platoon.
+To move a platoon, drag its symbol, or click its card and then the map. Clicking a symbol shows its platoon. The map shows the game's own map texture (fields, forest, roads, water, faint contour lines); **Terrain** at the bottom right of the map turns it off. Each platoon is a counter with its tactical symbol. With **Facing & formation** at the bottom right of the map, a wedge on the counter's edge shows where it faces and a tag below names its formation (brown: dug in). **Set-up defaults** at the top of a side set type, formation and facing for all its platoons; a platoon's details can override them. The mouse wheel zooms, the right mouse button pans, **Fit** shows the whole map. Scenarios from older versions may set platoons up at a point; **Put them on the map** places them there in a line.
+
+To arrange several platoons, drag a box around them on open ground (Shift+click adds or removes one). Drag one of them to move them all, or choose **Line**, **Column** or **Carré** in the bar below the map: the platoons line up around their middle, facing the other side's start area, at the chosen distance.
 
 ![Searching platoons](docs/img/editor-units.png)
 
@@ -234,14 +236,14 @@ JSON has no comments. Unknown top-level fields starting with `_` are ignored, e.
 
 | Field | Required | Values | Meaning |
 |---|---|---|---|
-| `at` | yes | point name | Where to set up. |
+| `at` | – | point name | Where to set up. Without `at`, `type`, `formation` and `facing` are defaults for the platoons with a `position`. |
 | `type` | – | `"trench"` \| `"place"` | `trench` = dug in at prepared positions, `place` = in the open. Default `place`. |
 | `formation` | – | see 6.3 | Formation. Default `line2` for `trench`, `columnlr` for `place`. |
 | `facing` | – | `"N"`, `"NE"`, `"E"`, `"SE"`, `"S"`, `"SW"`, `"W"`, `"NW"` | Facing. Default: towards the other side. |
 
-Each side needs a `deploy`, unless every one of its platoons has its own `deploy`, a `position` or a group with `deploy`.
+Every platoon needs a `position`, its own `deploy.at`, or a group or side `deploy` with `at`.
 
-A platoon is set up by the first of: its own `deploy` with `at`, its `position`, its group's `deploy`, the side's `deploy`.
+A platoon sets up at the first of: its own `deploy.at`, its `position`, its group's `deploy.at`, the side's `deploy.at`. Type, formation and facing come from its own `deploy`, else from its group's, else from its side's.
 
 **`orders`** – executed in sequence, for **all** platoons of the side together (without those in a group with its own orders), starting when the player unpauses after deployment:
 
@@ -392,7 +394,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -1024..4096, z -2048..3072; grid of 1024 m cells
 - Player start area: x 0..1024 / z 0..1024; x 1024..2048 / z 1024..2048
 - Enemy start area: x 2048..3072 / z 0..1024; x 2048..3072 / z 1024..2048
-- Settlements: 111 houses around [2900, -416], 1812 x 1063 m (neutral area); 33 houses around [2425, -430], 702 x 317 m (neutral area); 17 houses around [1352, -127], 316 x 248 m (neutral area); 8 houses around [1640, -230], 322 x 127 m (neutral area); 8 houses around [3506, -476], 66 x 251 m (neutral area); 5 houses around [1268, 300], 104 x 202 m (neutral area); 4 houses around [98, 98], 55 x 114 m (player area); 4 houses around [3342, -89], 75 x 98 m (neutral area); 3 houses around [404, 35], 152 x 22 m (player area)
+- Settlements: 10 houses around [615, -403], 538 x 51 m (neutral area); 5 houses around [1268, 300], 104 x 202 m (neutral area); 4 houses around [98, 98], 55 x 114 m (player area); 4 houses around [385, 14], 152 x 105 m (player area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -412,7 +414,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z -1024..4096; grid of 1024 m cells
 - Player start area: x 1024..2048 / z 2048..3072
 - Enemy start area: x 0..1024 / z 1024..2048
-- Settlements: 10 houses around [2893, 2117], 220 x 164 m (neutral area); 9 houses around [2478, 2789], 49 x 148 m (neutral area)
+- Settlements: none
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -433,7 +435,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z -1024..4096; grid of 1024 m cells
 - Player start area: x -1024..0 / z 1024..2048; x -1024..0 / z 2048..3072
 - Enemy start area: x 0..1024 / z 1024..2048; x 1024..2048 / z 1024..2048
-- Settlements: 10 houses around [2893, 2117], 220 x 164 m (neutral area); 9 houses around [2478, 2789], 49 x 148 m (neutral area)
+- Settlements: none
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -450,7 +452,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -1024..4096, z -2048..2048; grid of 1024 m cells
 - Player start area: x 0..1024 / z -1024..0
 - Enemy start area: x 2048..3072 / z -1024..0; x 2048..3072 / z 0..1024
-- Settlements: 83 houses around [1583, 1757], 1180 x 586 m (neutral area); 42 houses around [1721, 1388], 527 x 524 m (neutral area); 27 houses around [346, 1386], 713 x 410 m (neutral area); 10 houses around [1434, -1909], 256 x 159 m (neutral area); 8 houses around [-590, -476], 66 x 251 m (neutral area); 6 houses around [2072, -2014], 180 x 44 m (neutral area); 4 houses around [-754, -89], 75 x 98 m (neutral area); 4 houses around [803, -1537], 59 x 117 m (neutral area)
+- Settlements: 89 houses around [1611, 1775], 1180 x 658 m (neutral area); 42 houses around [1721, 1388], 527 x 524 m (neutral area); 27 houses around [346, 1386], 713 x 410 m (neutral area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -506,7 +508,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z 0..4096; grid of 1024 m cells
 - Player start area: x 0..1024 / z 2048..3072
 - Enemy start area: x 0..1024 / z 1024..2048; x 1024..2048 / z 1024..2048
-- Settlements: 149 houses around [-1868, 262], 1803 x 598 m (neutral area); 111 houses around [-1196, 3680], 1812 x 1063 m (neutral area); 33 houses around [-1671, 3666], 702 x 317 m (neutral area); 10 houses around [1434, 2187], 256 x 159 m (neutral area); 8 houses around [-590, 3620], 66 x 251 m (neutral area); 6 houses around [2072, 2082], 180 x 44 m (neutral area); 4 houses around [-754, 4007], 75 x 98 m (neutral area); 4 houses around [803, 2559], 59 x 117 m (player area)
+- Settlements: 30 houses around [2989, 2977], 777 x 982 m (neutral area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |
@@ -528,7 +530,7 @@ A base supplies the map section, weather, date/time and which nation the player 
 - Map extent: x -2048..3072, z -2048..2048; grid of 1024 m cells
 - Player start area: x -1024..0 / z -1024..0
 - Enemy start area: x 1024..2048 / z -1024..0
-- Settlements: 20 houses around [274, 1756], 430 x 307 m (neutral area); 10 houses around [845, -1979], 220 x 164 m (neutral area); 9 houses around [430, -1307], 49 x 148 m (neutral area); 8 houses around [686, 1599], 298 x 393 m (neutral area); 5 houses around [657, 1985], 215 x 102 m (neutral area); 4 houses around [1023, 1947], 112 x 64 m (neutral area); 4 houses around [2146, 98], 55 x 114 m (neutral area); 3 houses around [2452, 35], 152 x 22 m (neutral area)
+- Settlements: 20 houses around [274, 1756], 430 x 307 m (neutral area); 10 houses around [2663, -403], 538 x 51 m (neutral area); 8 houses around [686, 1599], 298 x 393 m (neutral area); 4 houses around [1023, 1947], 112 x 64 m (neutral area); 4 houses around [2146, 98], 55 x 114 m (neutral area); 4 houses around [2433, 14], 152 x 105 m (neutral area)
 - Known points from the original mission script (tested positions; good anchors for your own points):
 
 | name | x | z | lies in |

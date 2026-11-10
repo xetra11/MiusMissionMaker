@@ -1,10 +1,13 @@
-// Reads building positions from the map tiles (*.polypack2) and groups them into settlements.
+// Reads building positions from the map tiles (*.polypack2) and groups them into settlements,
+// and puts together the map texture of a mission.
 //
 // Tile object list ("obj_quads"): u32 total, then records
 //   [u32 fileLen, file (0 = same file)] [u32 nameLen, name (0 = same object)] f32 x, z, rot, 8 unknown bytes
 // Mission coordinates are the local coordinates of the mission's centre tile; tiles are 2048 m.
+// cell_x grows to +x, but cell_y grows to -z: the tile with cell_y + 1 lies south of a tile.
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 const { parse } = require('./azcf');
 
 const TILE = 2048;
@@ -56,7 +59,7 @@ function loadTiles(gameDir) {
     const params = parse(e.cell_desc).nodes[1].params;
     const cell = n => params.find(p => p.name === n).raw.readUInt32LE(0);
     tiles[f.split('_')[0].toLowerCase()] = {
-      cx: cell('cell_x'), cz: cell('cell_y'),
+      file: path.join(dir, f), cx: cell('cell_x'), cz: cell('cell_y'),
       buildings: parseObjects(e.obj_quads).filter(o => /^(build|saray|church)/.test(o.name)),
     };
   }
@@ -66,7 +69,7 @@ function loadTiles(gameDir) {
 // all settlements in world coordinates
 function settlements(tiles) {
   const all = Object.values(tiles).flatMap(t => t.buildings.map(b => ({
-    x: t.cx * TILE + b.x, z: t.cz * TILE + b.z, house: b.name.startsWith('build') || b.name.startsWith('church'),
+    x: t.cx * TILE + b.x, z: b.z - t.cz * TILE, house: b.name.startsWith('build') || b.name.startsWith('church'),
   })));
   const seen = new Array(all.length).fill(false);
   const groups = [];
@@ -97,9 +100,67 @@ function settlements(tiles) {
 function missionSettlements(tiles, all, polygon, extent) {
   const tile = tiles[path.win32.basename(polygon).split('_')[0].toLowerCase()];
   return all
-    .map(s => ({ ...s, x: Math.round(s.x - tile.cx * TILE), z: Math.round(s.z - tile.cz * TILE) }))
+    .map(s => ({ ...s, x: Math.round(s.x - tile.cx * TILE), z: Math.round(s.z + tile.cz * TILE) }))
     .filter(s => s.houses >= 3 && s.x >= extent.x0 && s.x <= extent.x1 && s.z >= extent.z0 && s.z <= extent.z1)
     .sort((a, b) => b.houses - a.houses);
 }
 
-module.exports = { loadTiles, settlements, missionSettlements };
+// The tile entry "back" is the game's top-down map texture: an "ATF1DXT1" header padded to 0x2000,
+// then 512 x 512 pixels as DXT1 blocks, 4 m per pixel, row 0 at the tile's south edge (z = 0).
+const BACK = 512, PX = TILE / BACK;
+function readBack(file) {
+  const b = readEntries(file, ['back']).back, rgb = Buffer.alloc(BACK * BACK * 3);
+  const c565 = v => [((v >> 11) & 31) * 255 / 31, ((v >> 5) & 63) * 255 / 63, (v & 31) * 255 / 31];
+  const mix = (p, q, a) => p.map((v, i) => v * a + q[i] * (1 - a));
+  let o = 0x2000;
+  for (let by = 0; by < BACK / 4; by++) {
+    for (let bx = 0; bx < BACK / 4; bx++) {
+      const a = b.readUInt16LE(o), c = b.readUInt16LE(o + 2), bits = b.readUInt32LE(o + 4);
+      o += 8;
+      const p0 = c565(a), p1 = c565(c);
+      const pal = a > c ? [p0, p1, mix(p0, p1, 2 / 3), mix(p0, p1, 1 / 3)] : [p0, p1, mix(p0, p1, 0.5), [0, 0, 0]];
+      for (let i = 0; i < 16; i++) {
+        const px = pal[(bits >> (i * 2)) & 3], q = ((by * 4 + (i >> 2)) * BACK + bx * 4 + (i & 3)) * 3;
+        rgb[q] = px[0]; rgb[q + 1] = px[1]; rgb[q + 2] = px[2];
+      }
+    }
+  }
+  return rgb;
+}
+
+function png(w, h, rgb) {
+  const raw = Buffer.alloc((w * 3 + 1) * h);
+  for (let y = 0; y < h; y++) rgb.copy(raw, y * (w * 3 + 1) + 1, y * w * 3, (y + 1) * w * 3);
+  const chunk = (type, data) => {
+    const td = Buffer.concat([Buffer.from(type), data]), len = Buffer.alloc(4), crc = Buffer.alloc(4);
+    len.writeUInt32BE(data.length); crc.writeUInt32BE(zlib.crc32(td));
+    return Buffer.concat([len, td, crc]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 2;
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr),
+    chunk('IDAT', zlib.deflateSync(raw, { level: 9 })), chunk('IEND', Buffer.alloc(0))]);
+}
+
+// map texture of a mission's extent as PNG, 4 m per pixel, north up
+function terrainPng(tiles, polygon, extent) {
+  const tile = tiles[path.win32.basename(polygon).split('_')[0].toLowerCase()];
+  const byCell = new Map(Object.values(tiles).map(t => [t.cx + ',' + t.cz, t]));
+  const backs = new Map();
+  const w = Math.round((extent.x1 - extent.x0) / PX), h = Math.round((extent.z1 - extent.z0) / PX);
+  const rgb = Buffer.alloc(w * h * 3, 0x80);
+  for (let j = 0; j < h; j++) {
+    const z = extent.z1 - (j + 0.5) * PX, dz = Math.floor(z / TILE);
+    for (let i = 0; i < w; i++) {
+      const x = extent.x0 + (i + 0.5) * PX, dx = Math.floor(x / TILE);
+      const t = byCell.get((tile.cx + dx) + ',' + (tile.cz - dz));
+      if (!t) continue;
+      if (!backs.has(t)) backs.set(t, readBack(t.file));
+      const col = Math.floor((x - dx * TILE) / PX), row = Math.floor((z - dz * TILE) / PX);
+      backs.get(t).copy(rgb, (j * w + i) * 3, (row * BACK + col) * 3, (row * BACK + col) * 3 + 3);
+    }
+  }
+  return png(w, h, rgb);
+}
+
+module.exports = { loadTiles, settlements, missionSettlements, terrainPng };
