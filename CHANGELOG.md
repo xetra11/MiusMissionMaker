@@ -2,7 +2,7 @@
 
 All notable changes to MiusMissionMaker. The release workflow publishes the section of a version as its release notes, so add a section `## <version> – <date>` before pushing the tag `v<version>`.
 
-## Unreleased
+## 0.5.0 – 2026-11-11
 
 ### Changed
 
