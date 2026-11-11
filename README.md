@@ -38,14 +38,14 @@ If the game is not in the default Steam folder, set its location under **Setting
 
 **3. Set points.** Points are the targets of orders and objectives. Press **Add point** under **Points**, then click on the map; clicking a village or grey dot uses its position. Drag a point to move it.
 
-**4. Pick your forces.** In **Player** and **Enemy**, search for platoons and add them; each new one appears on the map in its side's start area. The search covers names, types and vehicles, for example `StuG`, `T-34` or `mortar`, and the list can be filtered by type. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. **▸** on a platoon's card shows its details, such as **Size** for the number of squads or vehicles.
+**4. Pick your forces.** In **Player** and **Enemy**, search for platoons and add them; each new one appears on the map in its side's start area. The search covers names, types and vehicles, for example `StuG`, `T-34` or `mortar`, and the list can be filtered by type. Platoons marked **tested** come from original missions. **not in 07/1943** means the unit did not exist on the mission date; it still works. The list on the right shows each platoon on one line; click it, or its counter on the map, and its details open at the top left of the map, such as **Size** for the number of squads or vehicles. **×** or Esc closes them.
 
 ![Searching platoons](docs/img/editor-units.png)
 
 **5. Place your platoons.** Each platoon is a counter on the map with its tactical symbol.
 
 - **Where:** your platoons set up only in the blue start area, enemy platoons anywhere except there, for example in a village in no-man's land. A platoon dragged against the edge slides along it; one dropped or arranged outside goes to the nearest place it may stand.
-- **Move one:** drag its counter, or click its card and then the map.
+- **Move one:** drag its counter, or press **Move to …** in its details and click on the map. A platoon not on the map yet waits for that click as soon as you pick it in the list.
 - **Move several:** drag a box around them on open ground (Shift+click adds or removes one), then drag one of them.
 - **Arrange several:** with a box selection, the bar below the map offers **Line**, **Column** and **Carré**. The platoons line up around their middle, facing the other side's start area, at the chosen distance.
 - **Facing and formation:** **Facing & formation** at the bottom right shows a wedge on each counter's edge where it faces and a tag below with its formation (brown: dug in). **Set-up defaults** at the top of a side set type, formation and facing for all its platoons; a platoon's details can override them.

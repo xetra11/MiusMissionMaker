@@ -23,6 +23,7 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 #zoombar { position: absolute; right: 10px; top: 10px; display: flex; gap: 4px; }
 #zoombar button { min-width: 30px; background: var(--panel); }
 #formbar { position: absolute; left: 50%; bottom: 44px; white-space: nowrap; transform: translateX(-50%); display: none; gap: 6px; align-items: center; padding: 6px 8px; background: var(--panel); border: 1px solid var(--accent); border-radius: 5px; box-shadow: 0 2px 10px #0008; }
+#detail { position: absolute; left: 10px; top: 10px; width: 360px; max-height: calc(100% - 50px); overflow-y: auto; display: none; padding: 8px 9px; background: var(--panel); border: 1px solid var(--accent); border-radius: 5px; box-shadow: 0 2px 10px #0008; }
 #mapopts { position: absolute; right: 10px; bottom: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 #mapopts label { padding: 3px 7px; background: #000a; border-radius: 4px; cursor: pointer; }
 #coord:empty { display: none; }
@@ -60,6 +61,7 @@ button.icon { padding: 1px 7px; color: var(--muted); }
 #panel { padding: 10px; overflow-y: auto; flex: 1; }
 .card { background: var(--panel2); border: 1px solid var(--line); border-radius: 5px; padding: 6px 7px; margin-bottom: 6px; }
 .card.wrong { border-color: var(--bad); }
+.card.plat { display: flex; gap: 6px; align-items: center; padding: 2px 4px 2px 6px; margin-bottom: 3px; cursor: pointer; }
 .pt { display: grid; grid-template-columns: 12px 1fr 62px 62px 24px; gap: 4px; align-items: center; margin-bottom: 4px; }
 .pt input { padding: 2px 4px; width: 100%; min-width: 0; }
 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
@@ -99,6 +101,7 @@ dialog::backdrop { background: #0008; }
       <div id="hint"></div>
       <div id="mapopts"><label title="The game's map: fields, forest, roads, water and contour lines"><input type="checkbox" id="showterrain"> Terrain</label><label title="Show where each platoon faces and its formation"><input type="checkbox" id="showsetup"> Facing &amp; formation</label><span id="coord"></span></div>
       <div id="formbar"></div>
+      <div id="detail"></div>
       <div id="zoombar">
         <button id="zoomin" title="Zoom in (mouse wheel)">+</button>
         <button id="zoomout" title="Zoom out (mouse wheel)">−</button>
@@ -128,10 +131,8 @@ dialog::backdrop { background: #0008; }
 const API = '/api/' + location.hash.slice(1);
 const IN_SERVICE_DATE = 0x19430701; // all bases are set on this date
 let cat, s, tab = 'player', unitSearch = '', unitKind = '', selected = null, hover = null, drag = null;
-// platoon picked on the map, and the platoon waiting for a click on the map
+// platoon whose details are open on the map, and the platoon waiting for a click on the map
 let picked = null, placing = null;
-// platoon cards showing their details
-const opened = new Set();
 // waiting for a click that adds a point; platoons chosen on the map, the selection box being drawn
 let addingPoint = false, box = null, formSpacing = 100;
 // facing and formation on the map counters, chosen at the bottom right of the map
@@ -461,7 +462,7 @@ function placementForm(sideKey, p) {
   delete own.at;
   return [
     h('div', { class: 'small muted mono', style: 'margin:6px 0 4px' }, p.position ? `x ${p.position[0]}  z ${p.position[1]}, drag it on the map`
-      : d.at ? `sets up at point ${d.at}; click the card, then the map, to place it yourself` : 'not on the map yet: click the card, then the map'),
+      : d.at ? `sets up at point ${d.at}; "Place on map" places it yourself` : 'not on the map yet: click on the map to place it'),
     styleForm(p.deploy ??= {}, {
       type: `as ${g ? 'group' : 'side'} (${TYPE_NAMES[inherited.type]})`, formation: `as ${g ? 'group' : 'side'} (${inherited.formation})`,
       facing: side.deploy?.facing || g?.facing ? `as ${g ? 'group' : 'side'} (${inherited.facing})` : `to the enemy (${inherited.facing})`,
@@ -640,37 +641,63 @@ function setupText(sideKey, p) {
   const st = styleOf(sideKey, p);
   return `${p.position ? '' : `at ${at}, `}${TYPE_NAMES[st.type]}, ${st.formation}, facing ${st.facing}`;
 }
-function platoonCard(sideKey, p, i, nation) {
-  const side = s.sides[sideKey], u = unitOf(p.unit), wrong = u?.nation !== nation;
-  const variants = u?.variants ?? [], groups = Object.keys(side.groups ?? {}), isOpen = opened.has(p);
-  const toggle = () => { if (isOpen) opened.delete(p); else opened.add(p); refreshKeep(); };
-  // a click on the card (not on its controls) gets the platoon ready to be put on the map
-  const arm = e => {
-    if (e.target.closest('input, select, button, textarea, label')) return;
-    placing = placing === p ? null : p; picked = p; addingPoint = false;
+function removePlatoon(p) {
+  const list = s.sides[sideOfPlatoon(p)].platoons;
+  list.splice(list.indexOf(p), 1);
+  chosen.delete(p);
+  if (picked === p) picked = null;
+  if (placing === p) placing = null;
+  refreshKeep();
+}
+// one line per platoon; a click picks it and opens its details on the map, one not on the map yet waits for a click there
+function platoonCard(sideKey, p, nation) {
+  const u = unitOf(p.unit), wrong = u?.nation !== nation, off = !p.position;
+  const pickIt = e => {
+    if (e.target.closest('button')) return;
+    // like a click on its counter, it replaces the selection on the map
+    chosen.clear();
+    if (!off) chosen.add(p);
+    picked = p; placing = off ? p : null; addingPoint = false;
     renderLeft(); refreshKeep();
   };
   const style = placing === p ? 'border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)' : picked === p || chosen.has(p) ? 'border-color:var(--accent)' : '';
-  return h('div', { class: 'card' + (wrong ? ' wrong' : ''), id: 'platoon-' + p.callsign, style: style + ';cursor:pointer', onclick: arm,
-    title: 'Click, then click on the map to put the platoon there' },
+  return h('div', { class: 'card plat' + (wrong ? ' wrong' : ''), id: 'platoon-' + p.callsign, style, onclick: pickIt,
+    title: `${p.callsign}: ${unitTitle(u)}\n${unitDetails(u)}\n${setupText(sideKey, p)}` },
+    symbol(u, sideColor(sideKey), 22),
+    h('span', { class: 'mono ellip', style: 'flex:none;width:96px' }, p.callsign),
+    h('span', { class: 'grow ellip small' + (placing === p ? '' : ' muted'), style: placing === p ? 'color:var(--accent)' : '' },
+      placing === p ? 'click on the map…' : u?.name ?? p.unit),
+    off && placing !== p ? h('span', { class: 'tag', title: setupText(sideKey, p) }, p.deploy?.at || s.sides[sideKey].deploy?.at ? 'at point' : 'not placed') : null,
+    h('button', { class: 'icon', title: 'Remove', onclick: () => removePlatoon(p) }, '×'));
+}
+// the configuration of the picked platoon, on the map
+function renderDetail() {
+  const box = document.getElementById('detail'), p = picked, sideKey = p && sideOfPlatoon(p);
+  if (!sideKey) { picked = null; box.style.display = 'none'; return; }
+  const side = s.sides[sideKey], u = unitOf(p.unit), nation = sideKey === 'player' ? base().player : base().enemy;
+  const variants = u?.variants ?? [], groups = Object.keys(side.groups ?? {});
+  box.style.display = 'block';
+  fill(box,
     h('div', { class: 'row' },
       symbol(u, sideColor(sideKey), 30),
-      input(p.callsign, v => { p.callsign = v; showChecks(); draw(); }, { class: 'mono', style: 'width:104px', list: 'callsigns', title: 'Callsign (name in the game and in scripts)' }),
-      h('div', { class: 'grow ellip', title: `${unitTitle(u)}\n${p.unit}` },
-        h('b', {}, u?.name ?? p.unit), u?.parent ? h('span', { class: 'muted' }, ' · ' + u.parent) : null),
-      h('button', { class: 'icon', title: isOpen ? 'Hide details' : 'Show details', onclick: toggle }, isOpen ? '▾' : '▸'),
-      h('button', { class: 'icon', title: 'Remove', onclick: () => { side.platoons.splice(i, 1); refreshKeep(); } }, '×')),
-    h('div', { class: 'small ellip' + (placing === p ? '' : ' muted'), style: 'margin:3px 0 0 36px' + (placing === p ? ';color:var(--accent)' : ''), title: unitDetails(u) },
-      placing === p ? 'Click on the map to put it there. Esc cancels.'
-        : [unitDetails(u), setupText(sideKey, p), p.group ? 'group ' + p.group : null].filter(Boolean).join(' · ')),
-    isOpen ? h('div', { style: 'margin-top:6px' },
-      h('div', { class: 'small muted mono', style: 'margin-bottom:4px' }, p.unit + (u?.org ? ` · ${u.org}` : '')),
-      h('div', { class: 'row small' },
-        variants.length ? select([[u.key, `strongest (${u.men})`], ...variants.map(v => [v.key, `${v.key.split('@')[1]} (${v.men})`])], p.unit, v => { p.unit = v; refreshKeep(); }, { title: 'Variant' }) : null,
-        u?.source === 'database' ? h('label', { title: 'Number of squads' }, 'Size ', number(p.size, v => { p.size = v; }, { style: 'width:52px', min: 1, max: u.maxSquads || 15 })) : null,
-        select([['', 'plan: default'], ...cat.enums.plans], p.plan, v => { p.plan = v; }),
-        groups.length ? select([['', 'no group'], ...groups.map(g => [g, 'group: ' + g])], p.group, v => { if (v) p.group = v; else delete p.group; refreshKeep(); }, { title: 'Group' }) : null),
-      placementForm(sideKey, p)) : null);
+      input(p.callsign, v => { p.callsign = v; showChecks(); draw(); },
+        { class: 'mono', style: 'width:110px', list: 'callsigns', title: 'Callsign (name in the game and in scripts)', onchange: () => renderPanel() }),
+      h('div', { class: 'grow ellip', title: unitTitle(u) }, h('b', {}, u?.name ?? p.unit), u?.parent ? h('span', { class: 'muted' }, ' · ' + u.parent) : null),
+      h('button', { class: 'icon', title: 'Close (Esc)', onclick: () => { picked = null; placing = null; refreshKeep(); } }, '×')),
+    u?.nation !== nation ? h('div', { class: 'small', style: 'color:var(--bad);margin-top:4px' }, `This unit is not ${nation}.`) : null,
+    h('div', { class: 'small', style: 'margin-top:5px' }, unitDetails(u)),
+    h('div', { class: 'small muted mono', style: 'margin:2px 0 6px' }, p.unit + (u?.org ? ` · ${u.org}` : '')),
+    h('div', { class: 'row small', style: 'flex-wrap:wrap' },
+      variants.length ? select([[u.key, `strongest (${u.men})`], ...variants.map(v => [v.key, `${v.key.split('@')[1]} (${v.men})`])], p.unit, v => { p.unit = v; refreshKeep(); }, { title: 'Variant' }) : null,
+      u?.source === 'database' ? h('label', { title: 'Number of squads' }, 'Size ', number(p.size, v => { p.size = v; }, { style: 'width:52px', min: 1, max: u.maxSquads || 15 })) : null,
+      select([['', 'plan: default'], ...cat.enums.plans], p.plan, v => { p.plan = v; }),
+      groups.length ? select([['', 'no group'], ...groups.map(g => [g, 'group: ' + g])], p.group, v => { if (v) p.group = v; else delete p.group; refreshKeep(); }, { title: 'Group' }) : null),
+    placementForm(sideKey, p),
+    h('div', { class: 'row', style: 'margin-top:6px' },
+      h('button', { title: 'Then click on the map', onclick: () => { placing = placing === p ? null : p; addingPoint = false; renderLeft(); refreshKeep(); } },
+        placing === p ? 'Click on the map… (Esc)' : p.position ? 'Move to …' : 'Place on map'),
+      h('span', { class: 'grow' }),
+      h('button', { onclick: () => removePlatoon(p) }, 'Remove')));
 }
 function unitList(sideKey, nation) {
   const q = unitSearch.toLowerCase();
@@ -682,7 +709,8 @@ function unitList(sideKey, nation) {
     return h('div', { class: 'unit', title: `${u.key}${u.org ? '\n' + u.org : ''}\nSquads: ${u.squads.join(', ')}`, onclick: () => {
       const p = { callsign: nextCallsign(sideKey), unit: u.key, position: freeSpot(sideKey) };
       s.sides[sideKey].platoons.push(p);
-      opened.add(p);
+      chosen.clear(); chosen.add(p);
+      picked = p;
       refreshKeep();
     } },
     symbol(u, sideColor(sideKey), 30),
@@ -708,7 +736,7 @@ function sidePanel(sideKey) {
       ? legacyPoint('Platoons not on the map set up', side.deploy.at, sideKey) : null,
     h('label', { class: 'small' }, h('input', { type: 'checkbox', checked: side.ai === false, onchange: e => { if (e.target.checked) side.ai = false; else delete side.ai; } }), ' Block AI (only script orders)'),
     h('h2', {}, `Platoons (${side.platoons.length}, ${side.platoons.reduce((a, p) => a + (unitOf(p.unit)?.men ?? 0), 0)} men)`),
-    side.platoons.map((p, i) => platoonCard(sideKey, p, i, nation)),
+    side.platoons.map(p => platoonCard(sideKey, p, nation)),
     h('h2', {}, 'Add platoon'),
     h('div', { class: 'row' },
       input(unitSearch, v => { unitSearch = v; fill(); }, { class: 'grow', placeholder: 'Search: StuG, T-34, rifle, mortar ...' }),
@@ -761,7 +789,7 @@ function renderPanel() {
 }
 function refreshKeep() {
   const p = document.getElementById('panel'), y = p.scrollTop;
-  renderPanel(); p.scrollTop = y; setHint(); draw(); showChecks();
+  renderPanel(); p.scrollTop = y; renderDetail(); setHint(); draw(); showChecks();
 }
 function refresh() {
   renderLeft(); renderTabs(); refreshKeep();
@@ -1082,10 +1110,9 @@ function pick(px, py) {
   }
   return null;
 }
-// shows the card of a platoon picked on the map
+// opens the details of a platoon picked on the map and shows its card in the list
 function showPlatoon(sideKey, p) {
   picked = p;
-  opened.add(p);
   if (tab !== sideKey) { tab = sideKey; renderTabs(); }
   refreshKeep();
   document.getElementById('platoon-' + p.callsign)?.scrollIntoView({ block: 'nearest' });
@@ -1195,6 +1222,8 @@ window.addEventListener('mouseup', () => {
 });
 window.addEventListener('keydown', e => {
   if (e.key !== 'Escape' || e.target.closest?.('input, textarea, select')) return;
+  // the first Esc ends placing and selecting, the next one closes the details
+  if (!placing && !addingPoint && !chosen.size) picked = null;
   placing = null; addingPoint = false; chosen.clear(); box = null;
   renderLeft(); refreshKeep();
 });
@@ -1221,11 +1250,11 @@ async function fillOpen(current) {
 document.getElementById('open').addEventListener('change', async e => {
   if (!e.target.value) return;
   s = normalise(await api('/scenario?path=' + encodeURIComponent(e.target.value)));
-  selected = null; picked = null; placing = null; opened.clear(); chosen.clear(); addingPoint = false; resetZoom();
+  selected = null; picked = null; placing = null; chosen.clear(); addingPoint = false; resetZoom();
   refresh();
   log('Opened ' + e.target.value);
 });
-document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; picked = null; placing = null; opened.clear(); chosen.clear(); addingPoint = false; resetZoom(); refresh(); });
+document.getElementById('new').addEventListener('click', () => { s = blank(); selected = null; picked = null; placing = null; chosen.clear(); addingPoint = false; resetZoom(); refresh(); });
 document.getElementById('save').addEventListener('click', async () => {
   try { const r = await api('/save', clean()); log('Saved ' + r.file, 'good'); await fillOpen(`scenarios/${s.id}.json`); } catch (e) { log(e.message, 'err'); }
 });
